@@ -39,7 +39,7 @@ Hier im Fork wird nur das Aussehen geändert – so gibt es beim Sync keine Konf
 
 ## 🚀 Lokal starten und betreiben
 
-Genau wie Satzball, siehe [README von Satzball](../README.md) und [`docs/betrieb.md`](../docs/betrieb.md).
+Lokal genau wie Satzball, siehe [README von Satzball](../README.md). Auf dem Server neben Satzball: [`docs/betrieb-becherkoenig.md`](../docs/betrieb-becherkoenig.md).
 Auf dem Server `SATZBALL_QUELLCODE_URL` auf dieses Repository setzen (Link „Quellcode“ in der Fußzeile, AGPL).
 
 ## 📜 Lizenz
