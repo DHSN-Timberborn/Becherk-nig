@@ -1,15 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Satzball">
-  <!-- Satzball-Logo: stilisierter Volleyball. Blau = Akzentfarbe aus docs/design.html. -->
-  <defs>
-    <clipPath id="ball"><circle cx="32" cy="32" r="29"/></clipPath>
-  </defs>
-  <circle cx="32" cy="32" r="29" fill="#2867e4"/>
-  <g clip-path="url(#ball)" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round">
-    <g id="naht">
-      <path d="M32 32 C27 21 29 10 39 1"/>
-      <path d="M22.5 37 C14 28 13.5 15 20 3"/>
-    </g>
-    <use href="#naht" transform="rotate(120 32 32)"/>
-    <use href="#naht" transform="rotate(240 32 32)"/>
-  </g>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Becherkönig">
+  <!-- Becherkönig-Logo: roter Becher mit Ball (nach der Bierpong-Seite der Timberborn-Volleys). -->
+  <path d="M10 14h40l-7.2 44.5Q42 62 38.5 62h-17Q18 62 17.2 58.5z" fill="#e11d2e"/>
+  <path d="M10 14h40l-1.3 8.5H11.3z" fill="#fff"/>
+  <ellipse cx="30" cy="14" rx="20" ry="4" fill="#7f0a16"/>
+  <circle cx="49" cy="11" r="8" fill="#ff9f1c" stroke="#fff" stroke-width="1.6"/>
+  <circle cx="46.3" cy="8.3" r="2.6" fill="#fff" opacity=".55"/>
 </svg>
