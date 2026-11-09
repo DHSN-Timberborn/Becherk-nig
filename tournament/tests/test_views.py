@@ -144,6 +144,43 @@ class AnmeldungTests(TestCase):
         self.assertContains(self.client.get(reverse("anmelden")), "Anmeldung geschlossen")
 
 
+class MindestalterTests(TestCase):
+    def setUp(self):
+        self.t = turnier(mindestalter=16)
+
+    def test_ohne_mindestalter_kein_haken(self):
+        self.t.mindestalter = None
+        self.t.save()
+        self.assertNotContains(self.client.get(reverse("anmelden")), "Jahre alt")
+        self.assertNotContains(self.client.get(reverse("startseite")), "Teilnahme ab")
+        self.assertEqual(self.client.post(reverse("anmelden"), anmeldedaten()).status_code, 302)
+
+    def test_anmeldung_nur_mit_bestaetigung(self):
+        self.assertContains(self.client.get(reverse("startseite")), "Teilnahme ab 16 Jahren")
+        self.assertContains(self.client.get(reverse("anmelden")), "Alle Spieler im Team sind mindestens 16 Jahre alt.")
+        r = self.client.post(reverse("anmelden"), anmeldedaten())
+        self.assertContains(r, "Bitte bestätige, dass alle Spieler mindestens 16 sind.")
+        self.assertFalse(Team.objects.exists())
+        r = self.client.post(reverse("anmelden"), {**anmeldedaten(), "alter": "on"})
+        self.assertEqual(r.status_code, 302)
+        self.assertTrue(Team.objects.exists())
+
+    def test_spielerliste_aendern_nur_mit_bestaetigung(self):
+        team = Team.objects.create(turnier=self.t, name="Bit Blockers", kapitaen_name="L", kapitaen_email="l@example.de")
+        lena = Spieler.objects.create(team=team, vorname="Lena", nachname="Hoffmann")
+        url = reverse("team_bearbeiten", args=[team.edit_token])
+        daten = {"spieler-TOTAL_FORMS": "2", "spieler-INITIAL_FORMS": "1", "spieler-MIN_NUM_FORMS": "0",
+                 "spieler-MAX_NUM_FORMS": "1000", "spieler-0-id": lena.pk, "spieler-0-vorname": "Lena",
+                 "spieler-0-nachname": "Hoffmann", "spieler-1-id": "", "spieler-1-vorname": "Kim",
+                 "spieler-1-nachname": "Nguyen"}
+        r = self.client.post(url, daten)
+        self.assertContains(r, "Bitte bestätige, dass alle Spieler mindestens 16 sind.")
+        self.assertEqual(team.spieler.count(), 1)
+        r = self.client.post(url, {**daten, "alter": "on"})
+        self.assertRedirects(r, url)
+        self.assertEqual(team.spieler.count(), 2)
+
+
 class TeamBearbeitenTests(TestCase):
     def setUp(self):
         self.t = turnier()

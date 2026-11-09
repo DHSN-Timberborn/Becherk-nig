@@ -1,0 +1,10 @@
+{# Pflicht-Haken fürs Mindestalter (nur wenn das Turnier eins hat). Erwartet: feld (BoundField oder leer) #}
+{% if feld %}
+  <div class="feld">
+    <label class="check">
+      {{ feld }}
+      <span>{{ feld.label }}</span>
+    </label>
+    {{ feld.errors }}
+  </div>
+{% endif %}

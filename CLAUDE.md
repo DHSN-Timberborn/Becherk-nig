@@ -93,6 +93,9 @@ Betrieb (nginx, Update, Sicherung, Probelauf): `docs/betrieb.md`, Vorlage `docs/
 - Spielerzahl pro Turnier: Pflicht sind mindestens `pflicht_spieler` (Vorgabe `MIN_SPIELER` = 2, kleinster Wert 1),
   höchstens `max_spieler` (leer = keine Obergrenze). `min_spieler` ist nur eine **Empfehlung** (gelber Hinweis im
   Formular, keine Ablehnung) und liegt zwischen Pflicht- und Höchstzahl. Bierpong z. B.: Pflicht 1, empfohlen 4, ohne Obergrenze.
+- Mindestalter pro Turnier (`Turnier.mindestalter`, leer = keins, z. B. 16 bei Bier): Pflicht-Haken „Alle Spieler im
+  Team sind mindestens X Jahre alt“ bei der Anmeldung und beim Ändern der Spielerliste (`forms.AlterForm`,
+  `templates/tournament/_alter.html`); Startseite zeigt „Teilnahme ab X Jahren“. Gespeichert wird nur die Einstellung.
 - Spielernamen sind **öffentlich** (Teamliste). E-Mail und Zahlungsstatus sehen nur Orga und Kapitän.
 - Spiel-Phase (`Spiel.phase`): Gruppenspiel, Viertelfinale, Halbfinale, Spiel um Platz 3, Finale.
   K.-o.-Spiele haben keine Gruppe.

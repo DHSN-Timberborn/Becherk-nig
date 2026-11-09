@@ -14,7 +14,7 @@ from django.views.decorators.http import require_POST
 
 from . import spielplan as plan
 from . import warteliste
-from .forms import AnmeldeForm, spieler_formset
+from .forms import AlterForm, AnmeldeForm, spieler_formset
 from .models import Spiel, Spieler, Team, Turnier
 from .tabelle import endstand, gruppentabellen
 
@@ -193,13 +193,14 @@ def team_bearbeiten(request, token):
         instance=team, turnier=turnier, prefix="spieler",
         queryset=team.spieler.order_by("pk"),
     )
-    if request.method == "POST" and darf_aendern and formset.is_valid():
+    alter = AlterForm(request.POST if request.method == "POST" and darf_aendern else None, turnier=turnier)
+    if request.method == "POST" and darf_aendern and all([formset.is_valid(), alter.is_valid()]):
         formset.save()
         messages.success(request, "Änderungen gespeichert.")
         return redirect("team_bearbeiten", token=token)
 
     return render(request, "tournament/team_bearbeiten.html", {
-        "team": team, "turnier": turnier, "formset": formset, "darf_aendern": darf_aendern,
+        "team": team, "turnier": turnier, "formset": formset, "darf_aendern": darf_aendern, "alter": alter,
     })
 
 

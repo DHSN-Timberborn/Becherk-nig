@@ -37,6 +37,8 @@
 
   {% include "tournament/_spieler_formset.html" %}
 
+  {% include "tournament/_alter.html" with feld=form.alter %}
+
   <div class="feld">
     <label class="check">
       {{ form.datenschutz }}

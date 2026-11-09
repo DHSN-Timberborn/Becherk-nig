@@ -11,6 +11,7 @@
       <span class="badge badge--neutral badge--gross">Anmeldung geschlossen</span>
     {% endif %}
     <h1 class="titel">{{ turnier.name }}</h1>
+    {% if turnier.mindestalter %}<span class="leise">Teilnahme ab {{ turnier.mindestalter }} Jahren</span>{% endif %}
     {% if weitere_turniere %}<a class="klein" href="{% url 'turniere' %}">Andere Turniere ansehen →</a>{% endif %}
   </div>
 
