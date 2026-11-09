@@ -27,7 +27,7 @@
         <div class="slot__spiele">
           {% for s in slot.spiele %}
             <div class="partie{% if s.status == 'beendet' %} partie--fertig{% endif %}">
-              <span class="partie__tag">Feld {{ s.feld }} · {{ s.titel }}</span>
+              <span class="partie__tag">{{ turnier.feld_name }} {{ s.feld }} · {{ s.titel }}</span>
               <div class="partie__zeile{% if s.a_gewinnt %} partie__zeile--sieger{% endif %}">
                 <span>{{ s.team_a|default:s.platzhalter_a|default:"?" }}</span>
                 <span class="partie__wert">{% if s.status == 'beendet' %}{{ s.wert_a }}{% endif %}</span>

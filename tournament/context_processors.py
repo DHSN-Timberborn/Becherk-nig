@@ -4,7 +4,7 @@ from .models import Turnier
 
 
 def satzball(request):
-    return {"quellcode_url": settings.QUELLCODE_URL}
+    return {"quellcode_url": settings.QUELLCODE_URL, "marke": settings.MARKE}
 
 
 def aktuelles_turnier(request):

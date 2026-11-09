@@ -361,7 +361,7 @@ def konflikte(spiele):
         slot = je_slot[zeit]
         uhr = zeit.strftime("%H:%M")
         felder = Counter(s.feld for s in slot)
-        hinweise += [f"{uhr}: Feld {f} ist doppelt belegt." for f, n in felder.items() if n > 1]
+        hinweise += [f"{uhr}: {slot[0].turnier.feld_name} {f} ist doppelt belegt." for f, n in felder.items() if n > 1]
         teams = Counter(t for s in slot for t in (s.team_a, s.team_b, s.schiri_team) if t)
         hinweise += [f"{uhr}: {t} ist mehrfach eingeplant." for t, n in teams.items() if n > 1]
     return hinweise

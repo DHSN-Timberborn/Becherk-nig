@@ -30,7 +30,7 @@ class OhneSchiriTests(TestCase):
             "name": self.t.name, "datum": "2026-11-14", "beginn": "18:00", "ort": self.t.ort, "startgebuehr_eur": "0",
             "meldeschluss_0": "31.10.2026", "meldeschluss_1": "23:59", "max_teams": "8",
             "pflicht_spieler": "2", "min_spieler": "6", "max_spieler": "10", "modus": "jeder_gegen_jeden",
-            "anzahl_felder": "1", "slot_minuten": "20", "zaehlmodus": "saetze", "gewinnsaetze": "2",
+            "anzahl_felder": "1", "feldart": "feld", "slot_minuten": "20", "zaehlmodus": "saetze", "gewinnsaetze": "2",
             "punkte_pro_satz": "25", "punkte_entscheidungssatz": "15", "becher": "10",
             "gruppen-TOTAL_FORMS": "1", "gruppen-INITIAL_FORMS": "1",
             "gruppen-0-id": str(gruppe.pk), "gruppen-0-turnier": str(self.t.pk), "gruppen-0-name": gruppe.name,

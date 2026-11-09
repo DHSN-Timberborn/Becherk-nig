@@ -7,6 +7,8 @@ import os
 import secrets
 from pathlib import Path
 
+from config.marke import NAME as MARKE  # noqa: E402 – Name der Installation (Ableger ersetzen config/marke.py)
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # SQLite und Secret Key liegen in data/ (im Container: /app/data, Volume "satzball-data").
@@ -129,7 +131,7 @@ if EMAIL_HOST:
     EMAIL_TIMEOUT = 10
 else:
     EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
-DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL", "Satzball <noreply@localhost>")
+DEFAULT_FROM_EMAIL = os.environ.get("DEFAULT_FROM_EMAIL", f"{MARKE} <noreply@localhost>")
 
 LOGGING = {
     "version": 1,
