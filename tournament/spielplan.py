@@ -232,7 +232,8 @@ def erzeugen(turnier, anzahl_gruppen=None, zufall=None):
         mindestens = 3 * anzahl
     if len(teams) < mindestens:
         raise SpielplanFehler(
-            f"Dafür braucht es mindestens {mindestens} bestätigte und bezahlte Teams (aktuell {len(teams)})."
+            f"Dafür braucht es mindestens {mindestens} bestätigte{'' if turnier.kostenlos else ' und bezahlte'} Teams "
+            f"(aktuell {len(teams)})."
         )
 
     turnier.spiele.all().delete()

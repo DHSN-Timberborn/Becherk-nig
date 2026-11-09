@@ -11,6 +11,7 @@
   .uebersicht .nachruecken .button { padding: 8px 14px; font-size: 14px; }
 </style>
 <div class="uebersicht">
+  {% if not uebersicht_turnier.kostenlos %}
   <div><span>Startgebühren eingegangen</span><strong>{{ uebersicht.eingegangen|floatformat:"-2" }} €</strong>von {{ uebersicht.erwartet|floatformat:"-2" }} € erwartet</div>
   <div><span>Unbezahlt</span><strong>{{ uebersicht.unbezahlt }}</strong>Teams mit Startplatz
     {% if uebersicht.unbezahlt and not uebersicht_turnier.vorbei %}
@@ -30,6 +31,7 @@
       {% endif %}
     {% endif %}
   </div>
+  {% endif %}
   <div><span>Warteliste</span><strong>{{ uebersicht.warteliste }}</strong>
     {% if not uebersicht.warteliste %}niemand wartet
     {% elif uebersicht_turnier.warteliste_automatisch %}rücken automatisch nach
@@ -43,7 +45,7 @@
     {% endif %}
   </div>
 </div>
-<p class="help">Zahlen für <b>{{ uebersicht_turnier }}</b>. Haken „bezahlt“ setzen und speichern: Datum wird automatisch eingetragen, angemeldete Teams werden bestätigt.</p>
+<p class="help">Zahlen für <b>{{ uebersicht_turnier }}</b>. {% if uebersicht_turnier.kostenlos %}Ohne Startgebühr: Teams mit Startplatz sind automatisch bestätigt.{% else %}Haken „bezahlt“ setzen und speichern: Datum wird automatisch eingetragen, angemeldete Teams werden bestätigt.{% endif %}</p>
 {% endif %}
 {{ block.super }}
 {% endblock %}

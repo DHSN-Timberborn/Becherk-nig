@@ -17,7 +17,7 @@
 
 <div class="wertrahmen">
   {% include "tournament/_status.html" with gross=True prefix="Status: " %}
-  {% include "tournament/_zahlung.html" with gross=True kurz=True %}
+  {% if not turnier.kostenlos %}{% include "tournament/_zahlung.html" with gross=True kurz=True %}{% endif %}
 </div>
 
 <div class="karte">

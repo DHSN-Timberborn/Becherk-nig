@@ -1,4 +1,4 @@
-{% if not team.bezahlt and team.status != "abgesagt" %}
+{% if not team.bezahlt and team.status != "abgesagt" and not turnier.kostenlos %}
 <div class="karte karte--flach" id="zahlung">
   <div class="karte__teil" style="border-top:0">
     <div class="kopfzeile"><h2 class="zwischen">Startgebühr zahlen</h2><span class="zahl">{{ turnier.startgebuehr_eur|floatformat:"-2" }} €</span></div>

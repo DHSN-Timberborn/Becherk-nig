@@ -153,8 +153,15 @@ class Turnier(models.Model):
     def freie_plaetze(self):
         return max(self.max_teams - self.belegte_plaetze, 0)
 
+    @property
+    def kostenlos(self):
+        """Ohne Startgebühr: Teams mit Startplatz sind sofort bestätigt, Zahlungsteile werden ausgeblendet."""
+        return not self.startgebuehr_eur
+
     def unbezahlte_teams(self):
-        """Teams mit Startplatz, deren Startgebühr noch fehlt – in Anmelde-Reihenfolge."""
+        """Teams mit Startplatz, deren Startgebühr noch fehlt – in Anmelde-Reihenfolge (ohne Gebühr keine)."""
+        if self.kostenlos:
+            return self.teams.none()
         return self.teams.filter(status__in=Team.STARTPLATZ_STATUS, bezahlt=False).order_by(*Team.REIHENFOLGE)
 
     @property
@@ -174,7 +181,7 @@ class Turnier(models.Model):
         return {
             "eingegangen": self.startgebuehr_eur * len(bezahlt),
             "erwartet": self.startgebuehr_eur * len(startplatz),
-            "unbezahlt": sum(1 for t in startplatz if not t.bezahlt),
+            "unbezahlt": 0 if self.kostenlos else sum(1 for t in startplatz if not t.bezahlt),
             "warteliste": sum(1 for t in teams if t.status == Team.Status.WARTELISTE),
         }
 
@@ -236,8 +243,10 @@ class Gruppe(models.Model):
 
 class TeamQuerySet(models.QuerySet):
     def im_spielplan(self):
-        """Nur bestätigte und bezahlte Teams kommen in den Spielplan."""
-        return self.filter(status=Team.Status.BESTAETIGT, bezahlt=True)
+        """Nur bestätigte und bezahlte Teams kommen in den Spielplan (ohne Startgebühr: alle bestätigten)."""
+        return self.filter(status=Team.Status.BESTAETIGT).filter(
+            models.Q(bezahlt=True) | models.Q(turnier__startgebuehr_eur=0),
+        )
 
 
 class Team(models.Model):
@@ -285,15 +294,14 @@ class Team(models.Model):
         return self.name
 
     def save(self, *args, **kwargs):
-        # Bezahlt heißt bestätigt (Entscheidung Orga). Warteliste und Absage bleiben unberührt.
-        if self.bezahlt:
-            self.bezahlt_am = self.bezahlt_am or timezone.localdate()
+        # Bezahlt heißt bestätigt (Entscheidung Orga) – ohne Startgebühr ist ein Startplatz sofort bestätigt.
+        # Warteliste und Absage bleiben unberührt.
+        self.bezahlt_am = (self.bezahlt_am or timezone.localdate()) if self.bezahlt else None
+        if self.bezahlt or self.turnier.kostenlos:
             if self.status == self.Status.ANGEMELDET:
                 self.status = self.Status.BESTAETIGT
-        else:
-            self.bezahlt_am = None
-            if self.status == self.Status.BESTAETIGT:
-                self.status = self.Status.ANGEMELDET
+        elif self.status == self.Status.BESTAETIGT:
+            self.status = self.Status.ANGEMELDET
         super().save(*args, **kwargs)
 
     @property
