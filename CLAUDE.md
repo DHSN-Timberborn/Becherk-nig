@@ -66,7 +66,7 @@ Betrieb (nginx, Update, Sicherung, Probelauf): `docs/betrieb.md`, Vorlage `docs/
 - Nur bestätigte **und** bezahlte Teams kommen in den Spielplan (`Team.objects.im_spielplan()`).
 - **Ohne Startgebühr** (`Turnier.kostenlos`, Gebühr 0 – auch die Vorgabe): Ein Startplatz ist sofort bestätigt
   (`Team.save()`), `unbezahlte_teams()` ist leer, Zahlungsteile (Startseite, Anmeldung, Kapitänsseiten, Mails,
-  Admin-Kacheln) sind ausgeblendet. Ändert die Orga die Gebühr im Admin, wird der Status aller Teams mit
+  Admin-Kacheln) sind ausgeblendet; Filter „Unbezahlt“ lässt sie aus, CSV zeigt „–“ statt „nein“. Ändert die Orga die Gebühr im Admin, wird der Status aller Teams mit
   Startplatz neu berechnet. Tests, die die Bezahl-Logik prüfen, brauchen deshalb eine Gebühr > 0.
 - Team-Status: Anmeldung → `angemeldet` (Platz frei) oder `warteliste` (voll).
   **Bezahlt = bestätigt:** Setzt die Orga `bezahlt`, wird ein angemeldetes Team automatisch

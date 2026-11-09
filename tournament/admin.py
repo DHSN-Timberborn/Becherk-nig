@@ -127,8 +127,8 @@ class ZahlungFilter(admin.SimpleListFilter):
         return [("unbezahlt", "Unbezahlt (mit Startplatz)"), ("bezahlt", "Bezahlt")]
 
     def queryset(self, request, queryset):
-        if self.value() == "unbezahlt":
-            return queryset.filter(bezahlt=False, status__in=Team.STARTPLATZ_STATUS)
+        if self.value() == "unbezahlt":  # kostenlose Turniere haben nichts offen
+            return queryset.filter(bezahlt=False, status__in=Team.STARTPLATZ_STATUS).exclude(turnier__startgebuehr_eur=0)
         if self.value() == "bezahlt":
             return queryset.filter(bezahlt=True)
         return queryset
@@ -181,7 +181,7 @@ class TeamAdmin(admin.ModelAdmin):
             schreiber.writerow([_csv_zelle(wert) for wert in [
                 team.turnier.name, team.name, team.kapitaen_name, team.kapitaen_email, team.get_status_display(),
                 team._anzahl_spieler, f"{team.turnier.startgebuehr_eur:.2f}".replace(".", ","),
-                "ja" if team.bezahlt else "nein", team.bezahlt_am.strftime("%d.%m.%Y") if team.bezahlt_am else "",
+                "–" if team.turnier.kostenlos else "ja" if team.bezahlt else "nein", team.bezahlt_am.strftime("%d.%m.%Y") if team.bezahlt_am else "",
                 team.get_zahlungsart_display(), team.notiz,
             ]])
         return antwort

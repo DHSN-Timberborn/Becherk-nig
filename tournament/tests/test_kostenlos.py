@@ -47,6 +47,15 @@ class OhneStartgebuehrTests(TestCase):
         self.assertNotContains(r, "Startgebühren eingegangen")
         self.assertContains(r, "Ohne Startgebühr: Teams mit Startplatz sind automatisch bestätigt.")
         self.assertEqual(list(self.t.unbezahlte_teams()), [])
+        r = self.client.get(reverse("admin:tournament_team_changelist"),
+                            {"turnier__id__exact": self.t.pk, "zahlung": "unbezahlt"})
+        self.assertEqual(r.context["cl"].result_count, 0)
+
+        r = self.client.post(reverse("admin:tournament_team_changelist"), {
+            "action": "als_csv", "_selected_action": [t.pk for t in self.t.teams.all()],
+        })
+        zeile = r.content.decode("utf-8").splitlines()[1].split(";")
+        self.assertEqual((zeile[6], zeile[7]), ("0,00", "–"))  # Startgebühr, Bezahlt
         self.assertEqual(warteliste.an_zahlung_erinnern(self.t, None), 0)
         self.assertEqual(len(mail.outbox), 0)
 
