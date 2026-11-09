@@ -34,12 +34,19 @@ class TurnierTests(TestCase):
         with self.assertRaises(ValidationError):
             turnier(min_spieler=2, max_spieler=1).full_clean()
 
-    def test_empfehlung_mindestens_zwei(self):
+    def test_empfehlung_mindestens_pflichtzahl(self):
         for wert in (0, 1):
             with self.subTest(min_spieler=wert), self.assertRaises(ValidationError) as fehler:
                 turnier(name=f"Cup {wert}", min_spieler=wert).full_clean()
             self.assertIn("min_spieler", fehler.exception.message_dict)
         turnier(name="Cup 2", min_spieler=2).full_clean()
+        turnier(name="Pong", pflicht_spieler=1, min_spieler=1, max_spieler=1).full_clean()  # z. B. Einzel
+
+    def test_pflichtzahl_mindestens_eins_und_obergrenze_optional(self):
+        with self.assertRaises(ValidationError) as fehler:
+            turnier(name="Null", pflicht_spieler=0, min_spieler=1).full_clean()
+        self.assertIn("pflicht_spieler", fehler.exception.message_dict)
+        turnier(name="Offen", pflicht_spieler=1, min_spieler=4, max_spieler=None).full_clean()
 
     def test_min_spieler_groesser_max_spieler_ist_ungueltig(self):
         t = turnier(min_spieler=8, max_spieler=6)

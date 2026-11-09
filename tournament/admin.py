@@ -47,7 +47,8 @@ class TurnierAdmin(admin.ModelAdmin):
     fieldsets = [
         (None, {"fields": ["name", "oeffentlich", "datum", "beginn", "ort", "startgebuehr_eur", "zahlungsinfo"]}),
         ("Anmeldung", {"fields": [
-            "anmeldung_offen", "meldeschluss", "max_teams", "warteliste_automatisch", "min_spieler", "max_spieler",
+            "anmeldung_offen", "meldeschluss", "max_teams", "warteliste_automatisch", "pflicht_spieler", "min_spieler",
+            "max_spieler",
         ]}),
         ("Modus", {"fields": ["modus", "anzahl_felder", "slot_minuten", "spielplan_veroeffentlicht"]}),
         ("Zählweise", {"fields": [

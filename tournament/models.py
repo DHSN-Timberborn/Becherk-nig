@@ -11,7 +11,8 @@ from django.db import models
 from django.utils import timezone
 
 
-# Darunter kann ein Team nicht antreten. min_spieler am Turnier ist nur eine Empfehlung.
+# Vorgabe für Turnier.pflicht_spieler (darunter kann ein Team nicht antreten).
+# min_spieler am Turnier ist nur eine Empfehlung.
 MIN_SPIELER = 2
 
 
@@ -50,11 +51,17 @@ class Turnier(models.Model):
     )
     meldeschluss = models.DateTimeField()
     max_teams = models.PositiveSmallIntegerField("max. Teams")
+    pflicht_spieler = models.PositiveSmallIntegerField(
+        "Pflicht: mind. Spieler pro Team", default=MIN_SPIELER, validators=[MinValueValidator(1)],
+        help_text="Mit weniger Spielern lehnt das Formular die Anmeldung ab.",
+    )
     min_spieler = models.PositiveSmallIntegerField(
         "empfohlene Spielerzahl", default=6,
-        help_text=f"Weniger Spieler sind erlaubt (Hinweis im Formular); Pflicht sind mindestens {MIN_SPIELER}.",
+        help_text="Nur ein Hinweis im Formular – weniger Spieler (ab der Pflichtzahl) sind erlaubt.",
     )
-    max_spieler = models.PositiveSmallIntegerField("max. Spieler pro Team", default=10)
+    max_spieler = models.PositiveSmallIntegerField(
+        "max. Spieler pro Team", default=10, null=True, blank=True, help_text="Leer = keine Obergrenze.",
+    )
     anmeldung_offen = models.BooleanField("Anmeldung offen", default=False)
     modus = models.CharField(max_length=20, choices=Modus.choices, default=Modus.JEDER_GEGEN_JEDEN)
     anzahl_felder = models.PositiveSmallIntegerField("Anzahl Felder", default=2)
@@ -183,10 +190,11 @@ class Turnier(models.Model):
         self.save(update_fields=["teamdaten_geloescht_am"])
 
     def clean(self):
-        if self.min_spieler is not None and self.min_spieler < MIN_SPIELER:
-            raise ValidationError({"min_spieler": f"Mindestens {MIN_SPIELER} – weniger Spieler sind nie erlaubt."})
-        if self.max_spieler is not None and self.max_spieler < MIN_SPIELER:
-            raise ValidationError({"max_spieler": f"Mindestens {MIN_SPIELER}."})
+        pflicht = self.pflicht_spieler or 1
+        if self.min_spieler is not None and self.min_spieler < pflicht:
+            raise ValidationError({"min_spieler": f"Mindestens {pflicht} – so viele Spieler sind Pflicht."})
+        if self.max_spieler is not None and self.max_spieler < pflicht:
+            raise ValidationError({"max_spieler": f"Mindestens {pflicht} – so viele Spieler sind Pflicht."})
         if self.min_spieler is not None and self.max_spieler is not None and self.min_spieler > self.max_spieler:
             raise ValidationError({"max_spieler": "Muss mindestens so groß sein wie die empfohlene Spielerzahl."})
         if self.pk and self.zaehlmodus == self.Zaehlmodus.BECHER and self.becher:
