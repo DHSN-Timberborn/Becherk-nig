@@ -189,6 +189,7 @@ So wenig Daten wie möglich: Name der Spieler, eine E-Mail pro Team. Keine Telef
 | Sichtbarkeit | Orga schaltet jedes Turnier ausdrücklich frei | Feld „öffentlich sichtbar“ (Standard aus); Entwürfe und Testturniere bleiben unsichtbar |
 | Lizenz | Open Source unter AGPL-3.0, © 2026 TetraMedia | Fußzeile verlinkt den Quellcode; App ohne hochschulspezifische Texte |
 | Punkte-Modus | Ohne Zielpunktzahl, mehr Punkte gewinnt | Ersetzt „ein Satz auf X Punkte“; einen Satz bis 25 stellt man als Satz-Modus Best of 1 ein. Kein Unentschieden bleibt |
+| Beamer-Ansicht | Eigene Großbild-Seite statt Vollbild-Knopf in der Tabelle | Tabellen, laufende und nächste Spiele, Siegerbanner; aktualisiert sich alle 30 s ohne Neuladen (Vollbild bleibt) |
 | Ohne Startgebühr | Gebühr 0 € = kostenloses Turnier (z. B. Bierpong) | Startplatz ist sofort bestätigt; Zahlungsteile in Seiten, Mails und Admin ausgeblendet. Warteliste, Kapitäns-Mail und Bearbeitungslink bleiben |
 | Mindestalter | Pro Turnier optional (z. B. 16 bei Bier) | Kapitän bestätigt per Pflicht-Haken bei Anmeldung und Änderung der Spielerliste; kein Geburtsdatum (Datensparsamkeit) |
 | Schiri | Pro Turnier abschaltbar (z. B. Bierpong) | Haken „Schiris einteilen“; Umschalten wirkt sofort auf alle offenen Spiele, beendete behalten ihren Schiri |

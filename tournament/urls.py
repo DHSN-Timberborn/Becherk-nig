@@ -8,6 +8,7 @@ urlpatterns = [
     path("teams/", views.teamliste, name="teamliste"),
     path("spielplan/", views.spielplan, name="spielplan"),
     path("tabelle/", views.tabelle, name="tabelle"),
+    path("beamer/", views.beamer, name="beamer"),
     path("anmelden/", views.anmelden, name="anmelden"),
     path("datenschutz/", views.datenschutz, name="datenschutz"),
     path("team/<str:token>/", views.team_bearbeiten, name="team_bearbeiten"),

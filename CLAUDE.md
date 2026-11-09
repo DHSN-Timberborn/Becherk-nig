@@ -143,6 +143,10 @@ Betrieb (nginx, Update, Sicherung, Probelauf): `docs/betrieb.md`, Vorlage `docs/
   (im Anmeldeformular Pflicht).
 - Befehle: `testturnier [--teams N] [--spielplan]` (Probelauf), `sicherung [--behalten N]`
   (SQLite-Backup nach `data/sicherungen/`).
+- Beamer-Ansicht `/beamer/` (öffentlich wie die Tabelle, erst nach Veröffentlichung; Link „Beamer →“ auf der
+  Orga-Spielplanseite): eigenständige Großbild-Seite mit Gruppentabellen, „Läuft“ und „Als Nächstes“
+  (`views._slots`, auch vom Spielplan genutzt) und Siegerbanner aus `tabelle.endstand`. `static/js/beamer.js` holt
+  alle 30 s den Stand und tauscht nur `#beamer` aus – ein Neuladen würde den Vollbildmodus beenden.
 - Druckansicht zum Aushang: `/orga/spielplan/druck/` (eigenständige Seite, schwarz-weiß, A4; Link auf der
   Orga-Spielplanseite). Ziel: Plan mit bis zu 16 Zeit-Slots auf einer Seite.
 - Ergebnis eintragen: `/orga/spiel/<id>/`, Satz-Modus Sätze (+ optional Ballpunkte gesamt),

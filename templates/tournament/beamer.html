@@ -1,0 +1,84 @@
+{% load static %}<!doctype html>
+<html lang="de">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Beamer · {% if turnier %}{{ turnier.name }}{% else %}Satzball{% endif %}</title>
+  <link rel="icon" href="{% static 'img/logo.svg' %}" type="image/svg+xml">
+  <link rel="stylesheet" href="{% static 'css/satzball.css' %}">
+  <noscript><meta http-equiv="refresh" content="30"></noscript>
+  <style>
+    /* Großbild für den Beamer: alles groß, nichts zum Klicken außer „Vollbild“. Farben aus satzball.css. */
+    body { background: var(--bg); }
+    .beamer { min-height: 100vh; padding: 2.2vw 3vw; display: flex; flex-direction: column; gap: 2vw; font-size: clamp(16px, 1.5vw, 34px); }
+    .beamer__kopf { display: flex; align-items: center; gap: 1.2vw; }
+    .beamer__kopf img { width: 3.2vw; min-width: 32px; height: auto; }
+    .beamer__kopf h1 { margin: 0; flex: 1; font: italic 800 clamp(28px, 3.6vw, 80px)/1 var(--kond); text-transform: uppercase; }
+    .beamer__stand { color: var(--mut); }
+    .beamer__vollbild { font: inherit; font-size: .8em; padding: .4em .9em; border: 1px solid var(--line); border-radius: 10px; background: var(--sf); color: var(--ink); cursor: pointer; }
+    :fullscreen .beamer__vollbild { display: none; }
+    .beamer__sieger { background: var(--ac); color: var(--aci); border-radius: 1vw; padding: 1.4vw 2vw; display: flex; flex-wrap: wrap; align-items: baseline; gap: .4em 2.5vw; }
+    .beamer__sieger strong { font: 800 clamp(28px, 3.4vw, 76px)/1.05 var(--kond); text-transform: uppercase; flex-basis: 100%; }
+    .beamer__raster { flex: 1; display: grid; grid-template-columns: 2fr 1fr; gap: 2.5vw; align-items: start; }
+    .beamer__tabellen { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 32vw), 1fr)); gap: 2vw; }
+    .beamer h2 { margin: 0 0 .5em; font: 700 1.25em var(--kond); text-transform: uppercase; letter-spacing: .02em; }
+    .beamer .tabelle { font-size: 1em; }
+    .beamer .tabelle th { font-size: .75em; }
+    .beamer .tabelle td, .beamer .tabelle th { padding: .45em .5em; }
+    .beamer__spiele { display: flex; flex-direction: column; gap: 2vw; }
+    .beamer__spiel { background: var(--sf); border: 1px solid var(--line); border-radius: .8vw; padding: .7em .9em; margin-bottom: .6em; }
+    .beamer__spiel small { display: block; color: var(--mut); font-size: .75em; }
+    .beamer__spiel b { font-size: 1.15em; }
+    .beamer__live { color: var(--gr); }
+    @media (max-width: 900px) { .beamer__raster { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <main class="beamer" id="beamer" data-neu-laden="30">
+    <header class="beamer__kopf">
+      <img src="{% static 'img/logo.svg' %}" alt="">
+      <h1>{% if turnier %}{{ turnier.name }}{% else %}Satzball{% endif %}</h1>
+      {% if stand %}<span class="beamer__stand">Stand {{ stand|time:"G:i" }} Uhr</span>{% endif %}
+      <button type="button" class="beamer__vollbild" data-vollbild hidden>Vollbild</button>
+    </header>
+
+    {% if not tabellen %}
+      <p class="beamer__stand">Der Spielplan ist noch nicht veröffentlicht.</p>
+    {% else %}
+      {% if sieger %}
+        <section class="beamer__sieger" aria-label="Endstand">
+          <strong>🏆 {{ sieger }} {% if geteilt %}teilen sich Platz 1!{% else %}gewinnt!{% endif %}</strong>
+          {% for platz, team in weitere_plaetze %}<span>{{ platz }}. {{ team.name }}</span>{% endfor %}
+        </section>
+      {% endif %}
+
+      <div class="beamer__raster">
+        <div class="beamer__tabellen">
+          {% for gruppe, tabelle in tabellen %}
+            <section>
+              {% if tabellen|length > 1 %}<h2>Gruppe {{ gruppe.name }}</h2>{% else %}<h2>Tabelle</h2>{% endif %}
+              {% include "tournament/_tabelle.html" %}
+            </section>
+          {% endfor %}
+        </div>
+
+        <div class="beamer__spiele">
+          {% if jetzt %}
+            <section>
+              <h2 class="beamer__live">Läuft · {{ jetzt.zeit|time:"G:i" }}</h2>
+              {% for s in jetzt.spiele %}{% include "tournament/_beamer_spiel.html" %}{% endfor %}
+            </section>
+          {% endif %}
+          {% if naechster %}
+            <section>
+              <h2>Als Nächstes · {{ naechster.zeit|time:"G:i" }}</h2>
+              {% for s in naechster.spiele %}{% include "tournament/_beamer_spiel.html" %}{% endfor %}
+            </section>
+          {% endif %}
+        </div>
+      </div>
+    {% endif %}
+  </main>
+  <script src="{% static 'js/beamer.js' %}"></script>
+</body>
+</html>

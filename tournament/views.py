@@ -72,6 +72,53 @@ def teamliste(request):
     })
 
 
+def _slots(turnier):
+    """Spiele mit Uhrzeit (mit Ergebniswerten) und Slots [{"zeit", "spiele", "laeuft"}] für Spielplan und Beamer."""
+    satz_modus = turnier.zaehlmodus == Turnier.Zaehlmodus.SAETZE
+    spiele = [s for s in plan.mit_titeln(turnier) if s.uhrzeit]
+    for s in spiele:
+        s.wert_a, s.wert_b = (s.saetze_a, s.saetze_b) if satz_modus else (s.punkte_a, s.punkte_b)
+        fertig = s.status == Spiel.Status.BEENDET and None not in (s.wert_a, s.wert_b)
+        s.a_gewinnt = fertig and s.wert_a > s.wert_b
+        s.b_gewinnt = fertig and s.wert_b > s.wert_a
+    slots = [
+        {"zeit": zeit, "spiele": sorted((s for s in spiele if s.uhrzeit == zeit), key=lambda s: s.feld)}
+        for zeit in sorted({s.uhrzeit for s in spiele})
+    ]
+    live = laufender_slot(turnier, slots, timezone.now())
+    for slot in slots:
+        slot["laeuft"] = slot["zeit"] == live
+    return spiele, slots
+
+
+def _aufzaehlung(namen):
+    """["A", "B", "C"] -> "A, B und C"."""
+    return " und ".join(filter(None, [", ".join(namen[:-1]), namen[-1]])) if namen else ""
+
+
+def beamer(request):
+    """Großbild für den Beamer in der Halle: Tabellen, laufende und nächste Spiele, Endstand.
+    Öffentlich wie die Tabelle; die Seite holt sich alle 30 s den neuen Stand (static/js/beamer.js)."""
+    turnier = gewaehltes_turnier(request)
+    if not turnier or not turnier.spielplan_veroeffentlicht:
+        return render(request, "tournament/beamer.html", {"turnier": turnier})
+    _, slots = _slots(turnier)
+    plaetze = endstand(turnier)
+    offen = [slot for slot in slots if any(s.status == Spiel.Status.GEPLANT for s in slot["spiele"])]
+    jetzt = next((slot for slot in offen if slot["laeuft"]), None)
+    naechste = [slot for slot in offen if slot is not jetzt][:1]
+    return render(request, "tournament/beamer.html", {
+        "turnier": turnier,
+        "tabellen": gruppentabellen(turnier),
+        "sieger": _aufzaehlung([team.name for platz, team in plaetze if platz == 1]),  # mehrere bei Gleichstand
+        "geteilt": sum(1 for platz, _ in plaetze if platz == 1) > 1,
+        "weitere_plaetze": [(platz, team) for platz, team in plaetze if platz > 1],
+        "jetzt": jetzt,
+        "naechster": naechste[0] if naechste else None,
+        "stand": timezone.localtime(),
+    })
+
+
 def laufender_slot(turnier, slots, jetzt):
     """Slot, der gerade läuft: der erste mit offenen Spielen – aber erst ab seiner geplanten
     Startzeit am Spieltag. So folgt die Anzeige dem echten Stand, auch wenn das Turnier hinterherhängt."""
@@ -98,21 +145,8 @@ def spielplan(request):
     if not turnier or not turnier.spielplan_veroeffentlicht:
         return render(request, "tournament/spielplan.html", {"turnier": turnier})
 
-    jetzt = timezone.now()
     satz_modus = turnier.zaehlmodus == Turnier.Zaehlmodus.SAETZE
-    spiele = [s for s in plan.mit_titeln(turnier) if s.uhrzeit]
-    for s in spiele:
-        s.wert_a, s.wert_b = (s.saetze_a, s.saetze_b) if satz_modus else (s.punkte_a, s.punkte_b)
-        fertig = s.status == Spiel.Status.BEENDET and None not in (s.wert_a, s.wert_b)
-        s.a_gewinnt = fertig and s.wert_a > s.wert_b
-        s.b_gewinnt = fertig and s.wert_b > s.wert_a
-    slots = [
-        {"zeit": zeit, "spiele": sorted((s for s in spiele if s.uhrzeit == zeit), key=lambda s: s.feld)}
-        for zeit in sorted({s.uhrzeit for s in spiele})
-    ]
-    live = laufender_slot(turnier, slots, jetzt)
-    for slot in slots:
-        slot["laeuft"] = slot["zeit"] == live
+    spiele, slots = _slots(turnier)
     ko = [s for s in spiele if s.phase != Spiel.Phase.GRUPPE]
     return render(request, "tournament/spielplan.html", {
         "turnier": turnier,

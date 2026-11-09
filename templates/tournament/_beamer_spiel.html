@@ -1,0 +1,5 @@
+{# Ein Spiel auf dem Beamer. Erwartet: s (Spiel mit titel), turnier #}
+<div class="beamer__spiel">
+  <small>Feld {{ s.feld }} · {{ s.titel }}{% if s.schiri_team %} · Schiri: {{ s.schiri_team }}{% endif %}{% if s.status == "beendet" %} · fertig{% endif %}</small>
+  <b>{{ s.team_a|default:s.platzhalter_a|default:"?" }} – {{ s.team_b|default:s.platzhalter_b|default:"?" }}</b>
+</div>
