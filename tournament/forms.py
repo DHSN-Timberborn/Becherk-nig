@@ -5,6 +5,26 @@ from django.forms import BaseInlineFormSet, inlineformset_factory
 from .models import Spieler, Team
 
 
+def _alter_feld(turnier):
+    """Pflicht-Haken „alle Spieler sind mindestens X Jahre alt“, falls das Turnier ein Mindestalter hat."""
+    if not turnier.mindestalter:
+        return None
+    return forms.BooleanField(
+        required=True, label=f"Alle Spieler im Team sind mindestens {turnier.mindestalter} Jahre alt.",
+        error_messages={"required": f"Bitte bestätige, dass alle Spieler mindestens {turnier.mindestalter} sind."},
+    )
+
+
+class AlterForm(forms.Form):
+    """Nur der Alters-Haken – für die Kapitänsseite, wenn die Spielerliste geändert wird."""
+
+    def __init__(self, *args, turnier, **kwargs):
+        super().__init__(*args, **kwargs)
+        feld = _alter_feld(turnier)
+        if feld:
+            self.fields["alter"] = feld
+
+
 class AnmeldeForm(forms.ModelForm):
     datenschutz = forms.BooleanField(
         required=True, error_messages={"required": "Bitte bestätige die Datenschutzhinweise."},
@@ -20,6 +40,9 @@ class AnmeldeForm(forms.ModelForm):
         self.turnier = turnier
         self.fields["kapitaen_name"].required = True
         self.fields["kapitaen_email"].required = True
+        feld = _alter_feld(turnier)
+        if feld:
+            self.fields["alter"] = feld
 
     def clean_name(self):
         name = self.cleaned_data["name"].strip()

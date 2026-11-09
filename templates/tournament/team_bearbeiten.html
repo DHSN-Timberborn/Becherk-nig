@@ -47,6 +47,7 @@
   <form method="post" class="formular" novalidate>
     {% csrf_token %}
     {% include "tournament/_spieler_formset.html" with titel="Spielerliste" %}
+    {% include "tournament/_alter.html" with feld=alter.alter %}
     <button type="submit" class="btn">Änderungen speichern</button>
   </form>
 

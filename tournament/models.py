@@ -62,6 +62,11 @@ class Turnier(models.Model):
     max_spieler = models.PositiveSmallIntegerField(
         "max. Spieler pro Team", default=10, null=True, blank=True, help_text="Leer = keine Obergrenze.",
     )
+    mindestalter = models.PositiveSmallIntegerField(
+        "Mindestalter", null=True, blank=True, validators=[MinValueValidator(1)],
+        help_text="Leer = keine Altersgrenze. Sonst bestätigt der Kapitän bei der Anmeldung (und beim Ändern der "
+                  "Spielerliste), dass alle Spieler so alt sind – z. B. 16 bei Bier.",
+    )
     anmeldung_offen = models.BooleanField("Anmeldung offen", default=False)
     modus = models.CharField(max_length=20, choices=Modus.choices, default=Modus.JEDER_GEGEN_JEDEN)
     anzahl_felder = models.PositiveSmallIntegerField("Anzahl Felder", default=2)
