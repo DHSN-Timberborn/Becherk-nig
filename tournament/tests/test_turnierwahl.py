@@ -1,5 +1,6 @@
 from datetime import timedelta
 
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.test import TestCase
 from django.urls import reverse
@@ -90,7 +91,7 @@ class AdminTurnierTests(TestCase):
         r = self.client.get(reverse("admin:tournament_turnier_add"))
         self.assertContains(r, "css/admin.css")
         self.assertContains(r, "js/admin_turnier.js")
-        self.assertContains(r, "Satzball – Orga")
+        self.assertContains(r, f"{settings.MARKE} – Orga")  # Name aus config/marke.py (auch in Ablegern)
 
     def test_punkte_modus_speichern_behaelt_satzwerte(self):
         self.client.force_login(User.objects.create_superuser("orga2", "o2@example.de", "x"))
