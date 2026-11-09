@@ -60,6 +60,17 @@ class BecherModusTests(TestCase):
         spiel.full_clean()
         self.assertEqual(spiel.sieger, self.teams["Zebra"])
 
+    def test_becherzahl_nicht_unter_eingetragene_ergebnisse(self):
+        self.spiel("Adler", "Delta", 8, 0)
+        self.t.becher = 6
+        with self.assertRaisesMessage(ValidationError, "Adler – Delta hat schon mehr als 6 übrige Becher"):
+            self.t.full_clean()
+        self.t.becher = 8  # genau passend ist erlaubt
+        self.t.full_clean()
+        self.t.zaehlmodus = Turnier.Zaehlmodus.PUNKTE  # in anderen Modi spielt die Becherzahl keine Rolle
+        self.t.becher = 6
+        self.t.full_clean()
+
     def test_ergebnis_eintragen_und_anzeigen(self):
         self.t.oeffentlich = True
         self.t.save()

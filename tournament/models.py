@@ -189,6 +189,16 @@ class Turnier(models.Model):
             raise ValidationError({"max_spieler": f"Mindestens {MIN_SPIELER}."})
         if self.min_spieler is not None and self.max_spieler is not None and self.min_spieler > self.max_spieler:
             raise ValidationError({"max_spieler": "Muss mindestens so groß sein wie die empfohlene Spielerzahl."})
+        if self.pk and self.zaehlmodus == self.Zaehlmodus.BECHER and self.becher:
+            # Sonst rechnet die Tabelle mit negativen getroffenen Bechern.
+            zu_viele = self.spiele.filter(
+                models.Q(punkte_a__gt=self.becher) | models.Q(punkte_b__gt=self.becher), status="beendet",
+            ).first()
+            if zu_viele:
+                raise ValidationError({"becher": (
+                    f"Das Spiel {zu_viele} hat schon mehr als {self.becher} übrige Becher eingetragen – "
+                    "erst das Ergebnis korrigieren."
+                )})
 
 
 class Gruppe(models.Model):

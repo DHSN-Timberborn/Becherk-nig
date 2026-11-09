@@ -41,7 +41,7 @@ Das MVP deckt genau die vier Kernwünsche ab: Anmeldung, Spielerliste, Spielplan
 - [ ] Kapitän erhält Bearbeitungslink und kann Spieler bis Meldeschluss ändern
 - [ ] Orga-Übersicht aller Teams mit Status (angemeldet, bestätigt, Warteliste) und Haken "bezahlt" inkl. Datum und Zahlungsart
 - [ ] Spielplan per Knopfdruck erzeugen, Modus wählbar (Jeder-gegen-jeden oder Gruppen + K.-o.), auf 2 Felder verteilt, danach manuell anpassbar
-- [ ] Zählmodus pro Turnier wählbar: Satz-Modus (Best of 1/3/5) oder Punkte-Modus (ein Satz auf X Punkte); Ergebnisse eintragen, Tabelle berechnet sich automatisch
+- [ ] Zählmodus pro Turnier wählbar: Satz-Modus (Best of 1/3/5), Punkte-Modus (ein Satz auf X Punkte) oder Becher-Modus (z. B. Bierpong); Ergebnisse eintragen, Tabelle berechnet sich automatisch
 - [ ] Öffentliche Seite mit Spielplan, Ergebnissen, Tabelle (mobil lesbar)
 
 **Später, nur bei Bedarf**
@@ -59,7 +59,7 @@ Fünf Tabellen genügen. Die Zahlung hängt direkt am Team (ein Team zahlt einma
 
 | Tabelle | Wichtige Felder | Beziehung |
 | --- | --- | --- |
-| Turnier | id, name, datum, ort, startgebuehr_eur, meldeschluss, max_teams, min_spieler, max_spieler, anmeldung_offen, modus (jeder_gegen_jeden / gruppen_ko), anzahl_felder, zaehlmodus (saetze / punkte), gewinnsaetze (1 / 2 / 3 = Best of 1 / 3 / 5), punkte_pro_satz (z. B. 25), punkte_entscheidungssatz (z. B. 15) | hat viele Teams, Gruppen, Spiele |
+| Turnier | id, name, datum, ort, startgebuehr_eur, meldeschluss, max_teams, min_spieler, max_spieler, anmeldung_offen, modus (jeder_gegen_jeden / gruppen_ko), anzahl_felder, zaehlmodus (saetze / punkte / becher), gewinnsaetze (1 / 2 / 3 = Best of 1 / 3 / 5), punkte_pro_satz (z. B. 25), punkte_entscheidungssatz (z. B. 15), becher (Becher pro Team, z. B. 10) | hat viele Teams, Gruppen, Spiele |
 | Team | id, turnier_id, name, kapitaen_name, kapitaen_email, edit_token, status (angemeldet / bestaetigt / warteliste / abgesagt), bezahlt (ja/nein), bezahlt_am, zahlungsart (bar / ueberweisung / paypal), notiz, gruppe_id | gehört zu Turnier; hat viele Spieler |
 | Spieler | id, team_id, vorname, nachname, studiengang (optional) | gehört zu Team |
 | Gruppe | id, turnier_id, name (A, B, …) | hat viele Teams und Spiele |
