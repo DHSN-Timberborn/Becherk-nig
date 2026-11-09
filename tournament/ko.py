@@ -47,11 +47,13 @@ class Entscheidung:
         )
 
 
-def _schnitt(zeile, satz_modus):
+def _schnitt(zeile, modus):
     """Werte pro Spiel – damit Zweite aus unterschiedlich großen Gruppen vergleichbar sind."""
     sp = zeile.sp or 1
-    if satz_modus:
+    if modus == Turnier.Zaehlmodus.SAETZE:
         return (zeile.s / sp, zeile.sd / sp, zeile.pd / sp)
+    if modus == Turnier.Zaehlmodus.BECHER:
+        return (zeile.s / sp, zeile.pd / sp, zeile.getroffen / sp)
     return (zeile.s / sp, zeile.pd / sp, zeile.punkte_plus / sp)
 
 
@@ -66,7 +68,7 @@ def _planen(turnier):
     """Was in offenen K.-o.-Spielen stehen müsste: ({(spiel, seite): team oder None}, [Entscheidung])."""
     if turnier.modus != Turnier.Modus.GRUPPEN_KO:
         return {}, []
-    satz_modus = turnier.zaehlmodus == Turnier.Zaehlmodus.SAETZE
+    modus = turnier.zaehlmodus
     spiele = spielplan.mit_titeln(turnier)
     for s in spiele:
         s.turnier = turnier  # für Spiel.sieger, ohne weitere Abfrage
@@ -95,8 +97,8 @@ def _planen(turnier):
             zweite = [t[1] for t in fertig.values() if len(t) >= 2]
             if not zweite:
                 return None, None
-            bester = max(_schnitt(z, satz_modus) for z in zweite)
-            kandidaten = [z for z in zweite if _schnitt(z, satz_modus) == bester]
+            bester = max(_schnitt(z, modus) for z in zweite)
+            kandidaten = [z for z in zweite if _schnitt(z, modus) == bester]
             if len(kandidaten) > 1:
                 return None, tuple(z.team for z in kandidaten)
             if kandidaten[0].gleichstand:  # Platz 2 in der eigenen Gruppe ist selbst offen

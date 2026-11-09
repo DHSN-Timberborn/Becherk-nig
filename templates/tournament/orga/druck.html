@@ -42,7 +42,7 @@
   <p class="unterzeile">
     {{ turnier.datum|date:"l, j. F Y" }} · {{ turnier.ort }}
     {% if zeilen %} · {{ zeilen.0.0|time:"G:i" }} bis ca. {{ ende|time:"G:i" }} Uhr{% endif %}
-    · {% if turnier.zaehlmodus == "saetze" %}{{ turnier.get_gewinnsaetze_display }}{% else %}Punkte-Modus{% endif %}
+    · {{ turnier.zaehlweise_kurz }}
   </p>
 
   {% if zeilen %}

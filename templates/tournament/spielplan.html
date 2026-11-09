@@ -4,7 +4,7 @@
 <div class="stapel stapel--eng">
   <h1 class="titel titel--m">Spielplan</h1>
   {% if turnier %}
-    <span class="leise">{{ turnier.datum|date:"D, j. M" }} · {{ turnier.ort }} · {% if satz_modus %}{{ turnier.get_gewinnsaetze_display }}{% else %}Punkte-Modus{% endif %}</span>
+    <span class="leise">{{ turnier.datum|date:"D, j. M" }} · {{ turnier.ort }} · {{ turnier.zaehlweise_kurz }}</span>
   {% endif %}
 </div>
 
@@ -37,7 +37,7 @@
                 <span class="partie__wert">{% if s.status == 'beendet' %}{{ s.wert_b }}{% endif %}</span>
               </div>
               <span class="partie__detail">
-                {% if s.status == 'beendet' %}{% if satz_modus and s.punkte_a is not None and s.punkte_b is not None %}Ballpunkte {{ s.punkte_a }}:{{ s.punkte_b }}{% else %}Endstand{% endif %}{% elif slot.laeuft %}läuft{% else %}noch offen{% endif %}
+                {% if s.status == 'beendet' %}{% if satz_modus and s.punkte_a is not None and s.punkte_b is not None %}Ballpunkte {{ s.punkte_a }}:{{ s.punkte_b }}{% elif turnier.zaehlmodus == "becher" %}Becher übrig{% else %}Endstand{% endif %}{% elif slot.laeuft %}läuft{% else %}noch offen{% endif %}
               </span>
               {% if s.schiri_team %}<span class="partie__detail">Schiri: {{ s.schiri_team }}</span>{% endif %}
             </div>

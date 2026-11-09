@@ -43,14 +43,16 @@ class TurnierAdmin(admin.ModelAdmin):
     readonly_fields = ["teamdaten_geloescht_am"]
 
     class Media:
-        js = ["js/admin_turnier.js"]  # Satz-Felder im Punkte-Modus ausgrauen
+        js = ["js/admin_turnier.js"]  # Felder ausgrauen, die im gewählten Zählmodus nicht gelten
     fieldsets = [
         (None, {"fields": ["name", "oeffentlich", "datum", "beginn", "ort", "startgebuehr_eur", "zahlungsinfo"]}),
         ("Anmeldung", {"fields": [
             "anmeldung_offen", "meldeschluss", "max_teams", "warteliste_automatisch", "min_spieler", "max_spieler",
         ]}),
         ("Modus", {"fields": ["modus", "anzahl_felder", "slot_minuten", "spielplan_veroeffentlicht"]}),
-        ("Zählweise", {"fields": ["zaehlmodus", "gewinnsaetze", "punkte_pro_satz", "punkte_entscheidungssatz"]}),
+        ("Zählweise", {"fields": [
+            "zaehlmodus", "gewinnsaetze", "punkte_pro_satz", "punkte_entscheidungssatz", "becher",
+        ]}),
         ("Datenschutz", {"fields": ["teamdaten_geloescht_am"]}),
     ]
 

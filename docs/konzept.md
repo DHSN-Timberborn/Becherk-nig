@@ -103,6 +103,7 @@ Anzahl Spiele in einer Gruppe mit n Teams:
 | --- | --- | --- | --- |
 | Satz-Modus | ein Team die eingestellte Zahl an Sätzen gewinnt (Best of 3 = 2 Sätze) | Sätze je Team, optional Punkte je Satz | Siege, Satzdifferenz, Ballpunktdifferenz, direkter Vergleich |
 | Punkte-Modus | ein Team zuerst die Zielpunktzahl erreicht (ein Satz, z. B. bis 25) | Punkte je Team | Siege, Punktdifferenz, erzielte Punkte, direkter Vergleich |
+| Becher-Modus (z. B. Bierpong) | ein Team mehr übrige Becher hat als das andere | Übrige Becher je Team (0 bis Becherzahl, z. B. 10) | Siege (Sieg = 2 Punkte), Becher-Differenz, getroffene Becher, direkter Vergleich |
 
 Im Punkte-Modus gibt es kein Unentschieden, weil auf eine feste Punktzahl gespielt wird. Die Slotlänge im Spielplan sollte zum Modus passen (Punkte-Modus kürzer).
 
@@ -188,6 +189,7 @@ So wenig Daten wie möglich: Name der Spieler, eine E-Mail pro Team. Keine Telef
 | Sichtbarkeit | Orga schaltet jedes Turnier ausdrücklich frei | Feld „öffentlich sichtbar“ (Standard aus); Entwürfe und Testturniere bleiben unsichtbar |
 | Lizenz | Open Source unter AGPL-3.0, © 2026 TetraMedia | Fußzeile verlinkt den Quellcode; App ohne hochschulspezifische Texte |
 | Punkte-Modus | Ohne Zielpunktzahl, mehr Punkte gewinnt | Ersetzt „ein Satz auf X Punkte“; einen Satz bis 25 stellt man als Satz-Modus Best of 1 ein. Kein Unentschieden bleibt |
+| Becher-Modus | Dritter Zählmodus für Bierpong (Grundlage für den Ableger Becherkönig) | Gleichstand gibt es nicht, es wird verlängert. Getroffene Becher = Becherzahl − übrige Becher des Gegners |
 | K.-o.-Runde befüllen | Vollautomatisch nach jedem Ergebnis | Aus „Später“ vorgezogen; bester Gruppenzweiter nach Schnitt pro Spiel |
 | Echter Gleichstand | Entscheidungssatz statt Alphabet | Trennt auch der direkte Vergleich nicht, bleibt der K.-o.-Platz leer; die Orga lässt einen Entscheidungssatz spielen und trägt den Sieger im Admin ein |
 | Datenschutz | Datenschutzerklärung vom Betreiber, kein separates Impressum (Hobbyseite) | Verantwortlicher per `SATZBALL_VERANTWORTLICHER`, Rest des Textes in der App |
