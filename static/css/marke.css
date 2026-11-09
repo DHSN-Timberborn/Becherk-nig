@@ -41,3 +41,26 @@
 :root .feld input:not([type=checkbox]), :root .spieler-zeile input { border-radius: 3px; }
 :root .hinweis, :root .countdown { border-radius: 0; border-left: 5px solid currentColor; }
 :root .badge { border-radius: 2px; }
+
+/* Startseite (templates/marke/startseite_oben.html): rotes Titelbild und „So läuft’s ab“ */
+.bk-hero {
+  position: relative; overflow: hidden; color: #fff; padding: 26px 20px 24px;
+  background: linear-gradient(135deg, rgba(157, 6, 20, .92), rgba(227, 30, 36, .85) 55%, rgba(255, 71, 87, .8)), var(--bild) center / cover;
+  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 14px), 0 100%);
+  display: flex; flex-direction: column; gap: 10px;
+}
+.bk-hero__titel { margin: 0; font: 700 30px/1.05 var(--kond); text-transform: uppercase; text-shadow: 0 2px 6px rgba(0, 0, 0, .4); }
+.bk-hero p:not(.bk-hero__titel) { margin: 0; text-shadow: 0 1px 4px rgba(0, 0, 0, .5); }
+.bk-hero__knopf {
+  align-self: flex-start; margin-top: 4px; background: #fff; color: #c20f20; padding: 9px 20px; border-radius: 3px;
+  font: 700 15px var(--kond); text-transform: uppercase; letter-spacing: .05em; box-shadow: 0 4px 10px rgba(0, 0, 0, .3);
+}
+.bk-hero__knopf:hover { text-decoration: none; filter: brightness(.96); }
+.bk-ablauf { display: flex; flex-direction: column; gap: 10px; }
+.bk-ablauf__bilder { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 0 4px; }
+.bk-ablauf figure { margin: 0; position: relative; aspect-ratio: 4 / 3; overflow: hidden; transform: skewX(-8deg); border: 3px solid var(--sf); box-shadow: 0 4px 12px rgba(0, 0, 0, .25); background: #222; }
+.bk-ablauf img { position: absolute; inset: 0 -12%; width: 124%; height: 100%; object-fit: cover; transform: skewX(8deg); }
+.bk-ablauf figcaption {
+  position: absolute; left: 0; right: 0; bottom: 0; background: var(--ac); color: #fff; text-align: center; padding: 2px;
+  font: 600 12px var(--kond); text-transform: uppercase; letter-spacing: .04em;
+}

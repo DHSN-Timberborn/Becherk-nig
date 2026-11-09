@@ -1,1 +1,19 @@
-{# Baustein für Ableger: steht ganz oben auf der Startseite (z. B. ein großes Titelbild). In Satzball leer. #}
+{% load static %}{# Becherkönig: Titelbild und „So läuft’s ab“ oben auf der Startseite (Design und Bilder: Leon Scholle). #}
+<section class="bk-hero" style="--bild: url('{% static 'img/becherkoenig/tisch.jpg' %}')">
+  <p class="bk-hero__titel">Willkommen beim Bierpong-Turnier</p>
+  <p>Team anmelden, Spielplan auslosen lassen und spielen – bis zum letzten Becher.</p>
+  {% if turnier.anmeldung_moeglich %}<a class="bk-hero__knopf" href="{% url 'anmelden' %}">Jetzt anmelden</a>{% endif %}
+</section>
+
+<section class="bk-ablauf" aria-label="So läuft’s ab">
+  <p class="zwischen">So läuft’s ab</p>
+  <div class="bk-ablauf__bilder">
+    <figure><img src="{% static 'img/becherkoenig/anmelden.jpg' %}" alt="Anmeldung am Orga-Tisch" loading="lazy"><figcaption>1. Anmelden</figcaption></figure>
+    <figure><img src="{% static 'img/becherkoenig/auslosen.jpg' %}" alt="Auslosung der Teams" loading="lazy"><figcaption>2. Auslosen</figcaption></figure>
+    <figure><img src="{% static 'img/becherkoenig/spielen.jpg' %}" alt="Bierpong-Spiel" loading="lazy"><figcaption>3. Spielen</figcaption></figure>
+  </div>
+  <p class="leise klein">
+    Nach jedem Spiel wird eingetragen, wie viele Becher noch stehen – wer mehr übrig hat, gewinnt und bekommt
+    2 Punkte. Bei Punktgleichheit entscheidet die Becher-Differenz.
+  </p>
+</section>
