@@ -1,12 +1,12 @@
 {% load static %}{# Becherkönig: Titelbild und „So läuft’s ab“ oben auf der Startseite (Design und Bilder: Leon Scholle). #}
 <section class="bk-hero" style="--bild: url('{% static 'img/becherkoenig/tisch.jpg' %}')">
-  <h2 class="bk-hero__titel">Willkommen beim Bierpong-Turnier</h2>
+  <p class="bk-hero__titel">Willkommen beim Bierpong-Turnier</p>
   <p>Team anmelden, Spielplan auslosen lassen und spielen – bis zum letzten Becher.</p>
   {% if turnier.anmeldung_moeglich %}<a class="bk-hero__knopf" href="{% url 'anmelden' %}">Jetzt anmelden</a>{% endif %}
 </section>
 
 <section class="bk-ablauf" aria-label="So läuft’s ab">
-  <h2 class="zwischen">So läuft’s ab</h2>
+  <p class="zwischen">So läuft’s ab</p>
   <div class="bk-ablauf__bilder">
     <figure><img src="{% static 'img/becherkoenig/anmelden.jpg' %}" alt="Anmeldung am Orga-Tisch" loading="lazy"><figcaption>1. Anmelden</figcaption></figure>
     <figure><img src="{% static 'img/becherkoenig/auslosen.jpg' %}" alt="Auslosung der Teams" loading="lazy"><figcaption>2. Auslosen</figcaption></figure>
