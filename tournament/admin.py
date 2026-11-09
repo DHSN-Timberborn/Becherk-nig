@@ -67,9 +67,12 @@ class TurnierAdmin(admin.ModelAdmin):
     def save_model(self, request, obj, form, change):
         super().save_model(request, obj, form, change)
         if change and "mit_schiri" in form.changed_data and obj.spiele.exists():
-            spielplan.schiris_neu(obj)
-            self.message_user(request, "Schiris der offenen Spiele neu eingeteilt." if obj.mit_schiri
-                              else "Schiris bei allen offenen Spielen ausgetragen.", messages.INFO)
+            if obj.mit_schiri:
+                spielplan.schiris_neu(obj)
+                self.message_user(request, "Schiris der offenen Spiele neu eingeteilt.", messages.INFO)
+            else:
+                spielplan.schiris_austragen(obj)
+                self.message_user(request, "Schiris bei allen offenen Spielen ausgetragen.", messages.INFO)
         # Mehr Plätze oder Haken gerade gesetzt: Warteliste sofort nachrücken lassen
         for team in warteliste.auffuellen(obj, request):
             self.message_user(request, f"{team} ist automatisch von der Warteliste nachgerückt ({_mail_hinweis(team)}).",

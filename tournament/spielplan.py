@@ -284,12 +284,17 @@ def umplanen(turnier, betroffene_gruppen_ids):
     _speichern(turnier, gruppen_teams, verzahnen(je_gruppe), [ko_slots[z] for z in sorted(ko_slots)], start)
 
 
+def schiris_austragen(turnier):
+    """Schiris bei allen offenen Spielen austragen (Haken „Schiris einteilen“ ausgeschaltet).
+    Beendete Spiele behalten ihren Schiri."""
+    turnier.spiele.filter(status=Spiel.Status.GEPLANT).exclude(schiri_team=None).update(schiri_team=None)
+
+
 def schiris_neu(turnier):
     """Schiris aller offenen Gruppenspiele neu verteilen, z. B. nach dem Verschieben.
     Spielfrei ist ein Team, das in seiner Gruppe in dieser Runde nicht spielt.
-    Ohne Schiris (`Turnier.mit_schiri` aus): bei allen offenen Spielen austragen, beendete behalten ihren."""
+    Ohne Schiris (`Turnier.mit_schiri` aus): nichts tun – von Hand gesetzte Schiris (z. B. fürs Finale) bleiben."""
     if not turnier.mit_schiri:
-        turnier.spiele.filter(status=Spiel.Status.GEPLANT).exclude(schiri_team=None).update(schiri_team=None)
         return
     spiele = list(turnier.spiele.filter(phase=Phase.GRUPPE).exclude(uhrzeit=None)
                   .select_related("team_a", "team_b", "schiri_team"))

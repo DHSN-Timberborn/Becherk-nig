@@ -53,6 +53,19 @@ class OhneSchiriTests(TestCase):
         spielplan.schiris_neu(self.t)  # z. B. nach dem Verschieben per Drag & Drop
         self.assertEqual(set(self.schiris()), {None})
 
+    def test_von_hand_gesetzter_schiri_bleibt_beim_verschieben(self):
+        # Ohne Schiris spielen, aber fürs letzte Spiel doch einen eintragen (z. B. Finale)
+        self.t.mit_schiri = False
+        self.t.save()
+        spielplan.erzeugen(self.t)
+        letztes = self.t.spiele.order_by("uhrzeit", "feld").last()
+        frei = self.t.teams.exclude(pk__in=[letztes.team_a_id, letztes.team_b_id]).first()
+        letztes.schiri_team = frei
+        letztes.save()
+        spielplan.schiris_neu(self.t)  # läuft nach jedem Verschieben per Drag & Drop
+        letztes.refresh_from_db()
+        self.assertEqual(letztes.schiri_team, frei)
+
     def test_umschalten_im_admin_wirkt_auf_offene_spiele(self):
         spielplan.erzeugen(self.t)
         self.assertNotIn(None, self.schiris())

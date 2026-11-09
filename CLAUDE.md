@@ -107,7 +107,8 @@ Betrieb (nginx, Update, Sicherung, Probelauf): `docs/betrieb.md`, Vorlage `docs/
     aus der eigenen Gruppe nur, wenn es seltener gepfiffen hat oder sonst keins frei ist. Bei einer Gruppe das
     spielfreie Team der Runde. Bei Gleichstand pfeift, wer später seltener frei ist (gleichmäßige Verteilung).
     K.-o.-Spiele bekommen keinen automatischen Schiri. `Turnier.mit_schiri` aus (z. B. Bierpong): gar keine Schiris;
-    Umschalten im Admin trägt sie bei allen offenen Spielen aus bzw. teilt sie neu ein, beendete behalten ihren.
+    Umschalten im Admin trägt sie bei allen offenen Spielen aus (`schiris_austragen`) bzw. teilt sie neu ein,
+    beendete behalten ihren. Bei „aus“ lässt `schiris_neu` von Hand gesetzte Schiris (z. B. Finale) stehen.
     Nach jedem Verschieben werden die Schiris der offenen Spiele neu verteilt (`schiris_neu`).
   - Neu erzeugen nur, solange es keine Ergebnisse gibt; zieht die Veröffentlichung zurück.
 - Team löschen (im Admin) → `spielplan.umplanen`: Beendete Spiele bleiben (zählen aber nicht mehr in
