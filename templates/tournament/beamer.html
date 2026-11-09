@@ -45,11 +45,10 @@
     {% if not tabellen %}
       <p class="beamer__stand">Der Spielplan ist noch nicht veröffentlicht.</p>
     {% else %}
-      {% if endstand %}
+      {% if sieger %}
         <section class="beamer__sieger" aria-label="Endstand">
-          {% for platz, team in endstand %}
-            {% if platz == 1 %}<strong>🏆 {{ team.name }} gewinnt!</strong>{% else %}<span>{{ platz }}. {{ team.name }}</span>{% endif %}
-          {% endfor %}
+          <strong>🏆 {{ sieger }} {% if geteilt %}teilen sich Platz 1!{% else %}gewinnt!{% endif %}</strong>
+          {% for platz, team in weitere_plaetze %}<span>{{ platz }}. {{ team.name }}</span>{% endfor %}
         </section>
       {% endif %}
 

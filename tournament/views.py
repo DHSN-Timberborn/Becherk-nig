@@ -91,6 +91,11 @@ def _slots(turnier):
     return spiele, slots
 
 
+def _aufzaehlung(namen):
+    """["A", "B", "C"] -> "A, B und C"."""
+    return " und ".join(filter(None, [", ".join(namen[:-1]), namen[-1]])) if namen else ""
+
+
 def beamer(request):
     """Großbild für den Beamer in der Halle: Tabellen, laufende und nächste Spiele, Endstand.
     Öffentlich wie die Tabelle; die Seite holt sich alle 30 s den neuen Stand (static/js/beamer.js)."""
@@ -98,13 +103,16 @@ def beamer(request):
     if not turnier or not turnier.spielplan_veroeffentlicht:
         return render(request, "tournament/beamer.html", {"turnier": turnier})
     _, slots = _slots(turnier)
+    plaetze = endstand(turnier)
     offen = [slot for slot in slots if any(s.status == Spiel.Status.GEPLANT for s in slot["spiele"])]
     jetzt = next((slot for slot in offen if slot["laeuft"]), None)
     naechste = [slot for slot in offen if slot is not jetzt][:1]
     return render(request, "tournament/beamer.html", {
         "turnier": turnier,
         "tabellen": gruppentabellen(turnier),
-        "endstand": endstand(turnier),
+        "sieger": _aufzaehlung([team.name for platz, team in plaetze if platz == 1]),  # mehrere bei Gleichstand
+        "geteilt": sum(1 for platz, _ in plaetze if platz == 1) > 1,
+        "weitere_plaetze": [(platz, team) for platz, team in plaetze if platz > 1],
         "jetzt": jetzt,
         "naechster": naechste[0] if naechste else None,
         "stand": timezone.localtime(),

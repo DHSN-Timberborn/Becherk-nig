@@ -52,9 +52,36 @@ class BeamerTests(TestCase):
         self.assertContains(r, "2. Team 1")
         self.assertNotContains(r, "Läuft ·")
 
+    def test_gleichstand_um_platz_eins(self):
+        t = Turnier.objects.create(
+            name="Ring-Cup", oeffentlich=True, datum=timezone.localdate(), beginn=time(0, 0), ort="Halle",
+            meldeschluss=timezone.now() - timedelta(days=1), max_teams=8,
+        )
+        x, y, z = (Team.objects.create(turnier=t, name=n, kapitaen_name="K", kapitaen_email="k@example.de")
+                   for n in ("Xaver", "Yeti", "Zorro"))
+        spielplan.erzeugen(t)
+        t.spielplan_veroeffentlicht = True
+        t.save()
+        ring = {frozenset((x, y)): x, frozenset((y, z)): y, frozenset((x, z)): z}  # jeder schlägt einen
+        for s in t.spiele.all():
+            sieger = ring[frozenset((s.team_a, s.team_b))]
+            s.saetze_a, s.saetze_b = (2, 0) if sieger == s.team_a else (0, 2)
+            s.status = Spiel.Status.BEENDET
+            s.save()
+        r = self.client.get(f"{reverse('beamer')}?turnier={t.pk}")
+        self.assertContains(r, "Xaver, Yeti und Zorro teilen sich Platz 1!")
+        self.assertNotContains(r, "gewinnt!")
+
     def test_link_auf_der_orga_seite(self):
         self.client.force_login(User.objects.create_superuser("orga", "o@example.de", "x"))
         seite = f"{reverse('orga_spielplan')}?turnier={self.t.pk}"
         self.assertNotContains(self.client.get(seite), "Beamer →")  # erst nach der Veröffentlichung
         self.veroeffentlichen()
         self.assertContains(self.client.get(seite), "Beamer →")
+
+        # nicht öffentlich: Die Seite würde still ein anderes Turnier zeigen – also kein Link, sondern ein Hinweis
+        self.t.oeffentlich = False
+        self.t.save()
+        r = self.client.get(seite)
+        self.assertNotContains(r, "Beamer →")
+        self.assertContains(r, "Beamer: erst Turnier öffentlich schalten")

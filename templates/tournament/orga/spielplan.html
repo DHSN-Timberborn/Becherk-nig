@@ -94,7 +94,7 @@
     <div class="stapel stapel--eng">
       <div class="kopfzeile">
         <h2 class="zwischen zwischen--l">Vorschau</h2>
-        {% if zeilen %}<span><a href="{% url 'orga_spielplan_druck' %}?turnier={{ turnier.pk }}" target="_blank" rel="noopener">Druckansicht →</a>{% if turnier.spielplan_veroeffentlicht %} · <a href="{% url 'beamer' %}?turnier={{ turnier.pk }}" target="_blank" rel="noopener">Beamer →</a>{% endif %}</span>{% endif %}
+        {% if zeilen %}<span><a href="{% url 'orga_spielplan_druck' %}?turnier={{ turnier.pk }}" target="_blank" rel="noopener">Druckansicht →</a>{% if turnier.spielplan_veroeffentlicht %} · {% if turnier.oeffentlich %}<a href="{% url 'beamer' %}?turnier={{ turnier.pk }}" target="_blank" rel="noopener">Beamer →</a>{% else %}<span class="leise">Beamer: erst Turnier öffentlich schalten</span>{% endif %}{% endif %}</span>{% endif %}
       </div>
       <span class="leise klein">Spiel ziehen und auf einem anderen Slot ablegen – die Spiele tauschen. Ein Klick öffnet die Ergebnis-Eingabe.</span>
     </div>
