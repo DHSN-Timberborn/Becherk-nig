@@ -45,7 +45,7 @@ Auf dem Server `SATZBALL_QUELLCODE_URL` auf dieses Repository setzen (Link „Qu
 ## 📜 Lizenz
 
 Becherkönig basiert auf Satzball, Copyright © 2026 [TetraMedia](https://tetramedia.de).
-Design und Bilder der Bierpong-Seite: Timberborn-Volleys, beigesteuert unter derselben Lizenz.
+Design und Bilder der Bierpong-Seite: Leon Scholle (Timberborn-Volleys), beigesteuert unter derselben Lizenz.
 
 Open Source unter der [GNU Affero General Public License v3.0](../LICENSE). Wer eine veränderte Version als
 Webseite betreibt, muss den Nutzern den geänderten Quellcode zugänglich machen.
