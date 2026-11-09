@@ -1,7 +1,8 @@
 {% extends "base.html" %}
 {% block inhalt %}
+{% include "marke/startseite_oben.html" %}
 {% if not turnier %}
-  <h1 class="titel">Satzball</h1>
+  <h1 class="titel">{{ marke }}</h1>
   <p class="leise">Gerade ist kein Turnier geplant. Schau bald wieder vorbei.</p>
 {% else %}
   <div class="stapel">
@@ -35,7 +36,7 @@
     <div class="kachel">
       <span class="kachel__label">Ort</span>
       <span class="kachel__wert">{{ turnier.ort }}</span>
-      <span class="kachel__zusatz">{{ turnier.anzahl_felder }} Feld{{ turnier.anzahl_felder|pluralize:"er" }}</span>
+      <span class="kachel__zusatz">{{ turnier.felder_text }}</span>
     </div>
     <div class="kachel">
       <span class="kachel__label">Startgebühr</span>

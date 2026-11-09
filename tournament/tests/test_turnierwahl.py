@@ -97,7 +97,7 @@ class AdminTurnierTests(TestCase):
         r = self.client.post(reverse("admin:tournament_turnier_add"), {
             "name": "Punkte-Cup", "datum": "2026-11-14", "ort": "Halle", "startgebuehr_eur": "20",
             "meldeschluss_0": "31.10.2026", "meldeschluss_1": "23:59", "max_teams": "10",
-            "pflicht_spieler": "2", "min_spieler": "6", "max_spieler": "10", "modus": "jeder_gegen_jeden", "anzahl_felder": "2",
+            "pflicht_spieler": "2", "min_spieler": "6", "max_spieler": "10", "modus": "jeder_gegen_jeden", "anzahl_felder": "2", "feldart": "feld",
             "slot_minuten": "15", "mit_schiri": "on", "zaehlmodus": "punkte", "gewinnsaetze": "2",
             "punkte_pro_satz": "21", "punkte_entscheidungssatz": "15", "becher": "10",
             "gruppen-TOTAL_FORMS": "0", "gruppen-INITIAL_FORMS": "0",

@@ -53,7 +53,7 @@
         <div class="feld">{{ form.beginn.label_tag }}{{ form.beginn }}{{ form.beginn.errors }}</div>
         <div class="feld">{{ form.slot_minuten.label_tag }}{{ form.slot_minuten }}{{ form.slot_minuten.errors }}</div>
       </div>
-      <span class="leise klein">{{ turnier.anzahl_felder }} Felder · {% if turnier.mit_schiri %}Schiri: ein freies Team, bei mehreren Gruppen bevorzugt aus einer anderen{% else %}ohne Schiris{% endif %} · Gruppen werden zufällig gelost.</span>
+      <span class="leise klein">{{ turnier.felder_text }} · {% if turnier.mit_schiri %}Schiri: ein freies Team, bei mehreren Gruppen bevorzugt aus einer anderen{% else %}ohne Schiris{% endif %} · Gruppen werden zufällig gelost.</span>
 
       {% if hat_ergebnisse %}
         <div class="hinweis hinweis--warnung">Es gibt schon Ergebnisse. Der Plan kann nicht mehr neu erzeugt werden; offene Spiele lassen sich aber noch verschieben.</div>
@@ -110,7 +110,7 @@
     {% if zeilen %}
       <div class="plan" style="--felder: {{ felder|length }}">
         <span class="plan__kopf">Zeit</span>
-        {% for f in felder %}<span class="plan__kopf">Feld {{ f }}</span>{% endfor %}
+        {% for f in felder %}<span class="plan__kopf">{{ turnier.feld_name }} {{ f }}</span>{% endfor %}
         {% for zeit, zellen in zeilen %}
           <span class="plan__zeit">{{ zeit|time:"H:i" }}</span>
           {% for s in zellen %}

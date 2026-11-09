@@ -3,16 +3,17 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{% block titel %}{% if turnier %}{{ turnier.name }} · {% endif %}Satzball{% endblock %}</title>
+  <title>{% block titel %}{% if turnier %}{{ turnier.name }} · {% endif %}{{ marke }}{% endblock %}</title>
   <link rel="icon" href="{% static 'img/logo.svg' %}" type="image/svg+xml">
   <link rel="preload" href="{% static 'fonts/barlow-400.woff2' %}" as="font" type="font/woff2" crossorigin>
+  <link rel="stylesheet" href="{% static 'css/marke.css' %}">
   <link rel="stylesheet" href="{% static 'css/satzball.css' %}">
 </head>
 <body>
   <div class="app{% block app_klasse %}{% endblock %}">
     {% block kopf %}
     <header class="kopf">
-      <a class="marke" href="{% url 'startseite' %}"><img src="{% static 'img/logo.svg' %}" alt="" width="28" height="28">Satzball</a>
+      <a class="marke" href="{% url 'startseite' %}"><img src="{% static 'img/logo.svg' %}" alt="" width="28" height="28">{{ marke }}</a>
       {% if user.is_staff %}<a class="kopf__link" href="{% url 'orga_spielplan' %}">Orga</a>{% else %}<a class="kopf__link" href="{% url 'admin:index' %}">Orga-Login</a>{% endif %}
     </header>
     {% endblock %}
@@ -38,7 +39,7 @@
 
     <footer class="fuss">
       <a href="{% url 'datenschutz' %}">Datenschutz</a> ·
-      Satzball ist Open Source (AGPL-3.0) · <a href="{{ quellcode_url }}" rel="noopener">Quellcode</a>
+      {{ marke }} ist Open Source (AGPL-3.0) · <a href="{{ quellcode_url }}" rel="noopener">Quellcode</a>{% include "marke/fuss.html" %}
     </footer>
 
     {% block nav %}

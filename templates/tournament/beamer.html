@@ -3,8 +3,9 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Beamer · {% if turnier %}{{ turnier.name }}{% else %}Satzball{% endif %}</title>
+  <title>Beamer · {% if turnier %}{{ turnier.name }}{% else %}{{ marke }}{% endif %}</title>
   <link rel="icon" href="{% static 'img/logo.svg' %}" type="image/svg+xml">
+  <link rel="stylesheet" href="{% static 'css/marke.css' %}">
   <link rel="stylesheet" href="{% static 'css/satzball.css' %}">
   <noscript><meta http-equiv="refresh" content="30"></noscript>
   <style>
@@ -37,7 +38,7 @@
   <main class="beamer" id="beamer" data-neu-laden="30">
     <header class="beamer__kopf">
       <img src="{% static 'img/logo.svg' %}" alt="">
-      <h1>{% if turnier %}{{ turnier.name }}{% else %}Satzball{% endif %}</h1>
+      <h1>{% if turnier %}{{ turnier.name }}{% else %}{{ marke }}{% endif %}</h1>
       {% if stand %}<span class="beamer__stand">Stand {{ stand|time:"G:i" }} Uhr</span>{% endif %}
       <button type="button" class="beamer__vollbild" data-vollbild hidden>Vollbild</button>
     </header>

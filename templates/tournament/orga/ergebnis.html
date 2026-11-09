@@ -11,7 +11,7 @@
 {% block banner %}{% endblock %}
 {% block inhalt %}
 <div class="stapel stapel--eng">
-  <span class="leise">{% if spiel.feld %}Feld {{ spiel.feld }} · {% endif %}{% if spiel.uhrzeit %}{{ spiel.uhrzeit|time:"G:i" }} · {% endif %}{{ spiel.titel }}</span>
+  <span class="leise">{% if spiel.feld %}{{ turnier.feld_name }} {{ spiel.feld }} · {% endif %}{% if spiel.uhrzeit %}{{ spiel.uhrzeit|time:"G:i" }} · {% endif %}{{ spiel.titel }}</span>
   <span class="leise klein">{% if nummer %}Spiel {{ nummer }} von {{ anzahl }}{% endif %}{% if spiel.schiri_team %} · Schiri: {{ spiel.schiri_team }}{% endif %}</span>
 </div>
 
@@ -83,7 +83,7 @@
     <div class="liste">
       {% for s in parallel %}
         <a class="liste__zeile" href="{% url 'orga_ergebnis' s.pk %}">
-          <span>Feld {{ s.feld }} · {{ s.team_a|default:s.platzhalter_a }} – {{ s.team_b|default:s.platzhalter_b }}</span>
+          <span>{{ turnier.feld_name }} {{ s.feld }} · {{ s.team_a|default:s.platzhalter_a }} – {{ s.team_b|default:s.platzhalter_b }}</span>
           <span>{% if s.status == "beendet" %}✓{% else %}Eintragen{% endif %}</span>
         </a>
       {% endfor %}

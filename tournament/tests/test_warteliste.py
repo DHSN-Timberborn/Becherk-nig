@@ -117,7 +117,7 @@ class WartelisteTests(TestCase):
             "name": self.t.name, "oeffentlich": "on", "datum": self.t.datum.isoformat(), "ort": self.t.ort,
             "startgebuehr_eur": "20", "meldeschluss_0": timezone.localtime(self.t.meldeschluss).strftime("%d.%m.%Y"),
             "meldeschluss_1": "23:59", "anmeldung_offen": "on", "max_teams": "2", "warteliste_automatisch": "on",
-            "pflicht_spieler": "2", "min_spieler": "2", "max_spieler": "10", "modus": "jeder_gegen_jeden", "anzahl_felder": "2",
+            "pflicht_spieler": "2", "min_spieler": "2", "max_spieler": "10", "modus": "jeder_gegen_jeden", "anzahl_felder": "2", "feldart": "feld",
             "slot_minuten": "20", "mit_schiri": "on", "zaehlmodus": "saetze", "gewinnsaetze": "2", "punkte_pro_satz": "25",
             "punkte_entscheidungssatz": "15", "becher": "10", "gruppen-TOTAL_FORMS": "0", "gruppen-INITIAL_FORMS": "0",
         }, follow=True)

@@ -1,38 +1,9 @@
-/* Satzball – Farben und Typo aus docs/design.html. Mobile-first. */
-
-@font-face { font-family: "Barlow"; font-weight: 400; font-display: swap; src: url("../fonts/barlow-400.woff2") format("woff2"); }
-@font-face { font-family: "Barlow"; font-weight: 500; font-display: swap; src: url("../fonts/barlow-500.woff2") format("woff2"); }
-@font-face { font-family: "Barlow"; font-weight: 600; font-display: swap; src: url("../fonts/barlow-600.woff2") format("woff2"); }
-@font-face { font-family: "Barlow"; font-weight: 700; font-display: swap; src: url("../fonts/barlow-700.woff2") format("woff2"); }
-@font-face { font-family: "Barlow Condensed"; font-weight: 700; font-display: swap; src: url("../fonts/barlow-condensed-700.woff2") format("woff2"); }
-@font-face { font-family: "Barlow Condensed"; font-weight: 800; font-display: swap; src: url("../fonts/barlow-condensed-800.woff2") format("woff2"); }
-@font-face { font-family: "Barlow Condensed"; font-weight: 800; font-style: italic; font-display: swap; src: url("../fonts/barlow-condensed-800-italic.woff2") format("woff2"); }
-
-:root {
-  --cv: #e8e8e4; --bg: #f8f8f6; --sf: #ffffff; --sf2: #f0f0ed;
-  --ink: #15171c; --mut: #5c626d; --line: #e2e3e0;
-  --ac: oklch(0.55 0.2 262); --aci: #ffffff; --acs: oklch(0.95 0.03 262);
-  --gr: oklch(0.6 0.15 150); --grb: oklch(0.95 0.05 150); --grt: oklch(0.42 0.12 150);
-  --ye: oklch(0.8 0.15 85); --yeb: oklch(0.96 0.07 92); --yet: oklch(0.48 0.1 70);
-  --re: oklch(0.58 0.19 27); --reb: oklch(0.95 0.035 25); --ret: oklch(0.5 0.17 27);
-  --kond: "Barlow Condensed", "Arial Narrow", sans-serif;
-  color-scheme: light dark;
-}
-@media (prefers-color-scheme: dark) {
-  :root {
-    --cv: #08090b; --bg: #111317; --sf: #1a1d22; --sf2: #23262d;
-    --ink: #f1f2f4; --mut: #a0a6b0; --line: #2c3038;
-    --ac: oklch(0.72 0.15 262); --aci: #0c0e12; --acs: oklch(0.3 0.07 262);
-    --gr: oklch(0.7 0.15 150); --grb: oklch(0.3 0.06 150); --grt: oklch(0.82 0.13 150);
-    --ye: oklch(0.82 0.14 88); --yeb: oklch(0.33 0.06 85); --yet: oklch(0.87 0.12 90);
-    --re: oklch(0.68 0.17 27); --reb: oklch(0.32 0.07 25); --ret: oklch(0.8 0.12 27);
-  }
-}
+/* Satzball – Layout aus docs/design.html. Mobile-first. Schriften und Farben: marke.css. */
 
 * { box-sizing: border-box; }
 body {
   margin: 0; background: var(--cv); color: var(--ink);
-  font: 400 16px/1.45 "Barlow", system-ui, sans-serif; -webkit-font-smoothing: antialiased;
+  font: 400 16px/1.45 var(--schrift); -webkit-font-smoothing: antialiased;
 }
 a { color: var(--ac); text-decoration: none; }
 a:hover { text-decoration: underline; }

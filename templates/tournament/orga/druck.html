@@ -47,7 +47,7 @@
 
   {% if zeilen %}
     <table>
-      <thead><tr><th>Zeit</th>{% for f in felder %}<th>Feld {{ f }}</th>{% endfor %}</tr></thead>
+      <thead><tr><th>Zeit</th>{% for f in felder %}<th>{{ turnier.feld_name }} {{ f }}</th>{% endfor %}</tr></thead>
       <tbody>
         {% for zeit, zellen in zeilen %}
           <tr>

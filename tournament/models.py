@@ -69,7 +69,18 @@ class Turnier(models.Model):
     )
     anmeldung_offen = models.BooleanField("Anmeldung offen", default=False)
     modus = models.CharField(max_length=20, choices=Modus.choices, default=Modus.JEDER_GEGEN_JEDEN)
-    anzahl_felder = models.PositiveSmallIntegerField("Anzahl Felder", default=2)
+    class Feldart(models.TextChoices):
+        FELD = "feld", "Feld"
+        TISCH = "tisch", "Tisch"
+        PLATZ = "platz", "Platz"
+
+    FELD_MEHRZAHL = {"feld": "Felder", "tisch": "Tische", "platz": "Plätze"}
+
+    anzahl_felder = models.PositiveSmallIntegerField("Anzahl Felder", default=2, help_text="bzw. Tische oder Plätze")
+    feldart = models.CharField(
+        "Bezeichnung", max_length=10, choices=Feldart.choices, default=Feldart.FELD,
+        help_text="Wie die Spielorte heißen, z. B. Tisch beim Bierpong.",
+    )
     slot_minuten = models.PositiveSmallIntegerField("Slotlänge (min)", default=20)
     mit_schiri = models.BooleanField(
         "Schiris einteilen", default=True,
@@ -119,6 +130,17 @@ class Turnier(models.Model):
         turniere = cls.objects.filter(oeffentlich=True) if nur_oeffentliche else cls.objects.all()
         heute = timezone.localdate()
         return turniere.filter(datum__gte=heute).order_by("datum").first() or turniere.first()
+
+    @property
+    def feld_name(self):
+        """"Feld", "Tisch" oder "Platz"."""
+        return self.get_feldart_display()
+
+    @property
+    def felder_text(self):
+        """z. B. "2 Felder" oder "1 Tisch"."""
+        n = self.anzahl_felder
+        return f"{n} {self.feld_name if n == 1 else self.FELD_MEHRZAHL[self.feldart]}"
 
     @property
     def zaehlweise_kurz(self):

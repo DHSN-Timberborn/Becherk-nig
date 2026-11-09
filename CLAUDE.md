@@ -27,8 +27,12 @@ Jede Funktion muss sich gegen "geht auch mit einem Zettel" behaupten.
 - `config/` – Django-Projekt (Settings, URLs)
 - `tournament/` – die eine App: Models, Admin, Views, Spielplan-Logik, Tests
 - `templates/` – Seiten (`base.html`, `tournament/`, `mail/`)
-- `static/` – `css/satzball.css` (Farben/Typo aus dem Design, Light + Dark), `js/spieler.js`,
+- `static/` – `css/satzball.css` (Layout), `css/marke.css` (Schriften, Farben Light + Dark), `js/spieler.js`,
   `fonts/` (Barlow, lokal statt Google Fonts – Datenschutz)
+- **Marke** (für Ableger wie Becherkönig, Fork `DHSN-Timberborn/…`): `config/marke.py` (`NAME`, als
+  `settings.MARKE` und `{{ marke }}` überall statt „Satzball“), `static/css/marke.css`, `static/img/logo.svg`,
+  `templates/marke/startseite_oben.html` und `templates/marke/fuss.html` (in Satzball leer). Ein Ableger ersetzt
+  nur diese Dateien; alles andere kommt per „Sync fork“. Neue Farben/Schriften immer als Variable in `marke.css`.
 - `data/` – SQLite-Datei (`db.sqlite3`) und generierter `secret_key`; im Container
   `/app/data`, dort liegt das Volume `satzball-data`. Nicht ins Git.
 
@@ -44,6 +48,8 @@ Betrieb (nginx, Update, Sicherung, Probelauf): `docs/betrieb.md`, Vorlage `docs/
 ## Fachliche Regeln
 
 - Turniermodus pro Turnier: `jeder_gegen_jeden` oder `gruppen_ko`
+- Bezeichnung der Spielorte pro Turnier (`Turnier.feldart`: Feld, Tisch, Platz): Templates nutzen
+  `turnier.feld_name` („Tisch 1“) und `turnier.felder_text` („3 Tische“), nie fest „Feld“.
 - Zählmodus pro Turnier:
   - `saetze`: `gewinnsaetze` 1/2/3 = Best of 1/3/5, `punkte_pro_satz`, `punkte_entscheidungssatz`
   - `punkte`: keine Sätze und keine Zielpunktzahl (z. B. auf Zeit), mehr Punkte gewinnt, kein Unentschieden.

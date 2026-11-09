@@ -1,6 +1,7 @@
 import csv
 from collections import defaultdict
 
+from django.conf import settings
 from django.contrib import admin, messages
 from django.core.exceptions import PermissionDenied
 from django.db.models import Count
@@ -19,8 +20,8 @@ def _mail_hinweis(team):
     return "Mail verschickt" if getattr(team, "mail_verschickt", False) else "keine Mail – E-Mail-Adresse fehlt"
 
 
-admin.site.site_header = "Satzball – Orga"
-admin.site.site_title = "Satzball"
+admin.site.site_header = f"{settings.MARKE} – Orga"
+admin.site.site_title = settings.MARKE
 admin.site.index_title = "Turnierverwaltung"
 
 
@@ -50,7 +51,7 @@ class TurnierAdmin(admin.ModelAdmin):
             "anmeldung_offen", "meldeschluss", "max_teams", "warteliste_automatisch", "mindestalter", "pflicht_spieler", "min_spieler",
             "max_spieler",
         ]}),
-        ("Modus", {"fields": ["modus", "anzahl_felder", "slot_minuten", "mit_schiri", "spielplan_veroeffentlicht"]}),
+        ("Modus", {"fields": ["modus", "anzahl_felder", "feldart", "slot_minuten", "mit_schiri", "spielplan_veroeffentlicht"]}),
         ("Zählweise", {"fields": [
             "zaehlmodus", "gewinnsaetze", "punkte_pro_satz", "punkte_entscheidungssatz", "becher",
         ]}),
