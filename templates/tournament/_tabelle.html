@@ -5,6 +5,8 @@
       <th>#</th><th class="tabelle__team">Team</th><th title="Spiele">Sp</th><th title="Siege">S</th>
       {% if turnier.zaehlmodus == "saetze" %}
         <th>Sätze</th><th title="Satzdifferenz">SD</th><th title="Ballpunktdifferenz">BD</th>
+      {% elif turnier.zaehlmodus == "becher" %}
+        <th title="Punkte (Sieg = 2)">Pkt</th><th title="getroffene Becher">+</th><th title="verlorene Becher">−</th><th title="Becher-Differenz">Δ</th>
       {% else %}
         <th>Punkte</th><th title="Punktdifferenz">PD</th>
       {% endif %}
@@ -16,6 +18,8 @@
         <td>{{ z.platz }}</td><td class="tabelle__team">{{ z.team }}</td><td>{{ z.sp }}</td><td>{{ z.s }}</td>
         {% if turnier.zaehlmodus == "saetze" %}
           <td>{{ z.saetze_plus }}:{{ z.saetze_minus }}</td><td>{{ z.sd|stringformat:"+d" }}</td><td>{{ z.pd|stringformat:"+d" }}</td>
+        {% elif turnier.zaehlmodus == "becher" %}
+          <td><b>{{ z.pkt }}</b></td><td>{{ z.getroffen }}</td><td>{{ z.verloren }}</td><td>{{ z.pd|stringformat:"+d" }}</td>
         {% else %}
           <td>{{ z.punkte_plus }}:{{ z.punkte_minus }}</td><td>{{ z.pd|stringformat:"+d" }}</td>
         {% endif %}

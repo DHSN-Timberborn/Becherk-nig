@@ -1,19 +1,22 @@
-// Admin "Turnier": Im Punkte-Modus gelten Gewinnsätze und Punkte pro Satz nicht – ausgrauen.
+// Admin "Turnier": Felder ausgrauen, die im gewählten Zählmodus nicht gelten
+// (Satz-Felder nur im Satz-Modus, Becherzahl nur im Becher-Modus).
 // Bewusst nicht "disabled": gesperrte Felder würden beim Speichern nicht mitgeschickt.
 document.addEventListener("DOMContentLoaded", function () {
   var modus = document.getElementById("id_zaehlmodus");
   if (!modus) return;
-  var nurSatzModus = ["gewinnsaetze", "punkte_pro_satz", "punkte_entscheidungssatz"];
+  var gilt = {
+    gewinnsaetze: "saetze", punkte_pro_satz: "saetze", punkte_entscheidungssatz: "saetze", becher: "becher",
+  };
 
   function aktualisieren() {
-    var punkte = modus.value === "punkte";
-    nurSatzModus.forEach(function (name) {
+    Object.keys(gilt).forEach(function (name) {
       var feld = document.getElementById("id_" + name);
       if (!feld) return;
-      feld.setAttribute("aria-disabled", punkte ? "true" : "false");
-      feld.tabIndex = punkte ? -1 : 0;
+      var aus = modus.value !== gilt[name];
+      feld.setAttribute("aria-disabled", aus ? "true" : "false");
+      feld.tabIndex = aus ? -1 : 0;
       var zeile = feld.closest(".form-row") || feld.closest(".fieldBox");
-      if (zeile) zeile.classList.toggle("satzball-aus", punkte);
+      if (zeile) zeile.classList.toggle("satzball-aus", aus);
     });
   }
 

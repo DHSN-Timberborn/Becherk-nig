@@ -119,7 +119,7 @@ class WartelisteTests(TestCase):
             "meldeschluss_1": "23:59", "anmeldung_offen": "on", "max_teams": "2", "warteliste_automatisch": "on",
             "min_spieler": "2", "max_spieler": "10", "modus": "jeder_gegen_jeden", "anzahl_felder": "2",
             "slot_minuten": "20", "zaehlmodus": "saetze", "gewinnsaetze": "2", "punkte_pro_satz": "25",
-            "punkte_entscheidungssatz": "15", "gruppen-TOTAL_FORMS": "0", "gruppen-INITIAL_FORMS": "0",
+            "punkte_entscheidungssatz": "15", "becher": "10", "gruppen-TOTAL_FORMS": "0", "gruppen-INITIAL_FORMS": "0",
         }, follow=True)
         self.assertContains(r, "Alpha ist automatisch von der Warteliste nachgerückt")
         self.mitte.refresh_from_db()

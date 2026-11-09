@@ -16,7 +16,7 @@
     </div>
   {% endfor %}
   <span class="leise klein">
-    {% if satz_modus %}Sp = Spiele · S = Siege · SD = Satzdifferenz · BD = Ballpunktdifferenz. Sortiert nach Siegen, SD, BD, direktem Vergleich.{% else %}Sp = Spiele · S = Siege · PD = Punktdifferenz. Sortiert nach Siegen, PD, erzielten Punkten, direktem Vergleich.{% endif %}
+    {% if satz_modus %}Sp = Spiele · S = Siege · SD = Satzdifferenz · BD = Ballpunktdifferenz. Sortiert nach Siegen, SD, BD, direktem Vergleich.{% elif turnier.zaehlmodus == "becher" %}Sp = Spiele · S = Siege · Pkt = Punkte (Sieg = 2) · + getroffene Becher · − verlorene Becher · Δ = Becher-Differenz. Sortiert nach Punkten, Δ, getroffenen Bechern, direktem Vergleich.{% else %}Sp = Spiele · S = Siege · PD = Punktdifferenz. Sortiert nach Siegen, PD, erzielten Punkten, direktem Vergleich.{% endif %}
     {{ ko_hinweis }}
   </span>
   <a class="btn btn--sekundaer" href="{% url 'spielplan' %}">Zum Spielplan <span aria-hidden="true">→</span></a>

@@ -99,7 +99,7 @@ class AdminTurnierTests(TestCase):
             "meldeschluss_0": "31.10.2026", "meldeschluss_1": "23:59", "max_teams": "10",
             "min_spieler": "6", "max_spieler": "10", "modus": "jeder_gegen_jeden", "anzahl_felder": "2",
             "slot_minuten": "15", "zaehlmodus": "punkte", "gewinnsaetze": "2",
-            "punkte_pro_satz": "21", "punkte_entscheidungssatz": "15",
+            "punkte_pro_satz": "21", "punkte_entscheidungssatz": "15", "becher": "10",
             "gruppen-TOTAL_FORMS": "0", "gruppen-INITIAL_FORMS": "0",
         })
         self.assertEqual(r.status_code, 302, r.content.decode()[:500])

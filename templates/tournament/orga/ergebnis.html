@@ -28,6 +28,10 @@
         {% include "tournament/orga/_zaehler.html" with team=spiel.team_a name="saetze_a" wert=spiel.saetze_a max=turnier.gewinnsaetze %}
         <span class="zaehler__trenner">:</span>
         {% include "tournament/orga/_zaehler.html" with team=spiel.team_b name="saetze_b" wert=spiel.saetze_b max=turnier.gewinnsaetze %}
+      {% elif turnier.zaehlmodus == "becher" %}
+        {% include "tournament/orga/_zaehler.html" with team=spiel.team_a name="punkte_a" wert=spiel.punkte_a max=turnier.becher %}
+        <span class="zaehler__trenner">:</span>
+        {% include "tournament/orga/_zaehler.html" with team=spiel.team_b name="punkte_b" wert=spiel.punkte_b max=turnier.becher %}
       {% else %}
         {% include "tournament/orga/_zaehler.html" with team=spiel.team_a name="punkte_a" wert=spiel.punkte_a max=None %}
         <span class="zaehler__trenner">:</span>
@@ -35,7 +39,7 @@
       {% endif %}
     </div>
     <span class="leise klein mitte">
-      {% if satz_modus %}{{ turnier.get_gewinnsaetze_display }} – gewonnen mit {{ turnier.gewinnsaetze }} Satz{{ turnier.gewinnsaetze|pluralize:"en" }}{% else %}Punkte-Modus – das Team mit mehr Punkten gewinnt{% endif %}
+      {% if satz_modus %}{{ turnier.get_gewinnsaetze_display }} – gewonnen mit {{ turnier.gewinnsaetze }} Satz{{ turnier.gewinnsaetze|pluralize:"en" }}{% elif turnier.zaehlmodus == "becher" %}Wie viele Becher stehen noch? Das Team mit mehr übrigen Bechern gewinnt (von {{ turnier.becher }}).{% else %}Punkte-Modus – das Team mit mehr Punkten gewinnt{% endif %}
     </span>
     {% if satz_modus %}
       <details class="karte"{% if spiel.punkte_a or spiel.punkte_b %} open{% endif %}>

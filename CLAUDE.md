@@ -48,6 +48,9 @@ Betrieb (nginx, Update, Sicherung, Probelauf): `docs/betrieb.md`, Vorlage `docs/
   - `saetze`: `gewinnsaetze` 1/2/3 = Best of 1/3/5, `punkte_pro_satz`, `punkte_entscheidungssatz`
   - `punkte`: keine Sätze und keine Zielpunktzahl (z. B. auf Zeit), mehr Punkte gewinnt, kein Unentschieden.
     „Ein Satz bis 25“ ist Satz-Modus mit Best of 1. Im Admin graut `admin_turnier.js` die Satz-Felder aus.
+  - `becher` (z. B. Bierpong): `punkte_a/b` = übrige Becher (0 bis `Turnier.becher`), mehr gewinnt, kein Gleichstand
+    (Verlängerung). Getroffene Becher = `becher` − übrige des Gegners. `admin_turnier.js` graut `becher` außerhalb
+    des Becher-Modus aus. Kurzbezeichnung für Kopfzeilen: `Turnier.zaehlweise_kurz`.
 - Spiel speichert `saetze_a/b` und `punkte_a/b` (Satz-Modus: Ballpunkt-Summe, optional).
   Keine Punkte je Satz (bewusst entschieden).
 - K.-o.-Spiele dürfen ohne Teams angelegt werden; dann zeigen `platzhalter_a/b`
@@ -56,6 +59,8 @@ Betrieb (nginx, Update, Sicherung, Probelauf): `docs/betrieb.md`, Vorlage `docs/
 - Tabellenwertung:
   - Satz-Modus: Siege, Satzdifferenz, Ballpunktdifferenz, direkter Vergleich
   - Punkte-Modus: Siege, Punktdifferenz, erzielte Punkte, direkter Vergleich
+  - Becher-Modus: Siege (angezeigt als Pkt, Sieg = 2), Becher-Differenz (= `pd`), getroffene Becher
+    (`Zeile.getroffen`), direkter Vergleich. Bester Gruppenzweiter analog pro Spiel (`ko._schnitt`).
 - Paarungen per Kreismethode. Ungerade Teamzahl → "spielfrei" (bei einer Gruppe pfeift das spielfreie Team).
   2 Felder, kein Team doppelt im selben Slot.
 - Nur bestätigte **und** bezahlte Teams kommen in den Spielplan (`Team.objects.im_spielplan()`).
@@ -131,7 +136,7 @@ Betrieb (nginx, Update, Sicherung, Probelauf): `docs/betrieb.md`, Vorlage `docs/
 - Druckansicht zum Aushang: `/orga/spielplan/druck/` (eigenständige Seite, schwarz-weiß, A4; Link auf der
   Orga-Spielplanseite). Ziel: Plan mit bis zu 16 Zeit-Slots auf einer Seite.
 - Ergebnis eintragen: `/orga/spiel/<id>/`, Satz-Modus Sätze (+ optional Ballpunkte gesamt),
-  Punkte-Modus Punktzähler.
+  Punkte-Modus Punktzähler, Becher-Modus Zähler für übrige Becher (endet bei der Becherzahl).
 - Abweichung vom Design: "Ergebnis eintragen" zeigt im Punkte-Modus Punktzähler
   (z. B. 25 : 21 mit +/- Buttons) statt Sätzen.
 

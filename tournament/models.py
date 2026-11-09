@@ -6,6 +6,7 @@ Die Tabelle (Platzierung) wird nicht gespeichert, sondern aus beendeten Spielen 
 import secrets
 
 from django.core.exceptions import ValidationError
+from django.core.validators import MinValueValidator
 from django.db import models
 from django.utils import timezone
 
@@ -27,6 +28,7 @@ class Turnier(models.Model):
     class Zaehlmodus(models.TextChoices):
         SAETZE = "saetze", "Satz-Modus"
         PUNKTE = "punkte", "Punkte-Modus (ohne Sätze, mehr Punkte gewinnt)"
+        BECHER = "becher", "Becher-Modus (z. B. Bierpong: mehr übrige Becher gewinnt)"
 
     class Gewinnsaetze(models.IntegerChoices):
         BEST_OF_1 = 1, "Best of 1"
@@ -81,6 +83,10 @@ class Turnier(models.Model):
     punkte_entscheidungssatz = models.PositiveSmallIntegerField(
         "Punkte Entscheidungssatz", default=15, help_text="Nur im Satz-Modus.",
     )
+    becher = models.PositiveSmallIntegerField(
+        "Becher pro Team", default=10, validators=[MinValueValidator(1)],
+        help_text="Nur im Becher-Modus. Eingetragen wird, wie viele Becher jedes Team am Ende noch stehen hat.",
+    )
 
     class Meta:
         verbose_name = "Turnier"
@@ -97,6 +103,15 @@ class Turnier(models.Model):
         turniere = cls.objects.filter(oeffentlich=True) if nur_oeffentliche else cls.objects.all()
         heute = timezone.localdate()
         return turniere.filter(datum__gte=heute).order_by("datum").first() or turniere.first()
+
+    @property
+    def zaehlweise_kurz(self):
+        """Für Kopfzeilen, z. B. "Best of 3", "Punkte-Modus" oder "10 Becher"."""
+        if self.zaehlmodus == self.Zaehlmodus.SAETZE:
+            return self.get_gewinnsaetze_display()
+        if self.zaehlmodus == self.Zaehlmodus.BECHER:
+            return f"{self.becher} Becher"
+        return "Punkte-Modus"
 
     @property
     def vorbei(self):
@@ -174,6 +189,16 @@ class Turnier(models.Model):
             raise ValidationError({"max_spieler": f"Mindestens {MIN_SPIELER}."})
         if self.min_spieler is not None and self.max_spieler is not None and self.min_spieler > self.max_spieler:
             raise ValidationError({"max_spieler": "Muss mindestens so groß sein wie die empfohlene Spielerzahl."})
+        if self.pk and self.zaehlmodus == self.Zaehlmodus.BECHER and self.becher:
+            # Sonst rechnet die Tabelle mit negativen getroffenen Bechern.
+            zu_viele = self.spiele.filter(
+                models.Q(punkte_a__gt=self.becher) | models.Q(punkte_b__gt=self.becher), status="beendet",
+            ).first()
+            if zu_viele:
+                raise ValidationError({"becher": (
+                    f"Das Spiel {zu_viele} hat schon mehr als {self.becher} übrige Becher eingetragen – "
+                    "erst das Ergebnis korrigieren."
+                )})
 
 
 class Gruppe(models.Model):
@@ -394,6 +419,11 @@ class Spiel(models.Model):
             a, b = self.punkte_a, self.punkte_b
             if a is None or b is None:
                 return {"punkte_a": "Bitte die Punkte beider Teams eintragen."}
+            if self.turnier.zaehlmodus == Turnier.Zaehlmodus.BECHER:
+                if max(a, b) > self.turnier.becher:
+                    return {"punkte_a": f"Es gibt nur {self.turnier.becher} Becher pro Team."}
+                if a == b:
+                    return {"punkte_a": "Gleichstand gibt es nicht – bitte Verlängerung spielen und das Ergebnis eintragen."}
             if a == b:
                 return {"punkte_a": "Im Punkte-Modus gibt es kein Unentschieden."}
         return {}
