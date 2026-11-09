@@ -1,6 +1,7 @@
 from datetime import time, timedelta
 
 from django.contrib.auth.models import User
+from django.conf import settings
 from django.test import TestCase, override_settings
 from django.urls import reverse
 from django.utils import timezone
@@ -53,18 +54,22 @@ class FeldartTests(TestCase):
         self.assertTrue(any(f"Tisch {a.feld} ist doppelt belegt." in m for m in meldungen))
 
 
+# Die Tests lesen den Namen aus config/marke.py statt „Satzball“ fest zu erwarten –
+# so laufen sie unverändert auch in Ablegern wie Becherkönig.
+MARKE = settings.MARKE
+
+
 class MarkeTests(TestCase):
-    def test_satzball_ist_die_vorgabe(self):
+    def test_name_aus_config_marke(self):
         r = self.client.get(reverse("startseite"))
-        self.assertContains(r, "<title>Satzball</title>", html=False)
-        self.assertContains(r, "Satzball ist Open Source")
+        self.assertContains(r, f"<title>{MARKE}</title>", html=False)
+        self.assertContains(r, f"{MARKE} ist Open Source")
         self.assertContains(r, "css/marke.css")
 
-    @override_settings(MARKE="Becherkönig")
+    @override_settings(MARKE="Testmarke")
     def test_name_kommt_aus_der_marke(self):
         r = self.client.get(reverse("startseite"))
-        self.assertContains(r, "<title>Becherkönig</title>", html=False)
-        self.assertContains(r, "Becherkönig ist Open Source")
-        # sichtbar nirgends mehr „Satzball“ (der Quellcode-Link zeigt per SATZBALL_QUELLCODE_URL aufs Repo)
-        self.assertNotContains(r, ">Satzball")
-        self.assertNotContains(r, "Satzball ist")
+        self.assertContains(r, "<title>Testmarke</title>", html=False)
+        self.assertContains(r, "Testmarke ist Open Source")
+        self.assertNotContains(r, f"<title>{MARKE}")
+        self.assertNotContains(r, f"{MARKE} ist Open Source")
