@@ -90,8 +90,9 @@ Betrieb (nginx, Update, Sicherung, Probelauf): `docs/betrieb.md`, Vorlage `docs/
 - Admin-Optik: `templates/admin/base_site.html` + `static/css/admin.css` (nur Django-CSS-Variablen,
   Schrift, Rundungen). Turnier im Punkte-Modus: `static/js/admin_turnier.js` graut Satz-Felder aus
   (bewusst nicht `disabled`, sonst fehlen die Werte beim Speichern).
-- Spielerzahl: Pflicht sind mindestens `MIN_SPIELER` = 2, höchstens `max_spieler`. `min_spieler` am Turnier
-  ist nur eine **Empfehlung** (gelber Hinweis im Formular, keine Ablehnung).
+- Spielerzahl pro Turnier: Pflicht sind mindestens `pflicht_spieler` (Vorgabe `MIN_SPIELER` = 2, kleinster Wert 1),
+  höchstens `max_spieler` (leer = keine Obergrenze). `min_spieler` ist nur eine **Empfehlung** (gelber Hinweis im
+  Formular, keine Ablehnung) und liegt zwischen Pflicht- und Höchstzahl. Bierpong z. B.: Pflicht 1, empfohlen 4, ohne Obergrenze.
 - Spielernamen sind **öffentlich** (Teamliste). E-Mail und Zahlungsstatus sehen nur Orga und Kapitän.
 - Spiel-Phase (`Spiel.phase`): Gruppenspiel, Viertelfinale, Halbfinale, Spiel um Platz 3, Finale.
   K.-o.-Spiele haben keine Gruppe.

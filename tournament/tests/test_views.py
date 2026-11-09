@@ -105,6 +105,19 @@ class AnmeldungTests(TestCase):
         self.assertContains(r, "Höchstens 4 Spieler")
         self.assertFalse(Team.objects.exists())
 
+    def test_pflichtzahl_eins_ohne_obergrenze(self):
+        # z. B. Bierpong: ein Spieler reicht, 4 empfohlen, beliebig viele erlaubt
+        self.t.pflicht_spieler, self.t.min_spieler, self.t.max_spieler = 1, 4, None
+        self.t.save()
+        r = self.client.get(reverse("anmelden"))
+        self.assertContains(r, 'data-pflicht="1" data-empfohlen="4" data-max=""')
+        self.assertNotContains(r, "von max.")
+        r = self.client.post(reverse("anmelden"), anmeldedaten(spieler=[("Lena", "Hoffmann")]))
+        self.assertEqual(r.status_code, 302)
+        r = self.client.post(reverse("anmelden"), anmeldedaten("Großes Team", spieler=[(f"S{i}", "X") for i in range(12)]))
+        self.assertEqual(r.status_code, 302)
+        self.assertEqual(sorted(t.spieler.count() for t in Team.objects.all()), [1, 12])
+
     def test_datenschutz_muss_bestaetigt_werden(self):
         daten = anmeldedaten()
         del daten["datenschutz"]

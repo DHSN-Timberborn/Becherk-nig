@@ -2,7 +2,7 @@ from django import forms
 from django.core.exceptions import ValidationError
 from django.forms import BaseInlineFormSet, inlineformset_factory
 
-from .models import MIN_SPIELER, Spieler, Team
+from .models import Spieler, Team
 
 
 class AnmeldeForm(forms.ModelForm):
@@ -29,13 +29,12 @@ class AnmeldeForm(forms.ModelForm):
 
 
 class BaseSpielerFormSet(BaseInlineFormSet):
-    """Prüft die Spielerzahl: Pflicht sind MIN_SPIELER, höchstens max_spieler des Turniers.
+    """Prüft die Spielerzahl: Pflicht sind pflicht_spieler, höchstens max_spieler des Turniers (leer = beliebig).
     min_spieler des Turniers ist nur eine Empfehlung (Hinweis im Formular). Leere Zeilen zählen nicht."""
-
-    min_pflicht = MIN_SPIELER  # fürs Template (Hinweis im Formular)
 
     def __init__(self, *args, turnier, **kwargs):
         self.turnier = turnier
+        self.min_pflicht = turnier.pflicht_spieler  # fürs Template (Hinweis im Formular)
         super().__init__(*args, **kwargs)
 
     def clean(self):
@@ -46,10 +45,11 @@ class BaseSpielerFormSet(BaseInlineFormSet):
             1 for f in self.forms
             if f.cleaned_data and not f.cleaned_data.get("DELETE")
         )
-        if anzahl < MIN_SPIELER:
-            fehlen = MIN_SPIELER - anzahl
-            raise ValidationError(f"Mindestens {MIN_SPIELER} Spieler – noch {fehlen} {'fehlt' if fehlen == 1 else 'fehlen'}.")
-        if anzahl > self.turnier.max_spieler:
+        pflicht = self.turnier.pflicht_spieler
+        if anzahl < pflicht:
+            fehlen = pflicht - anzahl
+            raise ValidationError(f"Mindestens {pflicht} Spieler – noch {fehlen} {'fehlt' if fehlen == 1 else 'fehlen'}.")
+        if self.turnier.max_spieler is not None and anzahl > self.turnier.max_spieler:
             raise ValidationError(f"Höchstens {self.turnier.max_spieler} Spieler erlaubt.")
 
 

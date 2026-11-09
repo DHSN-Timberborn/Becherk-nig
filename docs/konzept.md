@@ -59,7 +59,7 @@ Fünf Tabellen genügen. Die Zahlung hängt direkt am Team (ein Team zahlt einma
 
 | Tabelle | Wichtige Felder | Beziehung |
 | --- | --- | --- |
-| Turnier | id, name, datum, ort, startgebuehr_eur, meldeschluss, max_teams, min_spieler, max_spieler, anmeldung_offen, modus (jeder_gegen_jeden / gruppen_ko), anzahl_felder, zaehlmodus (saetze / punkte / becher), gewinnsaetze (1 / 2 / 3 = Best of 1 / 3 / 5), punkte_pro_satz (z. B. 25), punkte_entscheidungssatz (z. B. 15), becher (Becher pro Team, z. B. 10) | hat viele Teams, Gruppen, Spiele |
+| Turnier | id, name, datum, ort, startgebuehr_eur, meldeschluss, max_teams, pflicht_spieler, min_spieler (Empfehlung), max_spieler (optional), anmeldung_offen, modus (jeder_gegen_jeden / gruppen_ko), anzahl_felder, zaehlmodus (saetze / punkte / becher), gewinnsaetze (1 / 2 / 3 = Best of 1 / 3 / 5), punkte_pro_satz (z. B. 25), punkte_entscheidungssatz (z. B. 15), becher (Becher pro Team, z. B. 10) | hat viele Teams, Gruppen, Spiele |
 | Team | id, turnier_id, name, kapitaen_name, kapitaen_email, edit_token, status (angemeldet / bestaetigt / warteliste / abgesagt), bezahlt (ja/nein), bezahlt_am, zahlungsart (bar / ueberweisung / paypal), notiz, gruppe_id | gehört zu Turnier; hat viele Spieler |
 | Spieler | id, team_id, vorname, nachname, studiengang (optional) | gehört zu Team |
 | Gruppe | id, turnier_id, name (A, B, …) | hat viele Teams und Spiele |
@@ -183,7 +183,7 @@ So wenig Daten wie möglich: Name der Spieler, eine E-Mail pro Team. Keine Telef
 | K.-o. bei 3/4 Gruppen | 3: Gruppensieger + bester Zweiter, 4: Viertelfinale | Platzhalter im Spielplan, Teams trägt die Orga ein |
 | Löschfrist | Admin-Aktion per Klick | "Teamdaten löschen" beim Turnier, erst nach dem Turniertag; Teamnamen und Ergebnisse bleiben |
 | Proxy auf dem VPS | Vorhandener nginx | Container nur auf 127.0.0.1, nginx macht HTTPS (siehe `docs/betrieb.md`) |
-| Spielerzahl | Empfohlene Zahl ist keine harte Regel | Pflicht sind mindestens 2 Spieler; darunter lehnt das Formular ab, unter der Empfehlung nur ein Hinweis |
+| Spielerzahl | Empfohlene Zahl ist keine harte Regel | Pflichtzahl pro Turnier (Vorgabe 2, mindestens 1); darunter lehnt das Formular ab, unter der Empfehlung nur ein Hinweis. Höchstzahl optional (leer = keine Obergrenze) |
 | Tabelle | Eigene Seite statt unter dem Spielplan | Menüpunkt „Tabelle“ wird aktiv markiert; Menü mit Symbolen |
 | Turnier-Wahl | Besucher können frühere/andere Turniere ansehen | Seite `/turniere/`, Auswahl wird gemerkt |
 | Sichtbarkeit | Orga schaltet jedes Turnier ausdrücklich frei | Feld „öffentlich sichtbar“ (Standard aus); Entwürfe und Testturniere bleiben unsichtbar |
