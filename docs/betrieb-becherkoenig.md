@@ -164,6 +164,10 @@ Probelauf wie bei Satzball, nur mit Becher-Modus:
 sudo docker exec becherkoenig python manage.py testturnier --teams 8 --zaehlmodus becher --spielplan
 ```
 
+Das Testturnier startet mit den Satzball-Vorgaben („Feld“, Schiris an, 20 € Startgebühr). Damit es nach Bierpong
+aussieht, danach im Admin beim Testturnier „Bezeichnung: Tisch“ wählen und „Schiris einteilen“ ausschalten –
+beides gilt sofort auch für den schon erzeugten Spielplan.
+
 Nach dem Turnier: Aktion „Teamdaten löschen (Datenschutz)“ wie bei Satzball.
 
 ## Logs
