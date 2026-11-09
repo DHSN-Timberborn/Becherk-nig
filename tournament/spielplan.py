@@ -189,7 +189,12 @@ def _zeit(turnier, start, minuten):
 def _speichern(turnier, gruppen_teams, partien, ko_slots, start):
     """Gruppenpartien und K.-o.-Slots ab `start` auf Slots und Felder legen und speichern.
     ko_slots enthält neue Einträge (phase, platzhalter_a, platzhalter_b) oder bestehende Spiele."""
-    slots = schiris_zuteilen(slots_verteilen(partien, turnier.anzahl_felder), gruppen_teams)
+    slots = slots_verteilen(partien, turnier.anzahl_felder)
+    if turnier.mit_schiri:
+        schiris_zuteilen(slots, gruppen_teams)
+    else:
+        for p in (p for slot in slots for p in slot):
+            p.schiri = None
     for i, slot in enumerate(slots):
         zeit = _zeit(turnier, start, i * turnier.slot_minuten)
         for feld, p in enumerate(slot, start=1):
@@ -279,9 +284,18 @@ def umplanen(turnier, betroffene_gruppen_ids):
     _speichern(turnier, gruppen_teams, verzahnen(je_gruppe), [ko_slots[z] for z in sorted(ko_slots)], start)
 
 
+def schiris_austragen(turnier):
+    """Schiris bei allen offenen Spielen austragen (Haken „Schiris einteilen“ ausgeschaltet).
+    Beendete Spiele behalten ihren Schiri."""
+    turnier.spiele.filter(status=Spiel.Status.GEPLANT).exclude(schiri_team=None).update(schiri_team=None)
+
+
 def schiris_neu(turnier):
     """Schiris aller offenen Gruppenspiele neu verteilen, z. B. nach dem Verschieben.
-    Spielfrei ist ein Team, das in seiner Gruppe in dieser Runde nicht spielt."""
+    Spielfrei ist ein Team, das in seiner Gruppe in dieser Runde nicht spielt.
+    Ohne Schiris (`Turnier.mit_schiri` aus): nichts tun – von Hand gesetzte Schiris (z. B. fürs Finale) bleiben."""
+    if not turnier.mit_schiri:
+        return
     spiele = list(turnier.spiele.filter(phase=Phase.GRUPPE).exclude(uhrzeit=None)
                   .select_related("team_a", "team_b", "schiri_team"))
     gruppen_teams = {g.pk: list(g.teams.order_by("pk")) for g in turnier.gruppen.all()}

@@ -66,6 +66,10 @@ class Turnier(models.Model):
     modus = models.CharField(max_length=20, choices=Modus.choices, default=Modus.JEDER_GEGEN_JEDEN)
     anzahl_felder = models.PositiveSmallIntegerField("Anzahl Felder", default=2)
     slot_minuten = models.PositiveSmallIntegerField("Slotlänge (min)", default=20)
+    mit_schiri = models.BooleanField(
+        "Schiris einteilen", default=True,
+        help_text="Aus: Spiele ohne Schiri (z. B. Bierpong). Umschalten wirkt sofort auf alle offenen Spiele.",
+    )
     spielplan_veroeffentlicht = models.BooleanField("Spielplan veröffentlicht", default=False)
     zahlungserinnerung_am = models.DateTimeField(
         "zuletzt an Zahlung erinnert", null=True, blank=True, editable=False,

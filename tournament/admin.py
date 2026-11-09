@@ -50,7 +50,7 @@ class TurnierAdmin(admin.ModelAdmin):
             "anmeldung_offen", "meldeschluss", "max_teams", "warteliste_automatisch", "pflicht_spieler", "min_spieler",
             "max_spieler",
         ]}),
-        ("Modus", {"fields": ["modus", "anzahl_felder", "slot_minuten", "spielplan_veroeffentlicht"]}),
+        ("Modus", {"fields": ["modus", "anzahl_felder", "slot_minuten", "mit_schiri", "spielplan_veroeffentlicht"]}),
         ("Zählweise", {"fields": [
             "zaehlmodus", "gewinnsaetze", "punkte_pro_satz", "punkte_entscheidungssatz", "becher",
         ]}),
@@ -66,6 +66,13 @@ class TurnierAdmin(admin.ModelAdmin):
 
     def save_model(self, request, obj, form, change):
         super().save_model(request, obj, form, change)
+        if change and "mit_schiri" in form.changed_data and obj.spiele.exists():
+            if obj.mit_schiri:
+                spielplan.schiris_neu(obj)
+                self.message_user(request, "Schiris der offenen Spiele neu eingeteilt.", messages.INFO)
+            else:
+                spielplan.schiris_austragen(obj)
+                self.message_user(request, "Schiris bei allen offenen Spielen ausgetragen.", messages.INFO)
         # Mehr Plätze oder Haken gerade gesetzt: Warteliste sofort nachrücken lassen
         for team in warteliste.auffuellen(obj, request):
             self.message_user(request, f"{team} ist automatisch von der Warteliste nachgerückt ({_mail_hinweis(team)}).",
