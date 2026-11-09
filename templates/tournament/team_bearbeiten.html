@@ -17,10 +17,12 @@
     <span class="kachel__label">Anmeldung</span>
     {% include "tournament/_status.html" %}
   </div>
+  {% if not turnier.kostenlos %}
   <div class="kachel">
     <span class="kachel__label">Startgebühr</span>
     {% include "tournament/_zahlung.html" %}
   </div>
+  {% endif %}
 </div>
 
 {% if team.status == "abgesagt" %}
@@ -31,10 +33,10 @@
   <div class="stapel">
     <div class="fortschritt">
       <span class="erreicht">Angemeldet</span>
-      <span{% if team.bezahlt %} class="erreicht"{% endif %}>Bezahlt</span>
+      {% if not turnier.kostenlos %}<span{% if team.bezahlt %} class="erreicht"{% endif %}>Bezahlt</span>{% endif %}
       <span{% if team.status == "bestaetigt" %} class="erreicht"{% endif %}>Bestätigt</span>
     </div>
-    {% if not team.bezahlt %}<span class="leise klein">Sobald die {{ turnier.startgebuehr_eur|floatformat:"-2" }} € eingegangen sind, bestätigt die Orga euer Team. <a href="#zahlung">Zahlungsinfos</a></span>{% endif %}
+    {% if not team.bezahlt and not turnier.kostenlos %}<span class="leise klein">Sobald die {{ turnier.startgebuehr_eur|floatformat:"-2" }} € eingegangen sind, bestätigt die Orga euer Team. <a href="#zahlung">Zahlungsinfos</a></span>{% endif %}
   </div>
 {% endif %}
 

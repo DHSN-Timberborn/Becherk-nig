@@ -12,6 +12,7 @@ def turnier(**kwargs):
     werte = dict(
         name="Herbst-Cup 2026", datum=date(2026, 11, 14), ort="Campus-Halle",
         meldeschluss=datetime(2026, 10, 31, 22, 59, tzinfo=timezone.utc), max_teams=10,
+        startgebuehr_eur=20,  # ohne Gebühr wäre jedes Team sofort bestätigt
     )
     werte.update(kwargs)
     return Turnier.objects.create(**werte)

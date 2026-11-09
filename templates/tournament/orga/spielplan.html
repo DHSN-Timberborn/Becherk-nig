@@ -9,7 +9,7 @@
 <div class="kopfzeile">
   <div class="stapel stapel--eng">
     <h1 class="titel titel--m">Spielplan</h1>
-    <span class="leise">{{ turnier.name }} · {{ anzahl_teams }} bestätigte und bezahlte Team{{ anzahl_teams|pluralize:"s" }}</span>
+    <span class="leise">{{ turnier.name }} · {{ anzahl_teams }} bestätigte{% if not turnier.kostenlos %} und bezahlte{% endif %} Team{{ anzahl_teams|pluralize:"s" }}</span>
   </div>
   {% if turniere|length > 1 %}
   <form method="get">

@@ -66,6 +66,11 @@ class TurnierAdmin(admin.ModelAdmin):
 
     def save_model(self, request, obj, form, change):
         super().save_model(request, obj, form, change)
+        if change and "startgebuehr_eur" in form.changed_data:
+            # Gebühr auf 0 gesetzt: angemeldete Teams sind bestätigt; Gebühr eingeführt: unbezahlte wieder angemeldet
+            for team in obj.teams.filter(status__in=[Team.Status.ANGEMELDET, Team.Status.BESTAETIGT]):
+                team.turnier = obj
+                team.save()
         if change and "mit_schiri" in form.changed_data and obj.spiele.exists():
             if obj.mit_schiri:
                 spielplan.schiris_neu(obj)

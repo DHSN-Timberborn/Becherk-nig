@@ -126,6 +126,7 @@ class SpielplanBasis(TestCase):
         self.t = Turnier.objects.create(
             name="Cup", datum=date(2026, 11, 14), beginn=time(9, 30), ort="Halle", max_teams=12,
             meldeschluss=datetime(2026, 10, 31, tzinfo=timezone.utc), modus=Turnier.Modus.GRUPPEN_KO,
+            startgebuehr_eur=20,  # ohne Gebühr wären auch unbezahlte Teams im Plan
         )
 
     def teams(self, n, **kwargs):
