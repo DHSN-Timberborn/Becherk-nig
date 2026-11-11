@@ -35,6 +35,7 @@
 
 /* Gerissene Kanten als feste Polygone (ohne Bilder) */
 :root {
+  --etikett: #e11d2e;  /* Hintergrund für weiße Schrift (Etiketten, Tabellenkopf, Orga-Knopf) – auch im Dunkelmodus */
   --riss-unten: polygon(0 0, 100% 0, 100% calc(100% - 4px), 98.7% calc(100% - 9px), 96.4% calc(100% - 4px), 94.5% calc(100% - 3px), 93.2% calc(100% - 15px), 90.1% calc(100% - 5px), 88.2% calc(100% - 3px), 85.6% calc(100% - 12px), 84.3% calc(100% - 4px), 81.5% calc(100% - 3px), 78.3% calc(100% - 4px), 76.9% calc(100% - 3px), 74.4% calc(100% - 15px), 72.5% calc(100% - 15px), 69.6% calc(100% - 4px), 67.4% calc(100% - 3px), 65.9% calc(100% - 15px), 64.3% calc(100% - 5px), 62.9% calc(100% - 4px), 60.3% calc(100% - 12px), 57.5% calc(100% - 15px), 55.2% calc(100% - 12px), 53.8% calc(100% - 9px), 50.9% calc(100% - 9px), 48.9% calc(100% - 3px), 46.4% calc(100% - 3px), 43.5% calc(100% - 5px), 41.2% calc(100% - 9px), 38.7% calc(100% - 4px), 36.7% calc(100% - 9px), 35.3% calc(100% - 6px), 32.9% calc(100% - 12px), 30.5% calc(100% - 6px), 28.6% calc(100% - 6px), 27.3% calc(100% - 9px), 26.0% calc(100% - 5px), 23.5% calc(100% - 2px), 20.3% calc(100% - 4px), 18.9% calc(100% - 5px), 17.5% calc(100% - 9px), 15.4% calc(100% - 5px), 14.1% calc(100% - 9px), 10.9% calc(100% - 2px), 8.9% calc(100% - 4px), 5.9% calc(100% - 4px), 3.3% calc(100% - 5px), 0.0% calc(100% - 15px));
   --riss-oben: polygon(0.0% 9px, 2.1% 3px, 3.5% 3px, 5.5% 12px, 8.7% 5px, 11.8% 12px, 14.5% 15px, 17.2% 5px, 20.5% 6px, 21.9% 6px, 23.6% 9px, 24.9% 6px, 26.6% 2px, 28.2% 15px, 30.7% 15px, 34.0% 2px, 36.2% 5px, 38.3% 5px, 39.7% 5px, 41.0% 4px, 44.4% 3px, 46.0% 15px, 48.5% 4px, 49.7% 6px, 52.1% 15px, 54.6% 4px, 57.7% 5px, 59.3% 12px, 62.6% 15px, 64.8% 4px, 67.9% 3px, 70.1% 12px, 71.5% 4px, 74.4% 12px, 76.6% 6px, 79.0% 9px, 82.3% 15px, 83.8% 2px, 86.7% 12px, 90.0% 4px, 92.7% 12px, 95.1% 6px, 97.1% 9px, 99.4% 15px, 100% 4px, 100% 100%, 0 100%);
   --riss-beide: polygon(0.0% 9px, 2.1% 3px, 3.5% 3px, 5.5% 12px, 8.7% 5px, 11.8% 12px, 14.5% 15px, 17.2% 5px, 20.5% 6px, 21.9% 6px, 23.6% 9px, 24.9% 6px, 26.6% 2px, 28.2% 15px, 30.7% 15px, 34.0% 2px, 36.2% 5px, 38.3% 5px, 39.7% 5px, 41.0% 4px, 44.4% 3px, 46.0% 15px, 48.5% 4px, 49.7% 6px, 52.1% 15px, 54.6% 4px, 57.7% 5px, 59.3% 12px, 62.6% 15px, 64.8% 4px, 67.9% 3px, 70.1% 12px, 71.5% 4px, 74.4% 12px, 76.6% 6px, 79.0% 9px, 82.3% 15px, 83.8% 2px, 86.7% 12px, 90.0% 4px, 92.7% 12px, 95.1% 6px, 97.1% 9px, 99.4% 15px, 100% 4px, 100% calc(100% - 4px), 98.7% calc(100% - 9px), 96.4% calc(100% - 4px), 94.5% calc(100% - 3px), 93.2% calc(100% - 15px), 90.1% calc(100% - 5px), 88.2% calc(100% - 3px), 85.6% calc(100% - 12px), 84.3% calc(100% - 4px), 81.5% calc(100% - 3px), 78.3% calc(100% - 4px), 76.9% calc(100% - 3px), 74.4% calc(100% - 15px), 72.5% calc(100% - 15px), 69.6% calc(100% - 4px), 67.4% calc(100% - 3px), 65.9% calc(100% - 15px), 64.3% calc(100% - 5px), 62.9% calc(100% - 4px), 60.3% calc(100% - 12px), 57.5% calc(100% - 15px), 55.2% calc(100% - 12px), 53.8% calc(100% - 9px), 50.9% calc(100% - 9px), 48.9% calc(100% - 3px), 46.4% calc(100% - 3px), 43.5% calc(100% - 5px), 41.2% calc(100% - 9px), 38.7% calc(100% - 4px), 36.7% calc(100% - 9px), 35.3% calc(100% - 6px), 32.9% calc(100% - 12px), 30.5% calc(100% - 6px), 28.6% calc(100% - 6px), 27.3% calc(100% - 9px), 26.0% calc(100% - 5px), 23.5% calc(100% - 2px), 20.3% calc(100% - 4px), 18.9% calc(100% - 5px), 17.5% calc(100% - 9px), 15.4% calc(100% - 5px), 14.1% calc(100% - 9px), 10.9% calc(100% - 2px), 8.9% calc(100% - 4px), 5.9% calc(100% - 4px), 3.3% calc(100% - 5px), 0.0% calc(100% - 15px));
@@ -55,7 +56,8 @@
 :root .marke { font: 700 24px/1 var(--kond); letter-spacing: .04em; color: var(--ink); gap: 0; }
 :root .marke img { display: none; }
 :root .kopf__link {
-  background: var(--ac); color: #fff; padding: 7px 14px; border-radius: 3px;
+  background: var(--etikett); color: #fff; padding: 7px 14px; border-radius: 3px;
+  max-width: 60%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;  /* lange Turniernamen (Kapitänsseite) */
   font: 600 14px var(--kond); text-transform: uppercase; letter-spacing: .05em;
 }
 :root .kopf__link:hover { text-decoration: none; filter: brightness(1.06); }
@@ -65,17 +67,18 @@
 :root .titel { font: 700 40px/1 var(--kond); letter-spacing: .01em; }
 :root .titel--m { font-size: 32px; }
 :root .zwischen {
-  align-self: flex-start; display: inline-block; background: var(--ac); color: #fff; padding: 4px 16px;
+  align-self: flex-start; display: inline-block; background: var(--etikett); color: #fff; padding: 4px 16px;
   transform: skewX(-10deg); font: 600 17px var(--kond); letter-spacing: .05em;
 }
 :root .kopfzeile .zwischen { align-self: center; }
 :root .text h2 { font-family: var(--kond); font-weight: 700; letter-spacing: .02em; }
 
 /* Karten, Listen, Kacheln: eckig, roter Rand links, Schatten */
-:root .karte, :root .liste, :root .partie, :root .kacheln, :root .kacheln--lose .kachel, :root .tabelle {
+:root .karte, :root .liste, :root .partie, :root .kacheln:not(.kacheln--lose), :root .kacheln--lose .kachel, :root .tabelle {
   border: 0; border-radius: 0; border-left: 6px solid var(--ac); box-shadow: 0 8px 20px rgba(0, 0, 0, .12);
 }
-:root .kacheln { gap: 1px; background: var(--line); }
+/* Lose Kacheln (z. B. Startzeit/Slotlänge auf der Orga-Spielplanseite) sind nur ein Raster – ohne eigenen Rand */
+:root .kacheln:not(.kacheln--lose) { gap: 1px; background: var(--line); }
 :root .kachel__wert, :root .zahl { font-weight: 700; }
 :root .liste__zeile--link:hover { background: var(--acs); }
 :root .team { border-bottom-color: var(--line); }
@@ -94,11 +97,11 @@
 /* Hinweise, Etiketten, Fortschritt */
 :root .hinweis, :root .countdown { border-radius: 0; border-left: 5px solid currentColor; }
 :root .badge { border-radius: 2px; font-family: var(--kond); text-transform: uppercase; letter-spacing: .05em; }
-:root .badge--angemeldet { background: var(--ac); color: #fff; }
+:root .badge--angemeldet { background: var(--etikett); color: #fff; }
 :root .plaetze span, :root .fortschritt span::before { border-radius: 0; }
 
 /* Spielplan: Uhrzeit als schräges rotes Etikett, Sieger rot hinterlegt */
-:root .slot__zeit { align-self: flex-start; background: var(--ac); color: #fff; padding: 2px 14px; transform: skewX(-10deg); font-size: 18px; }
+:root .slot__zeit { align-self: flex-start; background: var(--etikett); color: #fff; padding: 2px 14px; transform: skewX(-10deg); font-size: 18px; }
 :root .partie { gap: 4px; }
 :root .partie__zeile span:first-child { overflow-wrap: break-word; hyphens: auto; }  /* „Schaum-schläger“ statt „Schaumschläge r“ */
 :root .partie__zeile--sieger { color: var(--ac); }
@@ -107,7 +110,7 @@
 /* Tabelle: rote Kopfzeile in Oswald, Spitzenreiter hervorgehoben */
 :root .tabelle { background: var(--sf); }
 :root .tabelle th {
-  background: var(--ac); color: #fff; font: 600 13px var(--kond); text-transform: uppercase; letter-spacing: .04em; padding: 8px;
+  background: var(--etikett); color: #fff; font: 600 13px var(--kond); text-transform: uppercase; letter-spacing: .04em; padding: 8px;
 }
 :root .tabelle tbody tr:first-child td { background: var(--acs); font-weight: 700; }
 
