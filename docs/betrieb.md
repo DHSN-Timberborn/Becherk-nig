@@ -160,7 +160,7 @@ sudo docker cp satzball:/app/data/sicherungen ./sicherungen
 
 Der erste Befehl legt `/app/data/sicherungen/db-….sqlite3` an, der zweite kopiert die Sicherungen vom
 Container auf den Server. Es bleiben die 14 neuesten Sicherungen (`--behalten N`, `--behalten 0` behält alle).
-Für Becherkönig überall `becherkoenig` statt `satzball`.
+Für Becherkönig überall `becherkoenig` statt `satzball`, beim Image `ghcr.io/dhsn-timberborn/becherkoenig`.
 
 **Wiederherstellen** – mit dem App-Image kopieren, damit die Datei dem App-Benutzer gehört
 (als root hineinkopiert könnte die App sie nicht mehr schreiben):
