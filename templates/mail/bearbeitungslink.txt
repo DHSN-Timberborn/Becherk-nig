@@ -8,7 +8,7 @@ Status: {{ team.get_status_display }}
 
 Bitte gebt den Link nicht weiter – wer ihn hat, kann das Team bearbeiten.
 {% if team.status != "warteliste" and not turnier.kostenlos %}
-Startgebühr: {{ turnier.startgebuehr_eur|floatformat:"-2" }} €. Sobald sie bei uns eingegangen ist, ist euer Team bestätigt.
+Startgebühr: {{ team.startgebuehr_text }}. Sobald sie bei uns eingegangen ist, ist euer Team bestätigt.
 {% if turnier.zahlungsinfo %}{{ turnier.zahlungsinfo }}
 Verwendungszweck: {{ turnier.name }} – {{ team.name }}
 {% endif %}{% endif %}

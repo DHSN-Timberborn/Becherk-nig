@@ -6,7 +6,7 @@ Status: {{ team.get_status_display }}
 Über euren Bearbeitungslink könnt ihr die Spielerliste prüfen und ändern{% if not turnier.meldeschluss_vorbei %} (bis {{ turnier.meldeschluss|date:"j.n.Y, H:i" }} Uhr){% endif %}:
 {{ link }}
 {% if not team.bezahlt and not turnier.kostenlos %}
-Startgebühr: {{ turnier.startgebuehr_eur|floatformat:"-2" }} €. Sobald sie bei uns eingegangen ist, ist euer Team bestätigt.
+Startgebühr: {{ team.startgebuehr_text }}. Sobald sie bei uns eingegangen ist, ist euer Team bestätigt.
 {% if turnier.zahlungsinfo %}{{ turnier.zahlungsinfo }}
 Verwendungszweck: {{ turnier.name }} – {{ team.name }}
 {% endif %}{% endif %}

@@ -45,7 +45,7 @@
         <span class="kachel__zusatz">keine Startgebühr</span>
       {% else %}
         <span class="kachel__wert">{{ turnier.startgebuehr_eur|floatformat:"-2" }} €</span>
-        <span class="kachel__zusatz">pro Team</span>
+        <span class="kachel__zusatz">{{ turnier.gebuehr_einheit }}</span>
       {% endif %}
     </div>
     <div class="kachel">
