@@ -202,12 +202,14 @@ u.save()
   hinweis "$app läuft, Orga-Zugang „$orga_name“ angelegt."
 
   if [ "$mit_test" = ja ]; then
-    if [ "$app" = becherkoenig ]; then
-      docker exec "$app" python manage.py testturnier --teams 8 --spielplan --bierpong >/dev/null
+    extra=()
+    [ "$app" = becherkoenig ] && extra=(--bierpong)
+    # Nur zum Ausprobieren – ein Fehler hier (z. B. Fork noch nicht synchronisiert) bricht die Installation nicht ab
+    if docker exec "$app" python manage.py testturnier --teams 8 --spielplan "${extra[@]}" >/dev/null; then
+      hinweis "$app: Testturnier angelegt."
     else
-      docker exec "$app" python manage.py testturnier --teams 8 --spielplan >/dev/null
+      hinweis "$app: Testturnier konnte nicht angelegt werden – später von Hand, siehe docs/betrieb.md („Probelauf“)."
     fi
-    hinweis "$app: Testturnier angelegt."
   fi
 done
 
