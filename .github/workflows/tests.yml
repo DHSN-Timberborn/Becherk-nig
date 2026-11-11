@@ -81,8 +81,8 @@ jobs:
           printf '%s\n' j "" "" "" "Erika O'Muster" "Musterweg 1" "12345 Musterstadt" "orga@example.invalid" \
             j smtp.example.invalid "" orga@example.invalid 'smtp$pw #1' \
             orga orga@example.invalid 'pro$be pass#wort' 'pro$be pass#wort' j > "$RUNNER_TEMP/antworten.txt"
-          sudo SATZBALL_ZIEL="$RUNNER_TEMP/satzball" SATZBALL_QUELLE="$GITHUB_WORKSPACE" \
-            SATZBALL_EINGABE="$RUNNER_TEMP/antworten.txt" bash install.sh
+          export SATZBALL_ZIEL="$RUNNER_TEMP/satzball" SATZBALL_QUELLE="$GITHUB_WORKSPACE" SATZBALL_OHNE_PULL=1
+          sudo -E SATZBALL_EINGABE="$RUNNER_TEMP/antworten.txt" bash install.sh
           curl -fsS "http://$IP/" | grep -q "Probelauf"
           curl -fsS "http://$IP:8080/" | grep -q "Probelauf"
           curl -fsS "http://$IP/datenschutz/" | grep -q "Musterweg 1"
@@ -94,6 +94,19 @@ jobs:
           done
           docker exec becherkoenig python manage.py shell -c "from tournament.models import Turnier; assert Turnier.objects.get().zaehlmodus == 'becher'"
           test "$(sudo crontab -l | grep -c 'manage.py sicherung')" = 2
+
+          # Fertig eingerichtet: ein zweiter Aufruf bricht sofort ab
+          ! sudo -E SATZBALL_EINGABE=/dev/null bash install.sh 2> "$RUNNER_TEMP/zweiter.txt"
+          grep -q "schon eingerichtet" "$RUNNER_TEMP/zweiter.txt"
+          # Abgebrochene Einrichtung (ohne .eingerichtet): fragt nach, „n“ bricht ab, „j“ richtet neu ein
+          sudo rm "$SATZBALL_ZIEL/.eingerichtet"
+          printf 'n\n' > "$RUNNER_TEMP/nein.txt"
+          ! sudo -E SATZBALL_EINGABE="$RUNNER_TEMP/nein.txt" bash install.sh 2> "$RUNNER_TEMP/nein_aus.txt"
+          grep -q "Abgebrochen" "$RUNNER_TEMP/nein_aus.txt"
+          { echo j; head -n -1 "$RUNNER_TEMP/antworten.txt"; echo n; } > "$RUNNER_TEMP/fortsetzen.txt"  # ohne zweites Testturnier
+          sudo -E SATZBALL_EINGABE="$RUNNER_TEMP/fortsetzen.txt" bash install.sh
+          test -e "$SATZBALL_ZIEL/.eingerichtet"
+          docker exec becherkoenig python manage.py shell -c "from tournament.models import Turnier; assert Turnier.objects.count() == 1"  # Daten blieben
 
       - name: Image veröffentlichen (nur main)
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'

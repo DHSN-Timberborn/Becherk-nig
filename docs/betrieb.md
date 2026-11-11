@@ -30,6 +30,9 @@ Domains (leer = nur über die IP), Verantwortliche/r für die Datenschutzerklär
 Orga-Zugang mit Passwort und ob ein Testturnier angelegt werden soll. Danach schreibt es alles nach
 `/opt/satzball`, startet die Container, legt den Orga-Zugang an und richtet die tägliche Sicherung ein.
 Am Ende steht, unter welcher Adresse es weitergeht. Alles lässt sich später wie unten beschrieben ändern.
+Bricht das Skript ab (z. B. weil ghcr.io kurz nicht antwortet), einfach noch einmal starten: Es fragt nach,
+richtet neu ein und lässt vorhandene Daten stehen. Erst nach einer vollständigen Einrichtung verweigert es einen
+zweiten Lauf (Datei `/opt/satzball/.eingerichtet`).
 
 ## Einmalig einrichten (von Hand)
 
