@@ -159,6 +159,7 @@ def ergebnis_seite(request, pk):
         "spiel": spiel,
         "turnier": turnier,
         "satz_modus": satz_modus,
+        "becher_werte": range(turnier.becher + 1),
         "korrigieren": request.GET.get("korrigieren") or fehler or spiel.status == Spiel.Status.GEPLANT,
         "fehler": fehler,
         "nummer": zeitlich.index(spiel) + 1 if spiel in zeitlich else None,

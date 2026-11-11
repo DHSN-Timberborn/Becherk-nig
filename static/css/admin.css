@@ -1,132 +1,66 @@
-/* Satzball-Look für den Django Admin: gleiche Struktur, Farben und Schrift aus docs/design.html.
-   Überschreibt nur Djangos CSS-Variablen und ein paar Rundungen/Abstände. */
+/* Look für den Django Admin: gleiche Struktur, Farben und Schriften aus der Marke (static/css/marke.css,
+   lädt davor). Hier werden nur Djangos CSS-Variablen auf die Marken-Farben gelegt und ein paar
+   Rundungen/Abstände gesetzt – ein Ableger wie Becherkönig bekommt so automatisch seine Farben.
+   Hell/Dunkel folgt wie die übrige Seite dem Gerät; Djangos Umschalter ist deshalb ausgeblendet.
+   "html[data-theme]" gewinnt gegen Djangos eigene Hell-/Dunkel-Regeln, auch wenn dort noch eine Wahl gespeichert ist. */
 
-@font-face { font-family: "Barlow"; font-weight: 400; font-display: swap; src: url("../fonts/barlow-400.woff2") format("woff2"); }
-@font-face { font-family: "Barlow"; font-weight: 500; font-display: swap; src: url("../fonts/barlow-500.woff2") format("woff2"); }
-@font-face { font-family: "Barlow"; font-weight: 600; font-display: swap; src: url("../fonts/barlow-600.woff2") format("woff2"); }
-@font-face { font-family: "Barlow"; font-weight: 700; font-display: swap; src: url("../fonts/barlow-700.woff2") format("woff2"); }
-@font-face { font-family: "Barlow Condensed"; font-weight: 800; font-style: italic; font-display: swap; src: url("../fonts/barlow-condensed-800-italic.woff2") format("woff2"); }
-
-html[data-theme="light"],
+html[data-theme],
 :root {
-    --primary: #2867e4;
-    --secondary: #15171c;
-    --accent: #ffffff;
-    --primary-fg: #ffffff;
+    --primary: var(--ac);
+    --secondary: var(--ink);
+    --accent: #ffffff;          /* Titel in der (immer dunklen) Kopfzeile */
+    --primary-fg: var(--aci);
 
-    --body-fg: #15171c;
-    --body-bg: #ffffff;
-    --body-quiet-color: #5c626d;
-    --body-medium-color: #33373f;
-    --body-loud-color: #000000;
+    --body-fg: var(--ink);
+    --body-bg: var(--sf);
+    --body-quiet-color: var(--mut);
+    --body-medium-color: color-mix(in srgb, var(--ink) 80%, var(--sf));
+    --body-loud-color: var(--ink);
 
+    /* Kopfzeile immer dunkel, mit Marken-Farbe als Linie darunter */
     --header-color: #a0a6b0;
     --header-branding-color: #ffffff;
     --header-bg: #15171c;
     --header-link-color: #f1f2f4;
 
-    --breadcrumbs-fg: #5c626d;
-    --breadcrumbs-link-fg: #2867e4;
-    --breadcrumbs-bg: #f0f0ed;
+    --breadcrumbs-fg: var(--mut);
+    --breadcrumbs-link-fg: var(--ac);
+    --breadcrumbs-bg: var(--sf2);
 
-    --link-fg: #2867e4;
-    --link-hover-color: #1a4fb8;
-    --link-selected-fg: #15171c;
+    --link-fg: var(--ac);
+    --link-hover-color: color-mix(in srgb, var(--ac) 80%, var(--ink));
+    --link-selected-fg: var(--ink);
 
-    --hairline-color: #e6e6e3;
-    --border-color: #d4d5d1;
+    --hairline-color: var(--line);
+    --border-color: color-mix(in srgb, var(--line) 70%, var(--mut));
 
-    --message-success-bg: #e3f5e8;
-    --message-warning-bg: #fdf6d8;
-    --message-error-bg: #fdecea;
+    --message-success-bg: var(--grb);
+    --message-warning-bg: var(--yeb);
+    --message-error-bg: var(--reb);
 
-    --darkened-bg: #f6f6f4;
-    --selected-bg: #e9e9e6;
-    --selected-row: #eaf0fd;
+    --darkened-bg: var(--bg);
+    --selected-bg: var(--sf2);
+    --selected-row: var(--acs);
 
-    --button-bg: #2867e4;
-    --button-hover-bg: #1f55c7;
-    --default-button-bg: #15171c;
-    --default-button-hover-bg: #33373f;
-    --close-button-bg: #8a909a;
-    --close-button-hover-bg: #5c626d;
+    --button-fg: var(--aci);
+    --button-bg: var(--ac);
+    --button-hover-bg: color-mix(in srgb, var(--ac) 85%, var(--ink));
+    --default-button-bg: var(--ink);
+    --default-button-hover-bg: var(--mut);
+    --close-button-bg: var(--mut);
+    --close-button-hover-bg: var(--ink);
 
-    --font-family-primary: "Barlow", system-ui, sans-serif;
+    --font-family-primary: var(--schrift);
 
     --object-tools-fg: var(--primary-fg);
     --object-tools-bg: var(--primary);
     --object-tools-hover-bg: var(--button-hover-bg);
 }
-
-@media (prefers-color-scheme: dark) {
-    :root {
-        --primary: #6fa2ff;
-        --primary-fg: #0c0e12;
-        --body-fg: #f1f2f4;
-        --body-bg: #111317;
-        --body-quiet-color: #a0a6b0;
-        --body-medium-color: #d6d8dc;
-        --body-loud-color: #ffffff;
-        --header-bg: #08090b;
-        --breadcrumbs-fg: #a0a6b0;
-        --breadcrumbs-link-fg: #6fa2ff;
-        --breadcrumbs-bg: #1a1d22;
-        --link-fg: #6fa2ff;
-        --link-hover-color: #9cbfff;
-        --link-selected-fg: #f1f2f4;
-        --hairline-color: #2c3038;
-        --border-color: #3a3f48;
-        --message-success-bg: #12351f;
-        --message-warning-bg: #3a3112;
-        --message-error-bg: #3d1717;
-        --darkened-bg: #1a1d22;
-        --selected-bg: #23262d;
-        --selected-row: #1d2a44;
-        --button-fg: #0c0e12;
-        --button-bg: #6fa2ff;
-        --button-hover-bg: #9cbfff;
-        --default-button-bg: #f1f2f4;
-        --default-button-hover-bg: #d6d8dc;
-        --close-button-bg: #3a3f48;
-        --close-button-hover-bg: #5c626d;
-    }
-}
-
-html[data-theme="dark"] {
-    --primary: #6fa2ff;
-    --primary-fg: #0c0e12;
-    --body-fg: #f1f2f4;
-    --body-bg: #111317;
-    --body-quiet-color: #a0a6b0;
-    --body-medium-color: #d6d8dc;
-    --body-loud-color: #ffffff;
-    --header-bg: #08090b;
-    --breadcrumbs-fg: #a0a6b0;
-    --breadcrumbs-link-fg: #6fa2ff;
-    --breadcrumbs-bg: #1a1d22;
-    --link-fg: #6fa2ff;
-    --link-hover-color: #9cbfff;
-    --link-selected-fg: #f1f2f4;
-    --hairline-color: #2c3038;
-    --border-color: #3a3f48;
-    --message-success-bg: #12351f;
-    --message-warning-bg: #3a3112;
-    --message-error-bg: #3d1717;
-    --darkened-bg: #1a1d22;
-    --selected-bg: #23262d;
-    --selected-row: #1d2a44;
-    --button-fg: #0c0e12;
-    --button-bg: #6fa2ff;
-    --button-hover-bg: #9cbfff;
-    --default-button-bg: #f1f2f4;
-    --default-button-hover-bg: #d6d8dc;
-    --close-button-bg: #3a3f48;
-    --close-button-hover-bg: #5c626d;
-}
+.theme-toggle { display: none; }
 
 /* Kopf */
-#header { padding: 14px 32px; }
-#site-name { font: italic 800 24px/1 "Barlow Condensed", "Barlow", sans-serif; text-transform: uppercase; letter-spacing: .01em; }
+#header { padding: 14px 32px; border-bottom: 4px solid var(--ac); }
+#site-name { font: italic 800 24px/1 var(--kond); text-transform: uppercase; letter-spacing: .01em; }
 div.breadcrumbs { padding: 10px 32px; border-bottom: 1px solid var(--hairline-color); }
 
 /* Karten statt harter Balken */

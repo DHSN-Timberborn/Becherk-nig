@@ -1,10 +1,11 @@
 {% extends "admin/base.html" %}
 {% load static %}
-{# Wie Djangos admin/base_site.html, plus Satzball-Stylesheet (Farben, Schrift, Rundungen). #}
+{# Wie Djangos admin/base_site.html, plus Marke (Farben, Schriften aus marke.css) und admin.css (Rundungen, Abstände). #}
 
 {% block title %}{% if subtitle %}{{ subtitle }} | {% endif %}{{ title }} | {{ site_title|default:_('Django site admin') }}{% endblock %}
 
-{% block extrastyle %}{{ block.super }}<link rel="stylesheet" href="{% static 'css/admin.css' %}">
+{% block extrastyle %}{{ block.super }}<link rel="stylesheet" href="{% static 'css/marke.css' %}">
+<link rel="stylesheet" href="{% static 'css/admin.css' %}">
 <link rel="icon" href="{% static 'img/logo.svg' %}" type="image/svg+xml">{% endblock %}
 
 {% block branding %}

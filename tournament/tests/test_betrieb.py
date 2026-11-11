@@ -142,6 +142,9 @@ class BefehleTests(TestCase):
         self.assertEqual(Team.objects.im_spielplan().count(), 8)
         self.assertFalse(t.spiele.exclude(schiri_team=None).exists())
         self.assertIn("Bierpong-Turnier", ausgabe.getvalue())
+        namen = set(t.teams.values_list("name", flat=True))
+        self.assertIn("Becher Bros", namen)
+        self.assertFalse(namen & {"Smash Bros", "Baggerfahrer", "Mittelblock Mafia"})  # keine Volleyball-Namen
 
     def test_testturnier_mit_zu_wenigen_teams(self):
         with self.assertRaisesMessage(CommandError, "mindestens 6"):

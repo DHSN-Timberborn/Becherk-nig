@@ -31,7 +31,7 @@ Jede Funktion muss sich gegen "geht auch mit einem Zettel" behaupten.
   `fonts/` (Barlow, lokal statt Google Fonts – Datenschutz)
 - **Marke** (für Ableger wie Becherkönig, Fork `DHSN-Timberborn/…`): `config/marke.py` (`NAME`, als
   `settings.MARKE` und `{{ marke }}` überall statt „Satzball“), `static/css/marke.css`, `static/img/logo.svg`,
-  `templates/marke/startseite_oben.html` und `templates/marke/fuss.html` (in Satzball leer). Ein Ableger ersetzt
+  `templates/marke/startseite_oben.html`, `startseite_unten.html` und `fuss.html` (in Satzball leer). Ein Ableger ersetzt
   nur diese Dateien; alles andere kommt per „Sync fork“. Neue Farben/Schriften immer als Variable in `marke.css`.
 - `data/` – SQLite-Datei (`db.sqlite3`) und generierter `secret_key`; im Container
   `/app/data`, dort liegt das Volume `satzball-data`. Nicht ins Git.
@@ -100,8 +100,10 @@ in `.env`-Dateien schreibt es jeden Wert in Anführungszeichen, weil Compose `$`
 - Turnier-Wahl (öffentlich): `views.gewaehltes_turnier(request)` – `?turnier=<id>` (in der Session gemerkt),
   sonst das aktuelle öffentliche Turnier. Liste unter `/turniere/`; bei einem anderen als dem aktuellen Turnier zeigt
   `base.html` einen Hinweis (Block `banner`, auf Orga- und Kapitänsseiten leer).
-- Admin-Optik: `templates/admin/base_site.html` + `static/css/admin.css` (nur Django-CSS-Variablen,
-  Schrift, Rundungen). Turnier im Punkte-Modus: `static/js/admin_turnier.js` graut Satz-Felder aus
+- Admin-Optik: `templates/admin/base_site.html` lädt `marke.css` und `static/css/admin.css`; admin.css legt nur
+  Djangos CSS-Variablen auf die Marken-Farben (`--ac`, `--ink` …) und setzt Rundungen – Ableger bekommen so ihre
+  Farben auch im Admin. Hell/Dunkel folgt dem Gerät (Djangos Umschalter ausgeblendet). Die App-Überschrift im Admin
+  ist `settings.MARKE` (`tournament/apps.py`). Turnier im Punkte-Modus: `static/js/admin_turnier.js` graut Satz-Felder aus
   (bewusst nicht `disabled`, sonst fehlen die Werte beim Speichern).
 - Spielerzahl pro Turnier: Pflicht sind mindestens `pflicht_spieler` (Vorgabe `MIN_SPIELER` = 2, kleinster Wert 1),
   höchstens `max_spieler` (leer = keine Obergrenze). `min_spieler` ist nur eine **Empfehlung** (gelber Hinweis im
@@ -150,7 +152,7 @@ in `.env`-Dateien schreibt es jeden Wert in Anführungszeichen, weil Compose `$`
   dazu, macht Links ungültig;
   Teamnamen und Ergebnisse bleiben. Deshalb sind `kapitaen_name/-email` im Model optional
   (im Anmeldeformular Pflicht).
-- Befehle: `testturnier [--teams N] [--spielplan] [--bierpong]` (Probelauf; `--bierpong`: Becher, Tische, ohne Schiri,
+- Befehle: `testturnier [--teams N] [--spielplan] [--bierpong]` (Probelauf; `--bierpong`: Becher, Tische, ohne Schiri, Bierpong-Teamnamen,
   kostenlos, ab 16), `sicherung [--behalten N]`
   (SQLite-Backup nach `data/sicherungen/`).
 - Beamer-Ansicht `/beamer/` (öffentlich wie die Tabelle, erst nach Veröffentlichung; Link „Beamer →“ auf der
@@ -160,7 +162,7 @@ in `.env`-Dateien schreibt es jeden Wert in Anführungszeichen, weil Compose `$`
 - Druckansicht zum Aushang: `/orga/spielplan/druck/` (eigenständige Seite, schwarz-weiß, A4; Link auf der
   Orga-Spielplanseite). Ziel: Plan mit bis zu 16 Zeit-Slots auf einer Seite.
 - Ergebnis eintragen: `/orga/spiel/<id>/`, Satz-Modus Sätze (+ optional Ballpunkte gesamt),
-  Punkte-Modus Punktzähler, Becher-Modus Zähler für übrige Becher (endet bei der Becherzahl).
+  Punkte-Modus Punktzähler, Becher-Modus je Team Knöpfe 0 bis Becherzahl für die übrigen Becher (`_becher_wahl.html`, ohne JS).
 - Abweichung vom Design: "Ergebnis eintragen" zeigt im Punkte-Modus Punktzähler
   (z. B. 25 : 21 mit +/- Buttons) statt Sätzen.
 

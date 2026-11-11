@@ -1,4 +1,4 @@
 # Exakte Versionen: Updates kommen als Dependabot-PR und laufen vorher durch die Tests (.github/).
-Django==5.2.18
+Django==5.2.19
 gunicorn==26.2.0
 whitenoise==6.12.0

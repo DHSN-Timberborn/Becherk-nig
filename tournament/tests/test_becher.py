@@ -52,7 +52,7 @@ class BecherModusTests(TestCase):
     def test_ergebnis_pruefen(self):
         spiel = Spiel(turnier=self.t, gruppe=self.gruppe, team_a=self.teams["Adler"], team_b=self.teams["Zebra"],
                       status=Spiel.Status.BEENDET)
-        for pa, pb, fehler in [(None, 0, "beider Teams"), (11, 0, "nur 10 Becher"), (2, 2, "Verlängerung")]:
+        for pa, pb, fehler in [(None, 0, "für beide Teams"), (11, 0, "nur 10 Becher"), (2, 2, "Verlängerung")]:
             spiel.punkte_a, spiel.punkte_b = pa, pb
             with self.assertRaisesMessage(ValidationError, fehler):
                 spiel.full_clean()
@@ -81,13 +81,21 @@ class BecherModusTests(TestCase):
         spiel = self.t.spiele.first()
         url = reverse("orga_ergebnis", args=[spiel.pk])
         r = self.client.get(url)
-        self.assertContains(r, 'name="punkte_a"')
-        self.assertContains(r, 'max="10"')  # Zähler endet bei der Becherzahl
+        # Knöpfe 0 bis Becherzahl je Team statt Zähler, noch keiner gewählt
+        for name in ("punkte_a", "punkte_b"):
+            self.assertContains(r, f'type="radio" name="{name}"', count=11)
+            self.assertContains(r, f'name="{name}" value="10"')
+            self.assertNotContains(r, f'name="{name}" value="11"')
+        self.assertNotContains(r, " checked>")
+        self.assertNotContains(r, 'class="zaehler__wert"')
         self.assertContains(r, "Wie viele Becher stehen noch?")
         self.assertNotContains(r, 'name="saetze_a"')
 
+        r = self.client.post(url, {"punkte_a": "3"}, follow=True)
+        self.assertContains(r, "Bitte für beide Teams wählen, wie viele Becher noch stehen.")
         r = self.client.post(url, {"punkte_a": "3", "punkte_b": "3"}, follow=True)
         self.assertContains(r, "Verlängerung")
+        self.assertContains(r, 'name="punkte_a" value="3" checked>', html=False)  # Auswahl bleibt nach dem Fehler
         self.client.post(url, {"punkte_a": "3", "punkte_b": "0"})
         spiel.refresh_from_db()
         self.assertEqual((spiel.status, spiel.punkte_a, spiel.punkte_b), (Spiel.Status.BEENDET, 3, 0))

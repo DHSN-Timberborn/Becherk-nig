@@ -201,5 +201,16 @@ b, strong { font-weight: 700; }
 .zaehler__trenner { font: 800 40px var(--kond); color: var(--mut); }
 .zaehler__knoepfe { display: flex; gap: 8px; }
 .zaehler__knoepfe button { width: 56px; height: 56px; border: 0; border-radius: 14px; background: var(--acs); color: var(--ac); font-size: 28px; font-weight: 700; cursor: pointer; }
+/* Becher-Modus: Knöpfe 0 bis Becherzahl statt Zähler (templates/tournament/orga/_becher_wahl.html) */
+.becherwahl__kopf { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.becherwahl__knoepfe { display: grid; grid-template-columns: repeat(6, 1fr); gap: 8px; }
+.becherwahl__knoepfe label { position: relative; }
+.becherwahl__knoepfe input { position: absolute; opacity: 0; pointer-events: none; }
+.becherwahl__knoepfe span {
+  display: flex; align-items: center; justify-content: center; height: 52px; border-radius: 14px; cursor: pointer;
+  background: var(--acs); color: var(--ac); font: 800 24px/1 var(--kond);
+}
+.becherwahl__knoepfe input:checked + span { background: var(--ac); color: var(--aci); }
+.becherwahl__knoepfe input:focus-visible + span { outline: 3px solid var(--ac); outline-offset: 2px; }
 .btn-link--neutral { color: var(--ac); }
 details summary { cursor: pointer; }

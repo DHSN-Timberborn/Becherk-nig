@@ -23,6 +23,12 @@ TIMBERBORN = {
                 ("Max", "K."), ("Leon", "S."), ("Oliver", "M.")],
 }
 VORNAMEN = ["Lena", "Max", "Kim", "Jonas", "Mia", "Paul", "Emma", "Noah", "Lea", "Finn", "Sara", "Tom"]
+# Für --bierpong (gleich viele wie TEAMNAMEN, damit --teams überall dieselbe Grenze hat)
+BIERPONG_TEAMNAMEN = [
+    "Becher Bros", "Ping Pong Prost", "Die Treffsicheren", "Hopfenhelden", "Cup Cakes",
+    "Schaumschläger", "Die Abräumer", "Becherjäger", "Zielwasser", "Pong Dynastie",
+    "Last Cup Standing", "Wurfmaschinen", "Die Nachfüller", "Ball im Glas", "Bierbarone", "Rebound Rangers",
+]
 NACHNAMEN = ["Hoffmann", "Meier", "Nguyen", "Schulz", "Wolf", "Becker", "Krüger", "Yilmaz", "Lange", "Weber"]
 
 
@@ -40,7 +46,7 @@ class Command(BaseCommand):
 
     @transaction.atomic
     def handle(self, *args, teams, modus, zaehlmodus, mit_spielplan, bierpong, **options):
-        namen = [TIMBERBORN["name"]] + TEAMNAMEN
+        namen = [TIMBERBORN["name"]] + (BIERPONG_TEAMNAMEN if bierpong else TEAMNAMEN)
         if not 2 <= teams <= len(namen) - 2:
             raise CommandError(f"--teams muss zwischen 2 und {len(namen) - 2} liegen.")
         jetzt = timezone.localtime()
