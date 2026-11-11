@@ -73,3 +73,24 @@ class MarkeTests(TestCase):
         self.assertContains(r, "Testmarke ist Open Source")
         self.assertNotContains(r, f"<title>{MARKE}")
         self.assertNotContains(r, f"{MARKE} ist Open Source")
+
+
+class MarkeImAdminTests(TestCase):
+    def setUp(self):
+        self.client.force_login(User.objects.create_superuser("orga", "orga@example.invalid", "geheim-123"))
+
+    def test_admin_heisst_wie_die_marke(self):
+        from django.apps import apps
+        self.assertEqual(apps.get_app_config("tournament").verbose_name, MARKE)
+        r = self.client.get(reverse("admin:index"))
+        self.assertContains(r, f"{MARKE} – Orga")
+        self.assertContains(r, f'title="Modelle der {MARKE}-Anwendung"', html=False)
+
+    def test_admin_laedt_marken_farben_vor_admin_css(self):
+        html = self.client.get(reverse("admin:index")).content.decode()
+        self.assertIn("css/marke.css", html)
+        self.assertLess(html.index("css/marke.css"), html.index("css/admin.css"))
+
+    def test_startseite_hat_baustein_unten(self):
+        r = self.client.get(reverse("startseite"))
+        self.assertTemplateUsed(r, "marke/startseite_unten.html")
