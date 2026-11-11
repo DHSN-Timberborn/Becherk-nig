@@ -1,9 +1,17 @@
-{% load static %}{# Becherkönig: „So funktioniert’s“ ganz unten auf der Startseite (Design und Bild: Leon Scholle). #}
+{% load static %}{# Becherkönig: „So läuft’s ab“ und rote „So funktioniert’s“-Fläche ganz unten auf der Startseite (Design und Bilder: Leon Scholle). #}
 {% if turnier %}
+<section class="bk-ablauf" aria-labelledby="bk-ablauf-titel">
+  <h2 class="bk-st" id="bk-ablauf-titel">So läuft’s ab</h2>
+  <figure class="bk-rahmen"><img src="{% static 'img/becherkoenig/anmelden.jpg' %}" alt="Anmeldung am Orga-Tisch" loading="lazy"><figcaption><span>1. Anmelden</span></figcaption></figure>
+  <figure class="bk-rahmen"><img src="{% static 'img/becherkoenig/auslosen.jpg' %}" alt="Auslosung der Teams" loading="lazy"><figcaption><span>2. Auslosen</span></figcaption></figure>
+  <figure class="bk-rahmen"><img src="{% static 'img/becherkoenig/spielen.jpg' %}" alt="Bierpong-Spiel" loading="lazy"><figcaption><span>3. Spielen</span></figcaption></figure>
+</section>
+
 <section class="bk-regeln">
-  <figure class="bk-regeln__bild">
+  {% include "marke/_splitter.html" with id="-regeln" %}
+  <figure class="bk-rahmen">
     <img src="{% static 'img/becherkoenig/tisch.jpg' %}" alt="Bierpong-Tisch mit Bechern und Ball" loading="lazy">
-    <figcaption>Becher &amp; Ball</figcaption>
+    <figcaption><span>Becher &amp; Ball</span></figcaption>
   </figure>
   <div class="bk-regeln__text">
     <h2 class="bk-regeln__titel">So funktioniert’s</h2>
