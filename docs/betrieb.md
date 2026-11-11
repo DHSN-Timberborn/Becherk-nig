@@ -17,7 +17,23 @@ Erprobt auf Debian 12. Als `root` angemeldet entfällt das `sudo` vor den Befehl
 - Pro App eine **Domain mit DNS-Eintrag (Typ A)** auf die Server-IP. Prüfen:
   `getent hosts volleyball.example.de` muss die Server-IP zeigen. Ohne Domain geht es auch – dann nur über
   `http://<IP>` und ohne HTTPS (siehe unten).
-- Docker mit Compose und git:
+## Installation mit dem Skript (empfohlen)
+
+Auf einem frischen Debian/Ubuntu-Server reicht ein Befehl:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/Kootaro05/Satzball/main/install.sh | sudo bash
+```
+
+Das Skript installiert bei Bedarf Docker und git und fragt dann in der Konsole: Becherkönig dazu ja/nein,
+Domains (leer = nur über die IP), Verantwortliche/r für die Datenschutzerklärung, SMTP-Zugang (optional),
+Orga-Zugang mit Passwort und ob ein Testturnier angelegt werden soll. Danach schreibt es alles nach
+`/opt/satzball`, startet die Container, legt den Orga-Zugang an und richtet die tägliche Sicherung ein.
+Am Ende steht, unter welcher Adresse es weitergeht. Alles lässt sich später wie unten beschrieben ändern.
+
+## Einmalig einrichten (von Hand)
+
+Was das Skript macht, Schritt für Schritt. Vorher Docker mit Compose und git installieren:
 
 ```bash
 curl -fsSL https://get.docker.com | sudo sh
@@ -26,8 +42,6 @@ curl -fsSL https://get.docker.com | sudo sh
 ```bash
 sudo apt install -y git
 ```
-
-## Einmalig einrichten
 
 **1. Dateien holen**
 
@@ -53,7 +67,8 @@ sudo nano satzball.env
 
 Werte eintragen. Stolperfallen:
 
-- **Keine Anführungszeichen.** Docker liest die Datei wörtlich, Anführungszeichen werden Teil des Werts.
+- **`$`, `#` und Anführungszeichen:** Compose liest `$` als Variable und ` #` als Kommentar. Enthält ein Wert
+  (z. B. ein Passwort) solche Zeichen, ihn in einfache Anführungszeichen setzen: `EMAIL_HOST_PASSWORD='ab$c #1'`.
 - **Absender** in der Form `DEFAULT_FROM_EMAIL=Name <adresse@domain>`. Als Adresse das Postfach von
   `EMAIL_HOST_USER` nehmen, fremde Absender lehnen die meisten Anbieter ab.
 - **Verantwortlicher** für die Datenschutzerklärung: `SATZBALL_VERANTWORTLICHER=Name | Straße | PLZ Ort | E-Mail: …`

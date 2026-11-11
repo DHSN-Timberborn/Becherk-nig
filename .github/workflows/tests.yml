@@ -68,6 +68,33 @@ jobs:
           docker cp docs/Caddyfile.example caddy:/tmp/Caddyfile.example
           docker exec caddy caddy validate --config /tmp/Caddyfile.example --adapter caddyfile
 
+      - name: install.sh wie auf einem frischen Server (ohne Domain, mit Becherkönig, Image aus diesem Lauf)
+        run: |
+          docker compose down -v
+          # Becherkönig mit dem Image aus diesem Lauf testen (das echte Fork-Image kennt neue Befehle erst nach dem Sync)
+          docker tag satzball ghcr.io/dhsn-timberborn/becherkoenig:latest
+          sudo git config --global --add safe.directory '*'
+          IP=$(hostname -I | awk '{print $1}')
+          # Antworten in der Reihenfolge der Fragen: Becherkönig, IP, 2 Domains, Verantwortlicher (4),
+          # SMTP (ja, Server, Port, Benutzer, Passwort), Orga (Name, Mail, Passwort 2×), Testturnier.
+          # Sonderzeichen ($, #, ', Leerzeichen) prüfen, dass die .env-Dateien richtig geschrieben werden.
+          printf '%s\n' j "" "" "" "Erika O'Muster" "Musterweg 1" "12345 Musterstadt" "orga@example.invalid" \
+            j smtp.example.invalid "" orga@example.invalid 'smtp$pw #1' \
+            orga orga@example.invalid 'pro$be pass#wort' 'pro$be pass#wort' j > "$RUNNER_TEMP/antworten.txt"
+          sudo SATZBALL_ZIEL="$RUNNER_TEMP/satzball" SATZBALL_QUELLE="$GITHUB_WORKSPACE" \
+            SATZBALL_EINGABE="$RUNNER_TEMP/antworten.txt" bash install.sh
+          curl -fsS "http://$IP/" | grep -q "Probelauf"
+          curl -fsS "http://$IP:8080/" | grep -q "Probelauf"
+          curl -fsS "http://$IP/datenschutz/" | grep -q "Musterweg 1"
+          test "$(docker exec satzball printenv EMAIL_HOST_PASSWORD)" = 'smtp$pw #1'
+          test "$(docker exec becherkoenig printenv SATZBALL_VERANTWORTLICHER)" = "Erika O'Muster | Musterweg 1 | 12345 Musterstadt | E-Mail: orga@example.invalid"
+          test "$(docker exec becherkoenig printenv DEFAULT_FROM_EMAIL)" = "Becherkönig <orga@example.invalid>"
+          for app in satzball becherkoenig; do
+            docker exec "$app" python manage.py shell -c "from django.contrib.auth.models import User; assert User.objects.get(username='orga').check_password('pro\$be pass#wort')"
+          done
+          docker exec becherkoenig python manage.py shell -c "from tournament.models import Turnier; assert Turnier.objects.get().zaehlmodus == 'becher'"
+          test "$(sudo crontab -l | grep -c 'manage.py sicherung')" = 2
+
       - name: Image veröffentlichen (nur main)
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         env:
