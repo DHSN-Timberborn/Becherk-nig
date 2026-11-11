@@ -64,3 +64,29 @@
   position: absolute; left: 0; right: 0; bottom: 0; background: var(--ac); color: #fff; text-align: center; padding: 2px;
   font: 600 12px var(--kond); text-transform: uppercase; letter-spacing: .04em;
 }
+
+/* Startseite unten (templates/marke/startseite_unten.html): rote „So funktioniert’s“-Fläche nach Leons Seite */
+.bk-regeln {
+  margin: 8px -20px -28px; padding: 40px 20px 32px; color: #fff; display: grid; gap: 22px; align-items: center;
+  background: linear-gradient(135deg, #9d0614, #e31e24 55%, #ff4757);
+  clip-path: polygon(0 16px, 100% 0, 100% 100%, 0 100%);
+}
+.bk-regeln__bild { margin: 0 6px; position: relative; aspect-ratio: 1408 / 768; overflow: hidden; transform: skewX(-8deg); border: 5px solid #fff; box-shadow: 0 6px 16px rgba(0, 0, 0, .3); background: #222; }
+.bk-regeln__bild img { position: absolute; inset: 0 -6%; width: 112%; height: 100%; object-fit: cover; transform: skewX(8deg); }
+.bk-regeln__bild figcaption {
+  position: absolute; left: 0; right: 0; bottom: 0; background: var(--ac); color: #fff; text-align: center; padding: 3px;
+  font: 600 13px var(--kond); text-transform: uppercase; letter-spacing: .05em;
+}
+.bk-regeln__text { display: flex; flex-direction: column; gap: 10px; }
+.bk-regeln__text p { margin: 0; line-height: 1.5; }
+.bk-regeln__titel { margin: 0 0 4px; font: 700 28px/1.1 var(--kond); text-transform: uppercase; letter-spacing: .03em; }
+/* Gekreuzte Balken wie bei Leon */
+.bk-regeln__titel::after {
+  content: ""; display: inline-block; width: 24px; height: 24px; margin-left: 10px; vertical-align: -3px;
+  background: linear-gradient(45deg, transparent 41%, #fff 41% 59%, transparent 59%),
+              linear-gradient(-45deg, transparent 41%, #fff 41% 59%, transparent 59%);
+}
+@media (min-width: 720px) { .bk-regeln { grid-template-columns: 1fr 1fr; padding: 48px 32px 40px; } }
+
+/* Admin (lädt diese Datei vor admin.css): Titel in aufrechter Oswald statt schräger Barlow */
+:root #site-name { font-style: normal; font-weight: 700; letter-spacing: .03em; }
