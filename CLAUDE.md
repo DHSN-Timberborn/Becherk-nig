@@ -152,7 +152,7 @@ in `.env`-Dateien schreibt es jeden Wert in Anführungszeichen, weil Compose `$`
   dazu, macht Links ungültig;
   Teamnamen und Ergebnisse bleiben. Deshalb sind `kapitaen_name/-email` im Model optional
   (im Anmeldeformular Pflicht).
-- Befehle: `testturnier [--teams N] [--spielplan] [--bierpong]` (Probelauf; `--bierpong`: Becher, Tische, ohne Schiri,
+- Befehle: `testturnier [--teams N] [--spielplan] [--bierpong]` (Probelauf; `--bierpong`: Becher, Tische, ohne Schiri, Bierpong-Teamnamen,
   kostenlos, ab 16), `sicherung [--behalten N]`
   (SQLite-Backup nach `data/sicherungen/`).
 - Beamer-Ansicht `/beamer/` (öffentlich wie die Tabelle, erst nach Veröffentlichung; Link „Beamer →“ auf der
