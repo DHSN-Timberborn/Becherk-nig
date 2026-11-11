@@ -29,64 +29,149 @@
   }
 }
 
-/* Stil: aufrechte Oswald-Versalien, fast eckige Karten mit rotem Rand links, schräge Etiketten */
-:root .titel, :root .marke { font-style: normal; font-weight: 700; letter-spacing: .02em; }
-:root .zwischen { font-weight: 600; letter-spacing: .05em; }
-:root .karte, :root .liste, :root .partie, :root .kacheln--lose .kachel {
-  border-radius: 0; border-left: 5px solid var(--ac); box-shadow: 0 6px 16px rgba(0, 0, 0, .1);
-}
-:root .kacheln { border-radius: 0; border-left: 5px solid var(--ac); }
-:root .btn { border-radius: 3px; font-family: var(--kond); font-weight: 700; text-transform: uppercase; letter-spacing: .05em; }
-:root .btn--hinzu { border-radius: 3px; }
-:root .feld input:not([type=checkbox]), :root .spieler-zeile input { border-radius: 3px; }
-:root .hinweis, :root .countdown { border-radius: 0; border-left: 5px solid currentColor; }
-:root .badge { border-radius: 2px; }
+/* ===== Leons Look (Bierpong-Seite der Timberborn-Volleys) für alle öffentlichen Seiten =====
+   Gerissene Papierkanten, rote Flächen mit Splittern, weiße Kopfleiste, schwarzer Fuß, aufrechte Oswald-Versalien,
+   eckige Karten mit rotem Rand, schräge rote Etiketten. Regeln mit „:root“ davor, damit sie gegen satzball.css gewinnen. */
 
-/* Startseite (templates/marke/startseite_oben.html): rotes Titelbild und „So läuft’s ab“ */
-.bk-hero {
-  position: relative; overflow: hidden; color: #fff; padding: 26px 20px 24px;
-  background: linear-gradient(135deg, rgba(157, 6, 20, .92), rgba(227, 30, 36, .85) 55%, rgba(255, 71, 87, .8)), var(--bild) center / cover;
-  clip-path: polygon(0 0, 100% 0, 100% calc(100% - 14px), 0 100%);
-  display: flex; flex-direction: column; gap: 10px;
+/* Gerissene Kanten als feste Polygone (ohne Bilder) */
+:root {
+  --etikett: #e11d2e;  /* Hintergrund für weiße Schrift (Etiketten, Tabellenkopf, Orga-Knopf) – auch im Dunkelmodus */
+  --riss-unten: polygon(0 0, 100% 0, 100% calc(100% - 4px), 98.7% calc(100% - 9px), 96.4% calc(100% - 4px), 94.5% calc(100% - 3px), 93.2% calc(100% - 15px), 90.1% calc(100% - 5px), 88.2% calc(100% - 3px), 85.6% calc(100% - 12px), 84.3% calc(100% - 4px), 81.5% calc(100% - 3px), 78.3% calc(100% - 4px), 76.9% calc(100% - 3px), 74.4% calc(100% - 15px), 72.5% calc(100% - 15px), 69.6% calc(100% - 4px), 67.4% calc(100% - 3px), 65.9% calc(100% - 15px), 64.3% calc(100% - 5px), 62.9% calc(100% - 4px), 60.3% calc(100% - 12px), 57.5% calc(100% - 15px), 55.2% calc(100% - 12px), 53.8% calc(100% - 9px), 50.9% calc(100% - 9px), 48.9% calc(100% - 3px), 46.4% calc(100% - 3px), 43.5% calc(100% - 5px), 41.2% calc(100% - 9px), 38.7% calc(100% - 4px), 36.7% calc(100% - 9px), 35.3% calc(100% - 6px), 32.9% calc(100% - 12px), 30.5% calc(100% - 6px), 28.6% calc(100% - 6px), 27.3% calc(100% - 9px), 26.0% calc(100% - 5px), 23.5% calc(100% - 2px), 20.3% calc(100% - 4px), 18.9% calc(100% - 5px), 17.5% calc(100% - 9px), 15.4% calc(100% - 5px), 14.1% calc(100% - 9px), 10.9% calc(100% - 2px), 8.9% calc(100% - 4px), 5.9% calc(100% - 4px), 3.3% calc(100% - 5px), 0.0% calc(100% - 15px));
+  --riss-oben: polygon(0.0% 9px, 2.1% 3px, 3.5% 3px, 5.5% 12px, 8.7% 5px, 11.8% 12px, 14.5% 15px, 17.2% 5px, 20.5% 6px, 21.9% 6px, 23.6% 9px, 24.9% 6px, 26.6% 2px, 28.2% 15px, 30.7% 15px, 34.0% 2px, 36.2% 5px, 38.3% 5px, 39.7% 5px, 41.0% 4px, 44.4% 3px, 46.0% 15px, 48.5% 4px, 49.7% 6px, 52.1% 15px, 54.6% 4px, 57.7% 5px, 59.3% 12px, 62.6% 15px, 64.8% 4px, 67.9% 3px, 70.1% 12px, 71.5% 4px, 74.4% 12px, 76.6% 6px, 79.0% 9px, 82.3% 15px, 83.8% 2px, 86.7% 12px, 90.0% 4px, 92.7% 12px, 95.1% 6px, 97.1% 9px, 99.4% 15px, 100% 4px, 100% 100%, 0 100%);
+  --riss-beide: polygon(0.0% 9px, 2.1% 3px, 3.5% 3px, 5.5% 12px, 8.7% 5px, 11.8% 12px, 14.5% 15px, 17.2% 5px, 20.5% 6px, 21.9% 6px, 23.6% 9px, 24.9% 6px, 26.6% 2px, 28.2% 15px, 30.7% 15px, 34.0% 2px, 36.2% 5px, 38.3% 5px, 39.7% 5px, 41.0% 4px, 44.4% 3px, 46.0% 15px, 48.5% 4px, 49.7% 6px, 52.1% 15px, 54.6% 4px, 57.7% 5px, 59.3% 12px, 62.6% 15px, 64.8% 4px, 67.9% 3px, 70.1% 12px, 71.5% 4px, 74.4% 12px, 76.6% 6px, 79.0% 9px, 82.3% 15px, 83.8% 2px, 86.7% 12px, 90.0% 4px, 92.7% 12px, 95.1% 6px, 97.1% 9px, 99.4% 15px, 100% 4px, 100% calc(100% - 4px), 98.7% calc(100% - 9px), 96.4% calc(100% - 4px), 94.5% calc(100% - 3px), 93.2% calc(100% - 15px), 90.1% calc(100% - 5px), 88.2% calc(100% - 3px), 85.6% calc(100% - 12px), 84.3% calc(100% - 4px), 81.5% calc(100% - 3px), 78.3% calc(100% - 4px), 76.9% calc(100% - 3px), 74.4% calc(100% - 15px), 72.5% calc(100% - 15px), 69.6% calc(100% - 4px), 67.4% calc(100% - 3px), 65.9% calc(100% - 15px), 64.3% calc(100% - 5px), 62.9% calc(100% - 4px), 60.3% calc(100% - 12px), 57.5% calc(100% - 15px), 55.2% calc(100% - 12px), 53.8% calc(100% - 9px), 50.9% calc(100% - 9px), 48.9% calc(100% - 3px), 46.4% calc(100% - 3px), 43.5% calc(100% - 5px), 41.2% calc(100% - 9px), 38.7% calc(100% - 4px), 36.7% calc(100% - 9px), 35.3% calc(100% - 6px), 32.9% calc(100% - 12px), 30.5% calc(100% - 6px), 28.6% calc(100% - 6px), 27.3% calc(100% - 9px), 26.0% calc(100% - 5px), 23.5% calc(100% - 2px), 20.3% calc(100% - 4px), 18.9% calc(100% - 5px), 17.5% calc(100% - 9px), 15.4% calc(100% - 5px), 14.1% calc(100% - 9px), 10.9% calc(100% - 2px), 8.9% calc(100% - 4px), 5.9% calc(100% - 4px), 3.3% calc(100% - 5px), 0.0% calc(100% - 15px));
 }
-.bk-hero__titel { margin: 0; font: 700 30px/1.05 var(--kond); text-transform: uppercase; text-shadow: 0 2px 6px rgba(0, 0, 0, .4); }
+
+/* Kreuz „✕“ aus zwei Balken, wie bei Leon hinter Überschriften und Logo */
+:root .titel::after, :root .marke::after, .bk-st::after, .bk-regeln__titel::after, .fuss::before {
+  --x: var(--ac);
+  content: ""; display: inline-block; width: .55em; height: .55em; margin-left: .3em; vertical-align: .02em;
+  background: linear-gradient(45deg, transparent 38%, var(--x) 38% 62%, transparent 62%),
+              linear-gradient(-45deg, transparent 38%, var(--x) 38% 62%, transparent 62%);
+}
+
+/* Kopfleiste: weiß mit Schatten, Schriftzug statt Logo, Orga-Knopf rot */
+:root .kopf {
+  position: relative; z-index: 5; padding: 12px 16px; background: var(--sf); box-shadow: 0 2px 8px rgba(0, 0, 0, .14);
+}
+:root .marke { font: 700 24px/1 var(--kond); letter-spacing: .04em; color: var(--ink); gap: 0; }
+:root .marke img { display: none; }
+:root .kopf__link {
+  background: var(--etikett); color: #fff; padding: 7px 14px; border-radius: 3px;
+  max-width: 60%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;  /* lange Turniernamen (Kapitänsseite) */
+  font: 600 14px var(--kond); text-transform: uppercase; letter-spacing: .05em;
+}
+:root .kopf__link:hover { text-decoration: none; filter: brightness(1.06); }
+:root .zurueck { font-family: var(--kond); text-transform: uppercase; letter-spacing: .04em; }
+
+/* Überschriften */
+:root .titel { font: 700 40px/1 var(--kond); letter-spacing: .01em; }
+:root .titel--m { font-size: 32px; }
+:root .zwischen {
+  align-self: flex-start; display: inline-block; background: var(--etikett); color: #fff; padding: 4px 16px;
+  transform: skewX(-10deg); font: 600 17px var(--kond); letter-spacing: .05em;
+}
+:root .kopfzeile .zwischen { align-self: center; }
+:root .text h2 { font-family: var(--kond); font-weight: 700; letter-spacing: .02em; }
+
+/* Karten, Listen, Kacheln: eckig, roter Rand links, Schatten */
+:root .karte, :root .liste, :root .partie, :root .kacheln:not(.kacheln--lose), :root .kacheln--lose .kachel, :root .tabelle {
+  border: 0; border-radius: 0; border-left: 6px solid var(--ac); box-shadow: 0 8px 20px rgba(0, 0, 0, .12);
+}
+/* Lose Kacheln (z. B. Startzeit/Slotlänge auf der Orga-Spielplanseite) sind nur ein Raster – ohne eigenen Rand */
+:root .kacheln:not(.kacheln--lose) { gap: 1px; background: var(--line); }
+:root .kachel__wert, :root .zahl { font-weight: 700; }
+:root .liste__zeile--link:hover { background: var(--acs); }
+:root .team { border-bottom-color: var(--line); }
+
+/* Knöpfe und Felder */
+:root .btn { height: 54px; border-radius: 3px; font: 700 18px var(--kond); text-transform: uppercase; letter-spacing: .06em; box-shadow: 0 4px 10px rgba(0, 0, 0, .18); }
+:root .btn--sekundaer { background: transparent; border: 2px solid var(--ac); color: var(--ac); box-shadow: none; }
+:root .btn--hinzu { border: 2px dashed var(--ac); border-radius: 3px; color: var(--ac); box-shadow: none; }
+:root .btn-link { font-family: var(--kond); text-transform: uppercase; letter-spacing: .05em; }
+:root .feld input:not([type=checkbox]), :root .spieler-zeile input, :root .auswahl, :root .feld select {
+  border: 2px solid var(--line); border-radius: 3px;
+}
+:root .feld input:not([type=checkbox]):focus, :root .spieler-zeile input:focus { border-color: var(--ac); outline: 0; }
+:root .wahl { border-radius: 0; border-width: 2px; }
+
+/* Hinweise, Etiketten, Fortschritt */
+:root .hinweis, :root .countdown { border-radius: 0; border-left: 5px solid currentColor; }
+:root .badge { border-radius: 2px; font-family: var(--kond); text-transform: uppercase; letter-spacing: .05em; }
+:root .badge--angemeldet { background: var(--etikett); color: #fff; }
+:root .plaetze span, :root .fortschritt span::before { border-radius: 0; }
+
+/* Spielplan: Uhrzeit als schräges rotes Etikett, Sieger rot hinterlegt */
+:root .slot__zeit { align-self: flex-start; background: var(--etikett); color: #fff; padding: 2px 14px; transform: skewX(-10deg); font-size: 18px; }
+:root .partie { gap: 4px; }
+:root .partie__zeile span:first-child { overflow-wrap: break-word; hyphens: auto; }  /* „Schaum-schläger“ statt „Schaumschläge r“ */
+:root .partie__zeile--sieger { color: var(--ac); }
+:root .slot--live .partie { border-left-color: var(--gr); }
+
+/* Tabelle: rote Kopfzeile in Oswald, Spitzenreiter hervorgehoben */
+:root .tabelle { background: var(--sf); }
+:root .tabelle th {
+  background: var(--etikett); color: #fff; font: 600 13px var(--kond); text-transform: uppercase; letter-spacing: .04em; padding: 8px;
+}
+:root .tabelle tbody tr:first-child td { background: var(--acs); font-weight: 700; }
+
+/* Fuß: schwarz, oben gerissen, großer Schriftzug */
+:root .fuss {
+  margin-top: 24px; padding: 54px 20px 24px; background: #0f0f10; color: #cfc7c7; clip-path: var(--riss-oben);
+  font-size: 13px; line-height: 1.6;
+}
+:root .fuss a { color: #fff; }
+.fuss::before {
+  content: "Becherkönig"; display: block; width: auto; height: auto; margin: 0 0 8px; background: none;
+  color: #fff; font: 700 24px/1 var(--kond); letter-spacing: .05em; text-transform: uppercase;
+}
+
+/* Untere Navigation: Oswald, aktiver Punkt rot mit Balken */
+:root .nav { box-shadow: 0 -2px 8px rgba(0, 0, 0, .12); border-top: 0; }
+:root .nav a { font-family: var(--kond); text-transform: uppercase; letter-spacing: .05em; }
+:root .nav a[aria-current="page"] { box-shadow: inset 0 3px 0 var(--ac); }
+
+/* ===== Startseite oben (templates/marke/startseite_oben.html): rotes Titelbild mit Splittern, unten gerissen ===== */
+.bk-hero {
+  position: relative; overflow: hidden; margin: -20px -20px 0; min-height: 330px; padding: 44px 20px 70px; color: #fff;
+  background: linear-gradient(135deg, #9d0614, #e31e24 55%, #ff4757);
+  clip-path: var(--riss-unten); display: flex; flex-direction: column; justify-content: center; gap: 12px;
+}
+.bk-splitter { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
+.bk-hero > :not(.bk-splitter) { position: relative; z-index: 1; }
+.bk-hero__titel { margin: 0; font: 700 36px/1.05 var(--kond); text-transform: uppercase; text-shadow: 0 2px 6px rgba(0, 0, 0, .4); }
 .bk-hero p:not(.bk-hero__titel) { margin: 0; text-shadow: 0 1px 4px rgba(0, 0, 0, .5); }
 .bk-hero__knopf {
-  align-self: flex-start; margin-top: 4px; background: #fff; color: #c20f20; padding: 9px 20px; border-radius: 3px;
+  align-self: flex-start; margin-top: 6px; background: #fff; color: #c20f20; padding: 10px 24px; border-radius: 3px;
   font: 700 15px var(--kond); text-transform: uppercase; letter-spacing: .05em; box-shadow: 0 4px 10px rgba(0, 0, 0, .3);
 }
 .bk-hero__knopf:hover { text-decoration: none; filter: brightness(.96); }
-.bk-ablauf { display: flex; flex-direction: column; gap: 10px; }
-.bk-ablauf__bilder { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; padding: 0 4px; }
-.bk-ablauf figure { margin: 0; position: relative; aspect-ratio: 4 / 3; overflow: hidden; transform: skewX(-8deg); border: 3px solid var(--sf); box-shadow: 0 4px 12px rgba(0, 0, 0, .25); background: #222; }
-.bk-ablauf img { position: absolute; inset: 0 -12%; width: 124%; height: 100%; object-fit: cover; transform: skewX(8deg); }
-.bk-ablauf figcaption {
-  position: absolute; left: 0; right: 0; bottom: 0; background: var(--ac); color: #fff; text-align: center; padding: 2px;
-  font: 600 12px var(--kond); text-transform: uppercase; letter-spacing: .04em;
-}
 
-/* Startseite unten (templates/marke/startseite_unten.html): rote „So funktioniert’s“-Fläche nach Leons Seite */
-.bk-regeln {
-  margin: 8px -20px -28px; padding: 40px 20px 32px; color: #fff; display: grid; gap: 22px; align-items: center;
-  background: linear-gradient(135deg, #9d0614, #e31e24 55%, #ff4757);
-  clip-path: polygon(0 16px, 100% 0, 100% 100%, 0 100%);
-}
-.bk-regeln__bild { margin: 0 6px; position: relative; aspect-ratio: 1408 / 768; overflow: hidden; transform: skewX(-8deg); border: 5px solid #fff; box-shadow: 0 6px 16px rgba(0, 0, 0, .3); background: #222; }
-.bk-regeln__bild img { position: absolute; inset: 0 -6%; width: 112%; height: 100%; object-fit: cover; transform: skewX(8deg); }
-.bk-regeln__bild figcaption {
+/* Große Abschnittsüberschrift mittig mit Kreuz (Leons „.st“) */
+.bk-st { margin: 8px 0 4px; text-align: center; font: 700 32px/1.1 var(--kond); text-transform: uppercase; letter-spacing: .03em; }
+
+/* ===== Startseite unten (templates/marke/startseite_unten.html): „So läuft’s ab“ und rote „So funktioniert’s“-Fläche ===== */
+.bk-ablauf { display: flex; flex-direction: column; gap: 18px; margin-top: 12px; }
+.bk-rahmen { margin: 0 8px; position: relative; aspect-ratio: 16 / 10; overflow: hidden; transform: skewX(-8deg); border: 4px solid #fff; box-shadow: 0 6px 16px rgba(0, 0, 0, .3); background: #222; }
+.bk-rahmen img { position: absolute; inset: 0 -6%; width: 112%; height: 100%; object-fit: cover; transform: skewX(8deg); }
+.bk-rahmen figcaption {
   position: absolute; left: 0; right: 0; bottom: 0; background: var(--ac); color: #fff; text-align: center; padding: 3px;
-  font: 600 13px var(--kond); text-transform: uppercase; letter-spacing: .05em;
+  font: 600 14px var(--kond); text-transform: uppercase; letter-spacing: .05em;
 }
+.bk-rahmen figcaption span { display: inline-block; transform: skewX(8deg); }
+.bk-regeln {
+  position: relative; overflow: hidden; margin: 24px -20px -28px; padding: 64px 20px 64px; color: #fff;
+  display: grid; gap: 26px; align-items: center; background: var(--ac); clip-path: var(--riss-beide);
+}
+.bk-regeln > :not(.bk-splitter) { position: relative; z-index: 1; }
+.bk-regeln .bk-rahmen { aspect-ratio: 1408 / 768; border-width: 6px; }
 .bk-regeln__text { display: flex; flex-direction: column; gap: 10px; }
 .bk-regeln__text p { margin: 0; line-height: 1.5; }
-.bk-regeln__titel { margin: 0 0 4px; font: 700 28px/1.1 var(--kond); text-transform: uppercase; letter-spacing: .03em; }
-/* Gekreuzte Balken wie bei Leon */
-.bk-regeln__titel::after {
-  content: ""; display: inline-block; width: 24px; height: 24px; margin-left: 10px; vertical-align: -3px;
-  background: linear-gradient(45deg, transparent 41%, #fff 41% 59%, transparent 59%),
-              linear-gradient(-45deg, transparent 41%, #fff 41% 59%, transparent 59%);
-}
-@media (min-width: 720px) { .bk-regeln { grid-template-columns: 1fr 1fr; padding: 48px 32px 40px; } }
+.bk-regeln__titel { margin: 0 0 4px; font: 700 30px/1.1 var(--kond); text-transform: uppercase; letter-spacing: .03em; }
+.bk-regeln__titel::after { --x: #fff; }
+@media (min-width: 720px) { .bk-regeln { grid-template-columns: 1fr 1fr; padding: 80px 32px; } }
+/* Fuß direkt nach der roten Fläche: kein Abstand, die gerissene Kante sitzt auf dem Rot */
+.inhalt:has(.bk-regeln) + .fuss { margin-top: 0; }
 
 /* Admin (lädt diese Datei vor admin.css): Titel in aufrechter Oswald statt schräger Barlow */
 :root #site-name { font-style: normal; font-weight: 700; letter-spacing: .03em; }
+:root #site-name::after { display: none; }

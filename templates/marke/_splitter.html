@@ -1,0 +1,15 @@
+{# Splitter, gekreuzte Balken und Punkte im Hintergrund der roten Flächen – nach Leons Seite (rauer Rand per SVG-Filter). #}
+<svg class="bk-splitter" viewBox="0 0 800 500" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+  <filter id="bk-rau{{ id|default:'' }}" x="-5%" y="-40%" width="110%" height="180%">
+    <feTurbulence type="fractalNoise" baseFrequency=".035" numOctaves="3" seed="4"/>
+    <feDisplacementMap in="SourceGraphic" scale="26"/>
+  </filter>
+  <g filter="url(#bk-rau{{ id|default:'' }})">
+    <polygon points="-40,-20 300,-20 200,520 -40,520" fill="#000" opacity=".12"/>
+    <polygon points="330,-20 470,-20 370,520 230,520" fill="#fff" opacity=".1"/>
+    <polygon points="520,-20 560,-20 460,520 420,520" fill="#fff" opacity=".18"/>
+    <polygon points="620,-20 860,-20 860,520 520,520" fill="#000" opacity=".1"/>
+    <path d="M560 90L760 410M760 90L560 410" stroke="#fff" stroke-width="40" opacity=".16"/>
+  </g>
+  <g fill="#fff" opacity=".22"><circle cx="60" cy="440" r="8"/><circle cx="100" cy="470" r="4"/><circle cx="700" cy="50" r="7"/></g>
+</svg>
