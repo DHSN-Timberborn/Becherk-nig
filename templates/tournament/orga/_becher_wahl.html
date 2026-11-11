@@ -1,0 +1,12 @@
+{# Becher-Modus: ein Knopf pro möglicher Becherzahl (0 bis Turnier.becher) statt Zähler – ein Tipp, fertig. Ohne JavaScript. #}
+<div class="karte becherwahl" role="radiogroup" aria-labelledby="{{ name }}_team">
+  <div class="becherwahl__kopf">
+    <span class="zaehler__team" id="{{ name }}_team">{{ team }}</span>
+    <span class="leise klein">Becher übrig</span>
+  </div>
+  <div class="becherwahl__knoepfe">
+    {% for n in becher_werte %}
+      <label><input type="radio" name="{{ name }}" value="{{ n }}"{% if wert == n %} checked{% endif %}><span>{{ n }}</span></label>
+    {% endfor %}
+  </div>
+</div>
