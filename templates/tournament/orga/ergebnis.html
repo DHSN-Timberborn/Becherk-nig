@@ -23,21 +23,22 @@
   <form method="post" class="formular" novalidate>
     {% csrf_token %}
     {% for f in fehler %}<div class="hinweis hinweis--fehler">{{ f }}</div>{% endfor %}
+    {% if turnier.zaehlmodus == "becher" %}
+      {% include "tournament/orga/_becher_wahl.html" with team=spiel.team_a name="punkte_a" wert=spiel.punkte_a %}
+      {% include "tournament/orga/_becher_wahl.html" with team=spiel.team_b name="punkte_b" wert=spiel.punkte_b %}
+    {% else %}
     <div class="karte zaehler-karte">
       {% if satz_modus %}
         {% include "tournament/orga/_zaehler.html" with team=spiel.team_a name="saetze_a" wert=spiel.saetze_a max=turnier.gewinnsaetze %}
         <span class="zaehler__trenner">:</span>
         {% include "tournament/orga/_zaehler.html" with team=spiel.team_b name="saetze_b" wert=spiel.saetze_b max=turnier.gewinnsaetze %}
-      {% elif turnier.zaehlmodus == "becher" %}
-        {% include "tournament/orga/_zaehler.html" with team=spiel.team_a name="punkte_a" wert=spiel.punkte_a max=turnier.becher %}
-        <span class="zaehler__trenner">:</span>
-        {% include "tournament/orga/_zaehler.html" with team=spiel.team_b name="punkte_b" wert=spiel.punkte_b max=turnier.becher %}
       {% else %}
         {% include "tournament/orga/_zaehler.html" with team=spiel.team_a name="punkte_a" wert=spiel.punkte_a max=None %}
         <span class="zaehler__trenner">:</span>
         {% include "tournament/orga/_zaehler.html" with team=spiel.team_b name="punkte_b" wert=spiel.punkte_b max=None %}
       {% endif %}
     </div>
+    {% endif %}
     <span class="leise klein mitte">
       {% if satz_modus %}{{ turnier.get_gewinnsaetze_display }} – gewonnen mit {{ turnier.gewinnsaetze }} Satz{{ turnier.gewinnsaetze|pluralize:"en" }}{% elif turnier.zaehlmodus == "becher" %}Wie viele Becher stehen noch? Das Team mit mehr übrigen Bechern gewinnt (von {{ turnier.becher }}).{% else %}Punkte-Modus – das Team mit mehr Punkten gewinnt{% endif %}
     </span>

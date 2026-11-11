@@ -465,6 +465,8 @@ class Spiel(models.Model):
         else:
             a, b = self.punkte_a, self.punkte_b
             if a is None or b is None:
+                if self.turnier.zaehlmodus == Turnier.Zaehlmodus.BECHER:
+                    return {"punkte_a": "Bitte für beide Teams wählen, wie viele Becher noch stehen."}
                 return {"punkte_a": "Bitte die Punkte beider Teams eintragen."}
             if self.turnier.zaehlmodus == Turnier.Zaehlmodus.BECHER:
                 if max(a, b) > self.turnier.becher:
