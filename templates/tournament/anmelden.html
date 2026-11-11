@@ -49,7 +49,7 @@
 
   <div class="stapel stapel--eng">
     <button type="submit" class="btn">Verbindlich anmelden</button>
-    {% if not turnier.kostenlos %}<span class="leise klein mitte">Startgebühr {{ turnier.startgebuehr_eur|floatformat:"-2" }} € · bezahlt wird bar, per Überweisung oder PayPal</span>{% endif %}
+    {% if not turnier.kostenlos %}<span class="leise klein mitte">Startgebühr {{ turnier.startgebuehr_eur|floatformat:"-2" }} € {{ turnier.gebuehr_einheit }} · bezahlt wird bar, per Überweisung oder PayPal</span>{% endif %}
   </div>
 </form>
 {% endblock %}

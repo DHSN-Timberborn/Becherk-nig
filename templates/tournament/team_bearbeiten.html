@@ -36,7 +36,7 @@
       {% if not turnier.kostenlos %}<span{% if team.bezahlt %} class="erreicht"{% endif %}>Bezahlt</span>{% endif %}
       <span{% if team.status == "bestaetigt" %} class="erreicht"{% endif %}>Bestätigt</span>
     </div>
-    {% if not team.bezahlt and not turnier.kostenlos %}<span class="leise klein">Sobald die {{ turnier.startgebuehr_eur|floatformat:"-2" }} € eingegangen sind, bestätigt die Orga euer Team. <a href="#zahlung">Zahlungsinfos</a></span>{% endif %}
+    {% if not team.bezahlt and not turnier.kostenlos %}<span class="leise klein">Sobald die {{ team.startgebuehr|floatformat:"-2" }} € eingegangen sind, bestätigt die Orga euer Team. <a href="#zahlung">Zahlungsinfos</a></span>{% endif %}
   </div>
 {% endif %}
 
