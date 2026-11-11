@@ -48,6 +48,26 @@ jobs:
           curl -fsS http://localhost:8000/spielplan/ | grep -q "Probelauf"
           curl -fsS -o /dev/null http://localhost:8000/tabelle/
 
+      - name: compose.yaml mit Caddy wie in docs/betrieb.md (ohne Domain, Image aus diesem Lauf)
+        run: |
+          docker rm -f satzball
+          docker tag satzball ghcr.io/kootaro05/satzball:latest
+          printf 'DJANGO_ALLOWED_HOSTS=localhost\nDJANGO_HTTPS=0\n' > satzball.env
+          touch becherkoenig.env
+          printf ':80 {\n\treverse_proxy satzball:8000\n}\n' > Caddyfile
+          docker compose --profile satzball up -d
+          for i in $(seq 1 30); do
+            curl -fsS -o /dev/null http://localhost/ && break
+            sleep 1
+          done
+          curl -fsS http://localhost/ | grep -q "Satzball"
+          curl -fsS -o /dev/null http://localhost/admin/login/
+
+      - name: Caddy-Vorlage gültig (mit der Caddy-Version aus compose.yaml)
+        run: |
+          docker cp docs/Caddyfile.example caddy:/tmp/Caddyfile.example
+          docker exec caddy caddy validate --config /tmp/Caddyfile.example --adapter caddyfile
+
       - name: Image veröffentlichen (nur main)
         if: github.event_name == 'push' && github.ref == 'refs/heads/main'
         env:
@@ -62,4 +82,6 @@ jobs:
 
       - name: Container-Log bei Fehler
         if: failure()
-        run: docker logs satzball || true
+        run: |
+          docker logs satzball || true
+          docker logs caddy || true

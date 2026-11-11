@@ -3,3 +3,7 @@ __pycache__/
 .venv/
 data/
 staticfiles/
+# Server-Konfiguration (docs/betrieb.md), enthält Passwörter
+.env
+*.env
+Caddyfile
