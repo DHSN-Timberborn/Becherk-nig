@@ -73,6 +73,14 @@ in `.env`-Dateien schreibt es jeden Wert in Anführungszeichen, weil Compose `$`
 - Paarungen per Kreismethode. Ungerade Teamzahl → "spielfrei" (bei einer Gruppe pfeift das spielfreie Team).
   2 Felder, kein Team doppelt im selben Slot.
 - Nur bestätigte **und** bezahlte Teams kommen in den Spielplan (`Team.objects.im_spielplan()`).
+- **Startgebühr pro Team oder pro Person** (`Turnier.gebuehr_pro_person`, Vorgabe pro Team): Was ein Team zahlt, steht in
+  `Team.startgebuehr` (pro Person: Betrag × aktuell eingetragene Spieler, `Team.anzahl_spieler` nutzt `_anzahl_spieler`
+  aus `.annotate()`), Text für Mails `Team.startgebuehr_text`, Einheit für Startseite/Anmeldung `Turnier.gebuehr_einheit`.
+  Templates mit Team zeigen nie `turnier.startgebuehr_eur` als Betrag. `zahlungsuebersicht` und CSV rechnen pro Team.
+- **PayPal** (`Turnier.paypal_link`, optional, nur `https://` zu paypal.me/paypal.com – geprüft in `Turnier.clean`):
+  Kapitänsseite zeigt bei offener Zahlung (nicht auf der Warteliste) Knopf + aufklappbaren QR-Code mit `Team.paypal_url`
+  (bei `paypal.me/<name>` mit Betrag des Teams, z. B. `/20EUR`). QR-Code als SVG auf dem Server (`segno`,
+  `{% load qr %}{% qr_svg url %}`), kein fremder Dienst.
 - **Ohne Startgebühr** (`Turnier.kostenlos`, Gebühr 0 – auch die Vorgabe): Ein Startplatz ist sofort bestätigt
   (`Team.save()`), `unbezahlte_teams()` ist leer, Zahlungsteile (Startseite, Anmeldung, Kapitänsseiten, Mails,
   Admin-Kacheln) sind ausgeblendet; Filter „Unbezahlt“ lässt sie aus, CSV zeigt „–“ statt „nein“. Ändert die Orga die Gebühr im Admin, wird der Status aller Teams mit

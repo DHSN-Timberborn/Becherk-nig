@@ -59,7 +59,7 @@ Fünf Tabellen genügen. Die Zahlung hängt direkt am Team (ein Team zahlt einma
 
 | Tabelle | Wichtige Felder | Beziehung |
 | --- | --- | --- |
-| Turnier | id, name, datum, ort, startgebuehr_eur, meldeschluss, max_teams, mindestalter (optional), pflicht_spieler, min_spieler (Empfehlung), max_spieler (optional), anmeldung_offen, modus (jeder_gegen_jeden / gruppen_ko), anzahl_felder, feldart (Feld / Tisch / Platz), mit_schiri (Schiris einteilen, Standard an), zaehlmodus (saetze / punkte / becher), gewinnsaetze (1 / 2 / 3 = Best of 1 / 3 / 5), punkte_pro_satz (z. B. 25), punkte_entscheidungssatz (z. B. 15), becher (Becher pro Team, z. B. 10) | hat viele Teams, Gruppen, Spiele |
+| Turnier | id, name, datum, ort, startgebuehr_eur, gebuehr_pro_person (Standard aus = pro Team), paypal_link (optional), meldeschluss, max_teams, mindestalter (optional), pflicht_spieler, min_spieler (Empfehlung), max_spieler (optional), anmeldung_offen, modus (jeder_gegen_jeden / gruppen_ko), anzahl_felder, feldart (Feld / Tisch / Platz), mit_schiri (Schiris einteilen, Standard an), zaehlmodus (saetze / punkte / becher), gewinnsaetze (1 / 2 / 3 = Best of 1 / 3 / 5), punkte_pro_satz (z. B. 25), punkte_entscheidungssatz (z. B. 15), becher (Becher pro Team, z. B. 10) | hat viele Teams, Gruppen, Spiele |
 | Team | id, turnier_id, name, kapitaen_name, kapitaen_email, edit_token, status (angemeldet / bestaetigt / warteliste / abgesagt), bezahlt (ja/nein), bezahlt_am, zahlungsart (bar / ueberweisung / paypal), notiz, gruppe_id | gehört zu Turnier; hat viele Spieler |
 | Spieler | id, team_id, vorname, nachname, studiengang (optional) | gehört zu Team |
 | Gruppe | id, turnier_id, name (A, B, …) | hat viele Teams und Spiele |
@@ -192,6 +192,8 @@ So wenig Daten wie möglich: Name der Spieler, eine E-Mail pro Team. Keine Telef
 | Feld oder Tisch | Bezeichnung pro Turnier (Feld, Tisch, Platz) | So kann auch eine Satzball-Seite einen Bierpong-Abend mit „Tisch 1“ ausrichten |
 | Marke | Ableger tauschen nur Marken-Dateien | `config/marke.py`, `static/css/marke.css`, `static/img/logo.svg`, `templates/marke/` – der Fork bleibt beim Sync konfliktfrei |
 | Beamer-Ansicht | Eigene Großbild-Seite statt Vollbild-Knopf in der Tabelle | Tabellen, laufende und nächste Spiele, Siegerbanner; aktualisiert sich alle 30 s ohne Neuladen (Vollbild bleibt) |
+| Gebühr pro Person | Einstellbar pro Turnier, Standard pro Team | Pro Person zahlt ein Team Betrag × eingetragene Spieler (aktueller Stand); Startseite, Anmeldung, Kapitänsseite, Mails, Admin-Kennzahlen und CSV rechnen damit. Ändert ein schon bezahltes Team die Spielerliste, klärt die Orga den Rest |
+| PayPal | Optionaler PayPal-Link am Turnier, jederzeit nachtragbar | Kapitänsseite: Knopf „Mit PayPal zahlen“ mit Team-Betrag (paypal.me/…/20EUR) und QR-Code fürs Handy; QR-Code entsteht auf dem Server, nur PayPal-Adressen erlaubt. Die App prüft keine Zahlung – „bezahlt“ setzt weiter die Orga |
 | Ohne Startgebühr | Gebühr 0 € = kostenloses Turnier (z. B. Bierpong) | Startplatz ist sofort bestätigt; Zahlungsteile in Seiten, Mails und Admin ausgeblendet. Warteliste, Kapitäns-Mail und Bearbeitungslink bleiben |
 | Mindestalter | Pro Turnier optional (z. B. 16 bei Bier) | Kapitän bestätigt per Pflicht-Haken bei Anmeldung und Änderung der Spielerliste; kein Geburtsdatum (Datensparsamkeit) |
 | Schiri | Pro Turnier abschaltbar (z. B. Bierpong) | Haken „Schiris einteilen“; Umschalten wirkt sofort auf alle offenen Spiele, beendete behalten ihren Schiri |

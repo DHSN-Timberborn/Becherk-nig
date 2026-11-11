@@ -46,7 +46,7 @@ class TurnierAdmin(admin.ModelAdmin):
     class Media:
         js = ["js/admin_turnier.js"]  # Felder ausgrauen, die im gewählten Zählmodus nicht gelten
     fieldsets = [
-        (None, {"fields": ["name", "oeffentlich", "datum", "beginn", "ort", "startgebuehr_eur", "zahlungsinfo"]}),
+        (None, {"fields": ["name", "oeffentlich", "datum", "beginn", "ort", "startgebuehr_eur", "gebuehr_pro_person", "zahlungsinfo", "paypal_link"]}),
         ("Anmeldung", {"fields": [
             "anmeldung_offen", "meldeschluss", "max_teams", "warteliste_automatisch", "mindestalter", "pflicht_spieler", "min_spieler",
             "max_spieler",
@@ -181,7 +181,7 @@ class TeamAdmin(admin.ModelAdmin):
         for team in queryset.order_by("turnier__datum", "turnier", *Team.REIHENFOLGE):
             schreiber.writerow([_csv_zelle(wert) for wert in [
                 team.turnier.name, team.name, team.kapitaen_name, team.kapitaen_email, team.get_status_display(),
-                team._anzahl_spieler, f"{team.turnier.startgebuehr_eur:.2f}".replace(".", ","),
+                team._anzahl_spieler, f"{team.startgebuehr:.2f}".replace(".", ","),
                 "–" if team.turnier.kostenlos else "ja" if team.bezahlt else "nein", team.bezahlt_am.strftime("%d.%m.%Y") if team.bezahlt_am else "",
                 team.get_zahlungsart_display(), team.notiz,
             ]])

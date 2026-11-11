@@ -4,12 +4,23 @@ Die Tabelle (Platzierung) wird nicht gespeichert, sondern aus beendeten Spielen 
 """
 
 import secrets
+from decimal import Decimal
+from urllib.parse import urlsplit
 
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models
+from django.template.defaultfilters import floatformat
 from django.utils import timezone
 
+
+def _euro(betrag):
+    """Betrag wie in den Templates (floatformat:"-2"): „20“, „7,50“."""
+    return floatformat(betrag, "-2")
+
+
+# Erlaubte Ziele für Turnier.paypal_link – unter „PayPal“ soll kein fremder Link landen.
+PAYPAL_HOSTS = {"paypal.me", "paypal.com"}
 
 # Vorgabe für Turnier.pflicht_spieler (darunter kann ein Team nicht antreten).
 # min_spieler am Turnier ist nur eine Empfehlung.
@@ -46,8 +57,17 @@ class Turnier(models.Model):
     beginn = models.TimeField(null=True, blank=True, help_text="Startzeit am Spieltag, z. B. 9:30.")
     ort = models.CharField(max_length=200)
     startgebuehr_eur = models.DecimalField("Startgebühr (€)", max_digits=6, decimal_places=2, default=0)
+    gebuehr_pro_person = models.BooleanField(
+        "Startgebühr pro Person", default=False,
+        help_text="Aus: Betrag gilt pro Team. An: pro eingetragenem Spieler (z. B. Bierpong) – ein Team zahlt Betrag × Spielerzahl.",
+    )
     zahlungsinfo = models.TextField(
         blank=True, help_text="Wie gezahlt wird (IBAN, PayPal, Bar-Termine). Erscheint nach der Anmeldung.",
+    )
+    paypal_link = models.URLField(
+        "PayPal-Link", blank=True,
+        help_text="Optional, z. B. https://paypal.me/eure-orga – Kapitäne bekommen dann einen Bezahl-Knopf und QR-Code "
+                  "mit dem Betrag ihres Teams. Auch nachträglich möglich.",
     )
     meldeschluss = models.DateTimeField()
     max_teams = models.PositiveSmallIntegerField("max. Teams")
@@ -195,14 +215,19 @@ class Turnier(models.Model):
         """Neue Anmeldungen stellen sich hinten an, solange alle Plätze belegt sind oder schon jemand wartet."""
         return self.freie_plaetze == 0 or self.warteliste_anzahl > 0
 
+    @property
+    def gebuehr_einheit(self):
+        """„pro Person“ oder „pro Team“ – für Startseite und Anmeldung."""
+        return "pro Person" if self.gebuehr_pro_person else "pro Team"
+
     def zahlungsuebersicht(self):
         """Kennzahlen für die Orga (Screen 06). Erwartet wird die Gebühr aller Teams mit Startplatz."""
-        teams = list(self.teams.only("status", "bezahlt"))
+        teams = list(self.teams.only("status", "bezahlt", "turnier").annotate(_anzahl_spieler=models.Count("spieler")))
         startplatz = [t for t in teams if t.hat_startplatz]
         bezahlt = [t for t in teams if t.bezahlt]
         return {
-            "eingegangen": self.startgebuehr_eur * len(bezahlt),
-            "erwartet": self.startgebuehr_eur * len(startplatz),
+            "eingegangen": sum((t.startgebuehr for t in bezahlt), Decimal(0)),
+            "erwartet": sum((t.startgebuehr for t in startplatz), Decimal(0)),
             "unbezahlt": 0 if self.kostenlos else sum(1 for t in startplatz if not t.bezahlt),
             "warteliste": sum(1 for t in teams if t.status == Team.Status.WARTELISTE),
         }
@@ -228,6 +253,10 @@ class Turnier(models.Model):
         self.save(update_fields=["teamdaten_geloescht_am"])
 
     def clean(self):
+        if self.paypal_link:
+            teile = urlsplit(self.paypal_link)
+            if teile.scheme != "https" or (teile.hostname or "").removeprefix("www.") not in PAYPAL_HOSTS:
+                raise ValidationError({"paypal_link": "Bitte einen PayPal-Link (https://paypal.me/… oder https://www.paypal.com/…)."})
         pflicht = self.pflicht_spieler or 1
         if self.min_spieler is not None and self.min_spieler < pflicht:
             raise ValidationError({"min_spieler": f"Mindestens {pflicht} – so viele Spieler sind Pflicht."})
@@ -329,6 +358,38 @@ class Team(models.Model):
     @property
     def hat_startplatz(self):
         return self.status in self.STARTPLATZ_STATUS
+
+    @property
+    def anzahl_spieler(self):
+        anzahl = getattr(self, "_anzahl_spieler", None)  # aus .annotate(), spart Abfragen in Listen
+        return self.spieler.count() if anzahl is None else anzahl
+
+    @property
+    def startgebuehr(self):
+        """Betrag, den dieses Team zahlt: pro Team fest, pro Person × eingetragene Spieler (aktueller Stand)."""
+        gebuehr = self.turnier.startgebuehr_eur
+        return gebuehr * self.anzahl_spieler if self.turnier.gebuehr_pro_person else gebuehr
+
+    @property
+    def paypal_url(self):
+        """PayPal-Link des Turniers; bei paypal.me/<name> mit dem Betrag des Teams („…/20EUR“, „…/7.50EUR“)."""
+        link = self.turnier.paypal_link
+        if not link:
+            return ""
+        teile = urlsplit(link)
+        pfad = [t for t in teile.path.split("/") if t]
+        if (teile.hostname or "").removeprefix("www.") == "paypal.me" and len(pfad) == 1 and self.startgebuehr > 0:
+            betrag = f"{self.startgebuehr:.2f}".removesuffix(".00")
+            return f"https://paypal.me/{pfad[0]}/{betrag}EUR"
+        return link
+
+    @property
+    def startgebuehr_text(self):
+        """„20 €“ bzw. „20 € (4 × 5 € pro Person)“ – für Kapitänsseite und Mails."""
+        betrag = f"{_euro(self.startgebuehr)} €"
+        if self.turnier.gebuehr_pro_person:
+            betrag += f" ({self.anzahl_spieler} × {_euro(self.turnier.startgebuehr_eur)} € pro Person)"
+        return betrag
 
     @property
     def startplatz_nr(self):

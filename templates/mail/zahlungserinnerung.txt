@@ -2,7 +2,7 @@
 
 kurze Erinnerung: Für "{{ team.name }}" ist die Startgebühr für {{ turnier.name }} noch nicht bei uns eingegangen.
 
-Startgebühr: {{ turnier.startgebuehr_eur|floatformat:"-2" }} €
+Startgebühr: {{ team.startgebuehr_text }}
 Bitte bis zum Meldeschluss am {{ turnier.meldeschluss|date:"j.n.Y, H:i" }} Uhr zahlen – danach geht euer Platz an die Warteliste.
 {% if turnier.zahlungsinfo %}
 {{ turnier.zahlungsinfo }}

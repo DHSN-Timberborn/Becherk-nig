@@ -1,13 +1,24 @@
-{% if not team.bezahlt and team.status != "abgesagt" and not turnier.kostenlos %}
+{% load qr %}{% if not team.bezahlt and team.status != "abgesagt" and not turnier.kostenlos %}
 <div class="karte karte--flach" id="zahlung">
   <div class="karte__teil" style="border-top:0">
-    <div class="kopfzeile"><h2 class="zwischen">Startgebühr zahlen</h2><span class="zahl">{{ turnier.startgebuehr_eur|floatformat:"-2" }} €</span></div>
+    <div class="kopfzeile"><h2 class="zwischen">Startgebühr zahlen</h2><span class="zahl">{{ team.startgebuehr|floatformat:"-2" }} €</span></div>
+    {% if turnier.gebuehr_pro_person %}<span class="leise klein">{{ team.anzahl_spieler }} Spieler × {{ turnier.startgebuehr_eur|floatformat:"-2" }} € pro Person – ändert ihr die Spielerliste, ändert sich der Betrag.</span>{% endif %}
     <span class="leise klein">{% if team.status == "warteliste" %}Bitte erst zahlen, wenn ihr von der Warteliste nachrückt.{% else %}Bis {{ turnier.meldeschluss|date:"j.n." }} – danach rückt die Warteliste nach. Nach Eingang wird euer Team bestätigt.{% endif %}</span>
   </div>
   {% if turnier.zahlungsinfo %}
   <div class="karte__teil">
     <span>{{ turnier.zahlungsinfo|linebreaksbr }}</span>
     <span class="leise klein">Verwendungszweck: <b>{{ turnier.name }} – {{ team.name }}</b></span>
+  </div>
+  {% endif %}
+  {% if team.paypal_url and team.status != "warteliste" %}
+  <div class="karte__teil paypal">
+    <a class="btn" href="{{ team.paypal_url }}" target="_blank" rel="noopener">Mit PayPal zahlen · {{ team.startgebuehr|floatformat:"-2" }} €</a>
+    <details class="paypal__qr">
+      <summary>QR-Code zeigen (zum Bezahlen mit dem Handy)</summary>
+      {% qr_svg team.paypal_url "PayPal-Link als QR-Code" %}
+    </details>
+    <span class="leise klein">Bitte bei PayPal als Nachricht angeben: <b>{{ turnier.name }} – {{ team.name }}</b></span>
   </div>
   {% endif %}
 </div>

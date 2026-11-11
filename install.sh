@@ -7,7 +7,8 @@
 # Fragt alles Nötige in der Konsole ab, schreibt die Konfiguration nach /opt/satzball, startet die Container
 # (compose.yaml mit Caddy), legt den Orga-Zugang an und richtet die tägliche Sicherung ein. Details: docs/betrieb.md
 #
-# Nur für Tests: SATZBALL_ZIEL (Ordner), SATZBALL_QUELLE (Git-Repo), SATZBALL_EINGABE (Antworten aus Datei).
+# Nur für Tests: SATZBALL_ZIEL (Ordner), SATZBALL_QUELLE (Git-Repo), SATZBALL_EINGABE (Antworten aus Datei),
+# SATZBALL_OHNE_PULL=1 (vorhandene Images nehmen statt von ghcr.io laden).
 set -euo pipefail
 
 ZIEL=${SATZBALL_ZIEL:-/opt/satzball}
@@ -53,7 +54,13 @@ env_zeile() {
 # ---------------------------------------------------------------------------------------------------------------
 [ "$(id -u)" -eq 0 ] || fehler "Bitte mit sudo bzw. als root starten."
 command -v apt-get >/dev/null || fehler "Das Skript ist für Debian/Ubuntu gedacht (apt-get fehlt). Siehe docs/betrieb.md."
-[ ! -e "$ZIEL/.env" ] || fehler "$ZIEL ist schon eingerichtet. Für ein Update siehe docs/betrieb.md („Update einspielen“)."
+# .eingerichtet schreibt das Skript erst ganz am Ende – fehlt es, wurde eine Einrichtung abgebrochen und darf neu laufen.
+[ ! -e "$ZIEL/.eingerichtet" ] || fehler "$ZIEL ist schon eingerichtet. Für ein Update siehe docs/betrieb.md („Update einspielen“)."
+if [ -e "$ZIEL/.env" ]; then
+  hinweis "In $ZIEL wurde schon mit der Einrichtung begonnen (z. B. abgebrochen). Die Einstellungen werden neu abgefragt"
+  hinweis "und überschrieben; Turniere und Teams in den Datenbanken bleiben erhalten."
+  ja "Einrichtung fortsetzen?" "n" || fehler "Abgebrochen. Für ein Update siehe docs/betrieb.md („Update einspielen“)."
+fi
 
 fett "Satzball – Installation"
 hinweis "Alle Fragen lassen sich später in $ZIEL ändern. Eingabe in [Klammern] = Vorschlag, mit Enter übernehmen."
@@ -124,7 +131,7 @@ ja "Testturnier anlegen (öffentlich sichtbar, später im Admin löschen)?" "j" 
 # ---------------------------------------------------------------------------------------------------------------
 fett "Einrichten in $ZIEL"
 if [ -d "$ZIEL/.git" ]; then
-  git -C "$ZIEL" pull -q --ff-only
+  git -C "$ZIEL" pull -q --ff-only || hinweis "$ZIEL ließ sich nicht aktualisieren – nutze den vorhandenen Stand."
 else
   git clone -q "$QUELLE" "$ZIEL"
 fi
@@ -177,17 +184,37 @@ if command -v ufw >/dev/null && ufw status | grep -q "Status: active"; then
   if [ "$mit_becher" = ja ] && [ -z "$domain_becher" ]; then ufw allow 8080/tcp >/dev/null; fi
 fi
 
-hinweis "Lade die Images und starte die Container (beim ersten Mal 1–2 Minuten) …"
-docker compose up -d --quiet-pull
+hinweis "Lade die Images (beim ersten Mal 1–2 Minuten) …"
+# Bis zu drei Versuche – ein kurzer Aussetzer bei ghcr.io soll die Einrichtung nicht abbrechen
+for versuch in 1 2 3; do
+  [ -n "${SATZBALL_OHNE_PULL:-}" ] && break
+  docker compose pull --quiet && break
+  [ "$versuch" = 3 ] && fehler "Die Images ließen sich nicht laden. Netz prüfen und das Skript einfach noch einmal starten."
+  hinweis "Laden hat nicht geklappt – neuer Versuch in 10 Sekunden ($versuch/3) …"
+  sleep 10
+done
+hinweis "Starte die Container …"
+docker compose up -d
 
 apps=(satzball)
 [ "$mit_becher" = ja ] && apps+=(becherkoenig)
 for app in "${apps[@]}"; do
-  for _ in $(seq 1 60); do
-    docker exec "$app" python manage.py migrate --check >/dev/null 2>&1 && break
-    sleep 2
+  # Warten, bis der Container die Datenbank eingerichtet hat (höchstens 3 Minuten, mit Lebenszeichen)
+  printf '  Warte auf %s ' "$app" >&2
+  bereit=nein
+  ende=$((SECONDS + 180))
+  while [ $SECONDS -lt $ende ]; do
+    if timeout 30 docker exec "$app" python manage.py migrate --check >/dev/null 2>&1; then bereit=ja; break; fi
+    printf '.' >&2
+    sleep 3
   done
-  docker exec "$app" python manage.py migrate --check >/dev/null 2>&1 || fehler "$app startet nicht. Log: docker logs $app"
+  printf '\n' >&2
+  if [ "$bereit" = nein ]; then
+    hinweis "Status: $(docker inspect -f '{{.State.Status}}, {{.RestartCount}} Neustarts' "$app" 2>/dev/null || echo unbekannt)"
+    hinweis "Letzte Zeilen aus dem Log von $app:"
+    docker logs --tail 25 "$app" >&2 || true
+    fehler "$app startet nicht. Nach dem Beheben (z. B. in $ZIEL/$app.env) das Skript einfach noch einmal starten."
+  fi
 
   # Orga-Zugang: Passwort über stdin, damit es weder in der Prozessliste noch in einer Datei steht
   printf '%s\n%s\n%s\n' "$orga_name" "$orga_mail" "$orga_pw" | docker exec -i "$app" python manage.py shell -c "
@@ -220,6 +247,7 @@ done
   if [ "$mit_becher" = ja ]; then echo "40 3 * * * docker exec becherkoenig python manage.py sicherung >/dev/null"; fi
 } | crontab -
 hinweis "Tägliche Sicherung um 3:30 Uhr eingerichtet."
+date > .eingerichtet   # ab jetzt verweigert ein erneuter Aufruf die Einrichtung (Update siehe docs/betrieb.md)
 
 adresse() { if [ -n "$1" ]; then printf 'https://%s/' "$1"; else printf 'http://%s%s/' "$ip" "$2"; fi; }
 fett "Fertig! Weiter geht es unter:"
