@@ -14,7 +14,20 @@ Die Datenbanken sind getrennt: Teams, Turniere und Orga-Zugänge von Becherköni
 | Adresse ohne Domain | `http://<IP>/` | `http://<IP>:8080/` |
 | Orga | `…/admin/` | `…/admin/` (eigener Zugang) |
 
-## Einschalten
+## Installieren mit dem Skript (empfohlen)
+
+Auf einem frischen Debian/Ubuntu-Server:
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/Kootaro05/Satzball/main/install.sh | sudo bash
+```
+
+Bei **„Bierpong-Version Becherkönig zusätzlich installieren?“** mit `j` antworten. Das Skript erledigt dann alles
+aus dem nächsten Abschnitt: Profil, `becherkoenig.env` mit dem Quellcode-Link auf diesen Fork (AGPL), Caddy,
+Orga-Zugang (derselbe Name und dasselbe Passwort wie bei Satzball, aber ein eigenes Konto), Sicherung und auf
+Wunsch ein Bierpong-Testturnier. Ohne Domain ist Becherkönig danach unter `http://<IP>:8080/` erreichbar.
+
+## Von Hand einschalten (Server läuft schon mit Satzball)
 
 In `/opt/satzball/.env` muss `becherkoenig` mit in den Profilen stehen:
 
@@ -65,11 +78,10 @@ Im Admin unter Turniere anlegen und diese Werte setzen:
 Probelauf:
 
 ```bash
-sudo docker exec becherkoenig python manage.py testturnier --teams 8 --zaehlmodus becher --spielplan
+sudo docker exec becherkoenig python manage.py testturnier --teams 8 --spielplan --bierpong
 ```
 
-Das Testturnier startet mit den Satzball-Vorgaben („Feld“, Schiris an, 20 € Startgebühr). Damit es nach Bierpong
-aussieht, danach im Admin beim Testturnier „Bezeichnung: Tisch“ wählen und „Schiris einteilen“ ausschalten –
-beides gilt sofort auch für den schon erzeugten Spielplan.
+Legt ein öffentliches Bierpong-Testturnier für heute an: Becher-Modus, Tische, ohne Schiri, kostenlos, ab 16,
+Spielplan veröffentlicht. Nach dem Ausprobieren im Admin löschen.
 
 Nach dem Turnier: Aktion „Teamdaten löschen (Datenschutz)“ wie bei Satzball.
