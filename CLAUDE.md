@@ -45,6 +45,8 @@ Umgebungsvariablen (alle optional): `DJANGO_DEBUG` (lokal Standard `1`, im Conta
 `SATZBALL_VERANTWORTLICHER` (Datenschutzerklärung, Zeilen mit `|` getrennt – Betreiberdaten nicht im Code).
 Betrieb: `compose.yaml` (fertige Images von ghcr.io + Caddy für HTTPS, Profile `satzball`/`becherkoenig`),
 Anleitung `docs/betrieb.md`, Vorlagen `docs/satzball.env.example` und `docs/Caddyfile.example`.
+`install.sh` richtet einen frischen Server per Konsolen-Fragen ein (Test in der CI über `SATZBALL_EINGABE`);
+in `.env`-Dateien schreibt es jeden Wert in Anführungszeichen, weil Compose `$` und ` #` sonst auswertet.
 
 ## Fachliche Regeln
 
@@ -148,7 +150,8 @@ Anleitung `docs/betrieb.md`, Vorlagen `docs/satzball.env.example` und `docs/Cadd
   dazu, macht Links ungültig;
   Teamnamen und Ergebnisse bleiben. Deshalb sind `kapitaen_name/-email` im Model optional
   (im Anmeldeformular Pflicht).
-- Befehle: `testturnier [--teams N] [--spielplan]` (Probelauf), `sicherung [--behalten N]`
+- Befehle: `testturnier [--teams N] [--spielplan] [--bierpong]` (Probelauf; `--bierpong`: Becher, Tische, ohne Schiri,
+  kostenlos, ab 16), `sicherung [--behalten N]`
   (SQLite-Backup nach `data/sicherungen/`).
 - Beamer-Ansicht `/beamer/` (öffentlich wie die Tabelle, erst nach Veröffentlichung; Link „Beamer →“ auf der
   Orga-Spielplanseite): eigenständige Großbild-Seite mit Gruppentabellen, „Läuft“ und „Als Nächstes“
