@@ -68,3 +68,10 @@ class PaypalLinkTests(TestCase):
         t.save()
         wartet = team_mit(t, "Wartet", 2, status="warteliste")
         self.assertNotContains(self.client.get(reverse("team_bearbeiten", args=[wartet.edit_token])), "PayPal zahlen")
+
+    def test_datenschutz_erwaehnt_paypal_nur_mit_link(self):
+        t = turnier()
+        self.assertNotContains(self.client.get(reverse("datenschutz")), "Zahlung per PayPal")
+        t.paypal_link = "https://paypal.me/orga-cup"
+        t.save()
+        self.assertContains(self.client.get(reverse("datenschutz")), "Zahlung per PayPal")
