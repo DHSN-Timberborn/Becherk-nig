@@ -226,5 +226,6 @@ sudo docker logs -f caddy
 
 Die App-Logs enthalten keine Zugriffe (Gunicorn schreibt kein Access-Log), sondern nur Start-Meldungen und
 Fehler, z. B. „Mail für Team 12 konnte nicht verschickt werden“. Caddy schreibt in der Vorlage ebenfalls kein
-Access-Log, IP-Adressen der Besucher werden also nicht gespeichert; im Caddy-Log stehen nur Meldungen zu
-Start und Zertifikaten. `compose.yaml` begrenzt jedes Container-Log auf 30 MB, ältere Einträge löscht Docker selbst.
+Access-Log; im Caddy-Log stehen Meldungen zu Start und Zertifikaten und bei Fehlern (z. B. App nicht erreichbar)
+der betroffene Aufruf samt IP-Adresse. So beschreibt es auch die Datenschutzerklärung – wer im `Caddyfile` ein
+Access-Log (`log`) einschaltet, muss dort Speicherdauer und Zweck nachtragen. `compose.yaml` begrenzt jedes Container-Log auf 30 MB, ältere Einträge löscht Docker selbst.
