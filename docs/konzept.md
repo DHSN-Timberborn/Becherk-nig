@@ -182,7 +182,7 @@ So wenig Daten wie möglich: Name der Spieler, eine E-Mail pro Team. Keine Telef
 | Anzahl Gruppen | Orga wählt 2–4, App schlägt vor | Vorschlag: höchstens 5 Teams pro Gruppe |
 | K.-o. bei 3/4 Gruppen | 3: Gruppensieger + bester Zweiter, 4: Viertelfinale | Platzhalter im Spielplan, Teams trägt die Orga ein |
 | Löschfrist | Admin-Aktion per Klick | "Teamdaten löschen" beim Turnier, erst nach dem Turniertag; Teamnamen und Ergebnisse bleiben |
-| Proxy auf dem VPS | Vorhandener nginx | Container nur auf 127.0.0.1, nginx macht HTTPS (siehe `docs/betrieb.md`) |
+| Proxy auf dem VPS | Caddy per Docker Compose | Fertige Images von ghcr.io, Caddy holt HTTPS selbst; App-Container ohne Port nach außen (siehe `docs/betrieb.md`) |
 | Spielerzahl | Empfohlene Zahl ist keine harte Regel | Pflichtzahl pro Turnier (Vorgabe 2, mindestens 1); darunter lehnt das Formular ab, unter der Empfehlung nur ein Hinweis. Höchstzahl optional (leer = keine Obergrenze) |
 | Tabelle | Eigene Seite statt unter dem Spielplan | Menüpunkt „Tabelle“ wird aktiv markiert; Menü mit Symbolen |
 | Turnier-Wahl | Besucher können frühere/andere Turniere ansehen | Seite `/turniere/`, Auswahl wird gemerkt |

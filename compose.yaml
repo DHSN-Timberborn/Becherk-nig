@@ -1,0 +1,55 @@
+# Satzball und optional Becherkönig (Bierpong-Ableger) hinter Caddy – siehe docs/betrieb.md.
+# Welche Apps laufen, steht in .env:  COMPOSE_PROFILES=satzball  oder  COMPOSE_PROFILES=satzball,becherkoenig
+# Caddy macht HTTPS selbst (Let's Encrypt); die Apps sind von außen nur über Caddy erreichbar.
+name: satzball
+
+x-app: &app
+  restart: unless-stopped
+  logging:
+    driver: json-file
+    options:
+      max-size: "10m"
+      max-file: "3"
+
+services:
+  satzball:
+    <<: *app
+    image: ghcr.io/kootaro05/satzball:latest
+    container_name: satzball
+    profiles: [satzball]
+    env_file: satzball.env
+    volumes:
+      - satzball-data:/app/data
+
+  becherkoenig:
+    <<: *app
+    image: ghcr.io/dhsn-timberborn/becherkoenig:latest
+    container_name: becherkoenig
+    profiles: [becherkoenig]
+    env_file: becherkoenig.env
+    volumes:
+      - becherkoenig-data:/app/data
+
+  caddy:
+    <<: *app
+    image: caddy:2.11.9
+    container_name: caddy
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+      - "8080:8080"   # nur für Becherkönig ohne Domain (http://<IP>:8080)
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+
+volumes:
+  satzball-data:
+    name: satzball-data
+  becherkoenig-data:
+    name: becherkoenig-data
+  caddy-data:
+    name: caddy-data
+  caddy-config:
+    name: caddy-config

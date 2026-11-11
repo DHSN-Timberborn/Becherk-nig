@@ -3,3 +3,6 @@
 data
 staticfiles
 **/__pycache__
+.env
+*.env
+Caddyfile
