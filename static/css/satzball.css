@@ -213,4 +213,8 @@ b, strong { font-weight: 700; }
 .becherwahl__knoepfe input:checked + span { background: var(--ac); color: var(--aci); }
 .becherwahl__knoepfe input:focus-visible + span { outline: 3px solid var(--ac); outline-offset: 2px; }
 .btn-link--neutral { color: var(--ac); }
+/* PayPal auf der Kapitänsseite (templates/tournament/_zahlungsinfo.html) */
+.paypal { gap: 10px; }
+.paypal__qr summary { cursor: pointer; font-weight: 600; color: var(--ac); }
+.paypal__qr .qr { display: block; width: 100%; max-width: 220px; height: auto; margin: 12px auto 0; border-radius: 8px; }
 details summary { cursor: pointer; }
