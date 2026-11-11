@@ -46,7 +46,7 @@ class TurnierAdmin(admin.ModelAdmin):
     class Media:
         js = ["js/admin_turnier.js"]  # Felder ausgrauen, die im gewählten Zählmodus nicht gelten
     fieldsets = [
-        (None, {"fields": ["name", "oeffentlich", "datum", "beginn", "ort", "startgebuehr_eur", "gebuehr_pro_person", "zahlungsinfo"]}),
+        (None, {"fields": ["name", "oeffentlich", "datum", "beginn", "ort", "startgebuehr_eur", "gebuehr_pro_person", "zahlungsinfo", "paypal_link"]}),
         ("Anmeldung", {"fields": [
             "anmeldung_offen", "meldeschluss", "max_teams", "warteliste_automatisch", "mindestalter", "pflicht_spieler", "min_spieler",
             "max_spieler",

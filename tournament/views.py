@@ -171,7 +171,11 @@ def tabelle(request):
 
 
 def datenschutz(request):
-    return render(request, "tournament/datenschutz.html", {"verantwortlicher": settings.VERANTWORTLICHER})
+    return render(request, "tournament/datenschutz.html", {
+        "verantwortlicher": settings.VERANTWORTLICHER,
+        # Absatz zu PayPal nur, wenn ein Turnier wirklich einen PayPal-Link hat
+        "mit_paypal": Turnier.objects.exclude(paypal_link="").exists(),
+    })
 
 
 def anmelden(request):
