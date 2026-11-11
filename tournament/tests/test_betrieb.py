@@ -131,6 +131,18 @@ class BefehleTests(TestCase):
 
 
 
+    def test_testturnier_bierpong(self):
+        ausgabe = StringIO()
+        call_command("testturnier", "--teams", "8", "--spielplan", "--bierpong", stdout=ausgabe)
+        t = Turnier.objects.get()
+        self.assertEqual((t.zaehlmodus, t.feldart, t.mit_schiri, t.mindestalter), ("becher", "tisch", False, 16))
+        self.assertTrue(t.kostenlos)
+        self.assertEqual((t.pflicht_spieler, t.min_spieler, t.max_spieler), (1, 4, None))
+        self.assertEqual(t.teams.count(), 8)  # keine unbezahlten Teams, kostenlos ist jeder Platz bestätigt
+        self.assertEqual(Team.objects.im_spielplan().count(), 8)
+        self.assertFalse(t.spiele.exclude(schiri_team=None).exists())
+        self.assertIn("Bierpong-Turnier", ausgabe.getvalue())
+
     def test_testturnier_mit_zu_wenigen_teams(self):
         with self.assertRaisesMessage(CommandError, "mindestens 6"):
             call_command("testturnier", "--teams", "4", "--spielplan", stdout=StringIO())

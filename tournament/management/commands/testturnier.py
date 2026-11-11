@@ -1,4 +1,4 @@
-"""Testturnier für den Probelauf anlegen: python manage.py testturnier [--teams 10] [--spielplan]"""
+"""Testturnier für den Probelauf anlegen: python manage.py testturnier [--teams 10] [--spielplan] [--bierpong]"""
 
 import random
 from datetime import timedelta
@@ -35,23 +35,35 @@ class Command(BaseCommand):
         parser.add_argument("--zaehlmodus", choices=Turnier.Zaehlmodus.values, default=Turnier.Zaehlmodus.SAETZE)
         parser.add_argument("--spielplan", action="store_true", dest="mit_spielplan",
                             help="Spielplan erzeugen und veröffentlichen")
+        parser.add_argument("--bierpong", action="store_true",
+                            help="Bierpong-Werte: Becher-Modus, Tische, ohne Schiri, kostenlos, ab 16, 4 Spieler")
 
     @transaction.atomic
-    def handle(self, *args, teams, modus, zaehlmodus, mit_spielplan, **options):
+    def handle(self, *args, teams, modus, zaehlmodus, mit_spielplan, bierpong, **options):
         namen = [TIMBERBORN["name"]] + TEAMNAMEN
         if not 2 <= teams <= len(namen) - 2:
             raise CommandError(f"--teams muss zwischen 2 und {len(namen) - 2} liegen.")
         jetzt = timezone.localtime()
         beginn = (jetzt + timedelta(minutes=30 - jetzt.minute % 30)).time().replace(second=0, microsecond=0)
-        turnier = Turnier.objects.create(
-            name=f"Probelauf {jetzt:%d.%m.%Y %H:%M}", oeffentlich=True, datum=jetzt.date(), beginn=beginn, ort="Campus-Halle",
-            startgebuehr_eur=20, meldeschluss=jetzt + timedelta(days=1), max_teams=teams + 2,
-            anmeldung_offen=True, modus=modus, zaehlmodus=zaehlmodus,
+        werte = dict(
+            startgebuehr_eur=20, zaehlmodus=zaehlmodus, ort="Campus-Halle",
             zahlungsinfo="Testturnier – bitte nichts überweisen.",
         )
+        offen = 2  # zwei unbezahlte Teams zum Testen des Zahlungs-Trackings
+        if bierpong:
+            werte = dict(
+                startgebuehr_eur=0, zaehlmodus=Turnier.Zaehlmodus.BECHER, ort="Mensa",
+                feldart=Turnier.Feldart.TISCH, mit_schiri=False, mindestalter=16,
+                pflicht_spieler=1, min_spieler=4, max_spieler=None,
+            )
+            offen = 0  # kostenlos: jeder Startplatz ist sofort bestätigt
+        turnier = Turnier.objects.create(
+            name=f"Probelauf {jetzt:%d.%m.%Y %H:%M}", oeffentlich=True, datum=jetzt.date(), beginn=beginn,
+            meldeschluss=jetzt + timedelta(days=1), max_teams=teams + 2, anmeldung_offen=True, modus=modus, **werte,
+        )
         zufall = random.Random()
-        # Teams mit Startplatz: die ersten `teams` bezahlt, zwei weitere offen (zum Testen des Zahlungs-Trackings)
-        for i, name in enumerate(namen[:teams + 2]):
+        # Teams mit Startplatz: die ersten `teams` bezahlt, `offen` weitere unbezahlt
+        for i, name in enumerate(namen[:teams + offen]):
             team = Team.objects.create(
                 turnier=turnier, name=name,
                 kapitaen_name=TIMBERBORN["kapitaen"] if i == 0 else f"Kapitän {i + 1}",
@@ -59,12 +71,15 @@ class Command(BaseCommand):
                 zahlungsart=Team.Zahlungsart.BAR if i < teams else "",
             )
             spieler = TIMBERBORN["spieler"] if i == 0 else [
-                (zufall.choice(VORNAMEN), zufall.choice(NACHNAMEN)) for _ in range(6)
+                (zufall.choice(VORNAMEN), zufall.choice(NACHNAMEN)) for _ in range(4 if bierpong else 6)
             ]
             for vorname, nachname in spieler:
                 Spieler.objects.create(team=team, vorname=vorname, nachname=nachname)
 
-        self.stdout.write(f"Turnier „{turnier}“ (id {turnier.pk}) mit {teams} bezahlten und 2 offenen Teams angelegt.")
+        if bierpong:
+            self.stdout.write(f"Bierpong-Turnier „{turnier}“ (id {turnier.pk}) mit {teams} Teams angelegt.")
+        else:
+            self.stdout.write(f"Turnier „{turnier}“ (id {turnier.pk}) mit {teams} bezahlten und 2 offenen Teams angelegt.")
         if mit_spielplan:
             try:
                 spielplan.erzeugen(turnier)
