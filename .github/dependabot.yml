@@ -24,6 +24,13 @@ updates:
     commit-message:
       prefix: "Docker"
 
+  - package-ecosystem: "docker-compose"   # Caddy-Version in compose.yaml
+    directory: "/"
+    schedule:
+      interval: "monthly"
+    commit-message:
+      prefix: "Caddy"
+
   - package-ecosystem: "github-actions"   # Versionen der Actions im Test-Workflow
     directory: "/"
     schedule:

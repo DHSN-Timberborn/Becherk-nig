@@ -41,9 +41,10 @@ Umgebungsvariablen (alle optional): `DJANGO_DEBUG` (lokal Standard `1`, im Conta
 `DJANGO_CSRF_TRUSTED_ORIGINS` (z. B. `https://volleyball.example.de`, nötig hinter HTTPS-Proxy),
 `EMAIL_HOST`, `EMAIL_PORT`, `EMAIL_HOST_USER`, `EMAIL_HOST_PASSWORD`, `EMAIL_USE_TLS`, `DEFAULT_FROM_EMAIL`
 (ohne `EMAIL_HOST` werden Mails nur in die Konsole/das Log geschrieben).
-`DJANGO_HTTPS=1` (nur auf dem Server hinter nginx: vertraut `X-Forwarded-Proto`, Cookies nur über HTTPS).
+`DJANGO_HTTPS=1` (nur auf dem Server hinter Caddy mit Domain: vertraut `X-Forwarded-Proto`, Cookies nur über HTTPS).
 `SATZBALL_VERANTWORTLICHER` (Datenschutzerklärung, Zeilen mit `|` getrennt – Betreiberdaten nicht im Code).
-Betrieb (nginx, Update, Sicherung, Probelauf): `docs/betrieb.md`, Vorlage `docs/satzball.env.example`.
+Betrieb: `compose.yaml` (fertige Images von ghcr.io + Caddy für HTTPS, Profile `satzball`/`becherkoenig`),
+Anleitung `docs/betrieb.md`, Vorlagen `docs/satzball.env.example` und `docs/Caddyfile.example`.
 
 ## Fachliche Regeln
 

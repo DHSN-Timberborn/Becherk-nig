@@ -1,146 +1,139 @@
-# Satzball – Betrieb auf dem VPS
+# Satzball – Betrieb auf dem Server
 
-Ein Docker-Container hinter nginx. nginx macht HTTPS (Zertifikat von Let's Encrypt über certbot) und leitet
-an den Container weiter, der nur lokal auf `127.0.0.1:8000` lauscht. Die SQLite-Datenbank liegt im Volume
-`satzball-data`.
+Satzball läuft als fertiges Docker-Image (`ghcr.io/kootaro05/satzball`, von der CI nach jedem grünen Lauf auf
+`main` gebaut) hinter **Caddy**. Caddy holt und erneuert das HTTPS-Zertifikat selbst. Optional läuft auf
+demselben Server der Bierpong-Ableger **Becherkönig** mit eigener Datenbank und eigener Domain.
+Alles steht in `compose.yaml`; die Daten liegen in den Volumes `satzball-data` und `becherkoenig-data`.
 
-Erprobt auf Debian 12 mit nginx und certbot. Als `root` angemeldet entfällt das `sudo` vor den Befehlen.
+Erprobt auf Debian 12. Als `root` angemeldet entfällt das `sudo` vor den Befehlen.
 
-> **Tipp zum Einfügen ins Terminal:** Befehle einzeln einfügen. Dateien mit `nano` bearbeiten statt mit
-> `cat > datei <<'EOF' … EOF` – beim Einfügen gehen dort oft die Zeilenumbrüche verloren, die Shell wartet
-> dann mit `>` auf ein `EOF`, das nie kommt. Mit **Strg + C** abbrechen, es wird nichts geschrieben.
+> **Tipp zum Einfügen ins Terminal:** Befehle einzeln einfügen. Dateien mit `nano` bearbeiten
+> (speichern **Strg + O**, **Enter**, beenden **Strg + X**).
 
 ## Voraussetzungen
 
-- Ein **DNS-Eintrag (Typ A)** für die Domain, der auf die IP des Servers zeigt. Prüfen:
-  `getent hosts volleyball.example.de` muss die Server-IP zeigen, sonst scheitert certbot.
-- Pakete (Debian/Ubuntu):
+- Ein Server mit offenen Ports **80** und **443** (für Becherkönig ohne Domain zusätzlich **8080**).
+  Läuft dort schon ein Webserver (nginx, Apache), muss er weg – Caddy braucht diese Ports.
+- Pro App eine **Domain mit DNS-Eintrag (Typ A)** auf die Server-IP. Prüfen:
+  `getent hosts volleyball.example.de` muss die Server-IP zeigen. Ohne Domain geht es auch – dann nur über
+  `http://<IP>` und ohne HTTPS (siehe unten).
+- Docker mit Compose und git:
 
 ```bash
-sudo apt update
+curl -fsSL https://get.docker.com | sudo sh
 ```
 
 ```bash
-sudo apt install -y docker.io git nginx certbot python3-certbot-nginx
-```
-
-```bash
-sudo systemctl enable --now docker
+sudo apt install -y git
 ```
 
 ## Einmalig einrichten
 
-**1. Code holen und Image bauen**
+**1. Dateien holen**
 
 ```bash
-sudo git clone https://github.com/Kootaro05/Satzball.git /opt/satzball
+sudo git clone https://github.com/Kootaro05/Satzball.git /opt/satzball && cd /opt/satzball
+```
+
+**2. Welche Apps laufen sollen** – nur Satzball, oder Satzball und Becherkönig:
+
+```bash
+echo "COMPOSE_PROFILES=satzball,becherkoenig" | sudo tee .env
+```
+
+**3. Umgebungsvariablen** – eine Datei pro App, aus derselben Vorlage:
+
+```bash
+sudo cp docs/satzball.env.example satzball.env && sudo chmod 600 satzball.env
 ```
 
 ```bash
-cd /opt/satzball && sudo docker build -t satzball .
+sudo nano satzball.env
 ```
 
-**2. Umgebungsvariablen anlegen** (Vorlage: `docs/satzball.env.example`)
-
-```bash
-sudo cp docs/satzball.env.example /etc/satzball.env && sudo chmod 600 /etc/satzball.env
-```
-
-```bash
-sudo nano /etc/satzball.env
-```
-
-Werte eintragen, speichern mit **Strg + O**, **Enter**, beenden mit **Strg + X**. Zwei Stolperfallen:
+Werte eintragen. Stolperfallen:
 
 - **Keine Anführungszeichen.** Docker liest die Datei wörtlich, Anführungszeichen werden Teil des Werts.
-- **Absender** in der Form `DEFAULT_FROM_EMAIL=Name <adresse@domain>` – mit `@` und spitzen Klammern.
-  Als Adresse das Postfach von `EMAIL_HOST_USER` nehmen, fremde Absender lehnen die meisten Anbieter ab.
+- **Absender** in der Form `DEFAULT_FROM_EMAIL=Name <adresse@domain>`. Als Adresse das Postfach von
+  `EMAIL_HOST_USER` nehmen, fremde Absender lehnen die meisten Anbieter ab.
 - **Verantwortlicher** für die Datenschutzerklärung: `SATZBALL_VERANTWORTLICHER=Name | Straße | PLZ Ort | E-Mail: …`
-  (jedes `|` wird ein Zeilenumbruch). Die Erklärung nennt 14 Tage Speicherdauer für Server-Logs – das ist
-  die Voreinstellung von nginx unter Debian; prüfen mit `grep rotate /etc/logrotate.d/nginx` (erwartet `rotate 14`).
+  (jedes `|` wird ein Zeilenumbruch).
 
-**3. Container starten** – Port nur lokal, damit niemand nginx umgehen kann
+Für Becherkönig dasselbe mit `becherkoenig.env`, dabei:
+
+- eigene Domain in `DJANGO_ALLOWED_HOSTS` und `DJANGO_CSRF_TRUSTED_ORIGINS`
+- **AGPL:** `SATZBALL_QUELLCODE_URL=https://github.com/DHSN-Timberborn/Becherkoenig` – der Link „Quellcode“
+  muss auf den Fork zeigen
+- `DEFAULT_FROM_EMAIL=Becherkönig <adresse@domain>`
+
+**4. Caddy** – Domains eintragen, nicht benötigte Blöcke löschen:
 
 ```bash
-sudo docker run -d --name satzball --restart unless-stopped -p 127.0.0.1:8000:8000 -v satzball-data:/app/data --env-file /etc/satzball.env --log-opt max-size=10m --log-opt max-file=3 satzball
+sudo cp docs/Caddyfile.example Caddyfile && sudo nano Caddyfile
 ```
 
-Prüfen (Domain ersetzen), erwartet `HTTP/1.1 200 OK`:
+**5. Starten** – lädt die Images und holt die Zertifikate (dauert beim ersten Mal etwas):
 
 ```bash
-curl -sI -H "Host: volleyball.example.de" http://127.0.0.1:8000/ | head -1
+sudo docker compose up -d
 ```
 
-Der Container führt beim Start automatisch `migrate` aus.
+Prüfen, erwartet `HTTP/2 200`:
 
-**4. Orga-Zugang anlegen** (Benutzername und Passwort vergibst du selbst)
+```bash
+curl -sI https://volleyball.example.de/ | head -1
+```
+
+**6. Orga-Zugang anlegen** (Benutzername und Passwort vergibst du selbst), je App einmal:
 
 ```bash
 sudo docker exec -it satzball python manage.py createsuperuser
 ```
 
-## nginx und HTTPS
+```bash
+sudo docker exec -it becherkoenig python manage.py createsuperuser
+```
 
-Erst einen einfachen Block für Port 80 anlegen; certbot holt danach das Zertifikat und trägt HTTPS samt
-Weiterleitung selbst ein. (Eine fertige 443-Konfiguration vorab würde an noch fehlenden Zertifikatsdateien
-scheitern.)
+Danach `https://volleyball.example.de/admin/` aufrufen und anmelden.
+
+**7. Tägliche Sicherung** per Cronjob (`sudo crontab -e`), Zeilen für nicht genutzte Apps weglassen:
+
+```cron
+30 3 * * * docker exec satzball python manage.py sicherung >/dev/null
+40 3 * * * docker exec becherkoenig python manage.py sicherung >/dev/null
+```
+
+### Ohne Domain (nur über die IP)
+
+Zum Ausprobieren oder im Uni-Netz ohne Domain: In `Caddyfile` statt der Domain-Blöcke die Blöcke `:80`
+(Satzball) und `:8080` (Becherkönig) aus der Vorlage nehmen. In den `.env`-Dateien
+`DJANGO_ALLOWED_HOSTS=<IP>`, `DJANGO_HTTPS=0` und die Zeile `DJANGO_CSRF_TRUSTED_ORIGINS` weglassen.
+Erreichbar dann unter `http://<IP>/` bzw. `http://<IP>:8080/`. Ohne HTTPS gehen Passwörter unverschlüsselt
+durchs Netz – für echte Turniere eine Domain nehmen.
+
+`DJANGO_HTTPS=1` (mit Domain) ist wichtig: Daran vertraut Django dem Header `X-Forwarded-Proto` von Caddy und
+schickt Cookies nur über HTTPS. Die App-Container haben keinen eigenen Port nach außen, nur Caddy.
+
+## Update einspielen
+
+Vorher auf GitHub prüfen, dass der Testlauf („Tests“ unter *Actions*) für `main` grün ist – erst dann gibt es
+das neue Image. Für Becherkönig vorher im Fork „Sync fork“ und dort auf den grünen Lauf warten.
 
 ```bash
-sudo nano /etc/nginx/sites-available/satzball
-```
-
-Inhalt (Domain ersetzen):
-
-```nginx
-server {
-    listen 80;
-    server_name volleyball.example.de;
-
-    location / {
-        proxy_pass http://127.0.0.1:8000;
-        proxy_set_header Host $host;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-    }
-}
-```
-
-Aktivieren, prüfen, neu laden:
-
-```bash
-sudo ln -s /etc/nginx/sites-available/satzball /etc/nginx/sites-enabled/satzball
+cd /opt/satzball && sudo git pull
 ```
 
 ```bash
-sudo nginx -t && sudo systemctl reload nginx
+sudo docker exec satzball python manage.py sicherung
 ```
-
-Zertifikat holen; `--redirect` leitet danach alle `http://`-Aufrufe auf `https://` um. certbot fragt nach
-einer E-Mail-Adresse (für Warnungen zum Ablauf) und nach der Zustimmung zu den Nutzungsbedingungen.
 
 ```bash
-sudo certbot --nginx --redirect -d volleyball.example.de
+sudo docker compose pull && sudo docker compose up -d
 ```
 
-Automatische Verlängerung prüfen – erwartet „all simulated renewals succeeded“:
-
-```bash
-sudo certbot renew --dry-run
-```
-
-Prüfen, dass der Container nur lokal erreichbar ist – bei `8000` muss `127.0.0.1:8000` stehen, nicht
-`0.0.0.0:8000`:
-
-```bash
-sudo ss -tlnp | grep -E ':(80|443|8000) '
-```
-
-Danach `https://volleyball.example.de/admin/` aufrufen und anmelden. Vor dem Zertifikat (nur http) klappt
-der Login nicht, weil `DJANGO_HTTPS=1` die Cookies auf HTTPS beschränkt.
-
-`X-Forwarded-Proto` ist wichtig: Daran erkennt Django, dass die Seite über HTTPS kam (sonst scheitert
-der Login an der CSRF-Prüfung). Django vertraut diesem Header nur mit `DJANGO_HTTPS=1` – deshalb muss
-der Container-Port an `127.0.0.1` gebunden sein. Statische Dateien liefert die App selbst aus.
+`git pull` holt nur `compose.yaml` und die Vorlagen; eure `.env`-Dateien und das `Caddyfile` bleiben unberührt.
+Die Container führen beim Start automatisch `migrate` aus. Nach jeder Änderung an einer `.env`-Datei reicht
+`sudo docker compose up -d`, nach einer Änderung am `Caddyfile` `sudo docker compose restart caddy`.
 
 ## Mailversand prüfen
 
@@ -153,33 +146,7 @@ dem Bearbeitungslink muss ankommen. Landen Mails im Spam, fehlen meist SPF/DKIM-
 Absender-Domain (Hilfe des Mail-Anbieters).
 
 Typischer Fehler: `SMTPSenderRefused … MAIL command parameter unrecognized` → `DEFAULT_FROM_EMAIL` hat
-nicht die Form `Name <adresse@domain>` oder enthält Anführungszeichen (siehe Schritt 2). Nach jeder
-Änderung an `/etc/satzball.env` den Container neu erstellen (wie bei „Update einspielen“).
-
-## Update einspielen
-
-```bash
-cd /opt/satzball && sudo git pull
-```
-
-```bash
-sudo docker build -t satzball .
-```
-
-```bash
-sudo docker exec satzball python manage.py sicherung
-```
-
-```bash
-sudo docker stop satzball && sudo docker rm satzball
-```
-
-```bash
-sudo docker run -d --name satzball --restart unless-stopped -p 127.0.0.1:8000:8000 -v satzball-data:/app/data --env-file /etc/satzball.env --log-opt max-size=10m --log-opt max-file=3 satzball
-```
-
-Die Daten bleiben im Volume `satzball-data` erhalten. Vor dem Update auf GitHub prüfen, dass der
-Testlauf („Tests“ unter *Actions*) für `main` grün ist.
+nicht die Form `Name <adresse@domain>` oder enthält Anführungszeichen.
 
 ## Sicherung
 
@@ -192,14 +159,10 @@ sudo docker cp satzball:/app/data/sicherungen ./sicherungen
 ```
 
 Der erste Befehl legt `/app/data/sicherungen/db-….sqlite3` an, der zweite kopiert die Sicherungen vom
-Container auf den Server. Es bleiben die 14 neuesten Sicherungen (`--behalten N`, `--behalten 0` behält
-alle). Täglich per Cronjob (`sudo crontab -e`), z. B.:
+Container auf den Server. Es bleiben die 14 neuesten Sicherungen (`--behalten N`, `--behalten 0` behält alle).
+Für Becherkönig überall `becherkoenig` statt `satzball`, beim Image `ghcr.io/dhsn-timberborn/becherkoenig`.
 
-```cron
-30 3 * * * docker exec satzball python manage.py sicherung >/dev/null
-```
-
-**Wiederherstellen** – mit dem Satzball-Image kopieren, damit die Datei dem App-Benutzer gehört
+**Wiederherstellen** – mit dem App-Image kopieren, damit die Datei dem App-Benutzer gehört
 (als root hineinkopiert könnte die App sie nicht mehr schreiben):
 
 ```bash
@@ -207,15 +170,15 @@ sudo docker exec satzball ls /app/data/sicherungen
 ```
 
 ```bash
-sudo docker stop satzball
+sudo docker compose stop satzball
 ```
 
 ```bash
-sudo docker run --rm -v satzball-data:/app/data satzball cp /app/data/sicherungen/db-2026-11-14-033000.sqlite3 /app/data/db.sqlite3
+sudo docker run --rm -v satzball-data:/app/data ghcr.io/kootaro05/satzball cp /app/data/sicherungen/db-2026-11-14-033000.sqlite3 /app/data/db.sqlite3
 ```
 
 ```bash
-sudo docker start satzball
+sudo docker compose start satzball
 ```
 
 Eine heruntergeladene Sicherung vorher zurück ins Volume legen:
@@ -257,16 +220,12 @@ Gut zu wissen:
 sudo docker logs -f satzball
 ```
 
-Das Container-Log enthält keine Zugriffe (Gunicorn schreibt kein Access-Log, IP-Adressen stehen nur im
-nginx-Log), sondern nur Start-Meldungen und Fehler, z. B. „Mail für Team 12 konnte nicht verschickt werden“.
-Damit es nicht unbegrenzt wächst, begrenzt `--log-opt max-size=10m --log-opt max-file=3` es auf 30 MB;
-ältere Einträge löscht Docker selbst. Nach Tagen rotieren kann Docker nicht. Beim Update (Container neu
-anlegen) beginnt das Log ohnehin von vorn.
-
-Ein laufender Container behält seine alten Log-Einstellungen. Prüfen, erwartet `map[max-file:3 max-size:10m]`:
-
 ```bash
-sudo docker inspect -f '{{.HostConfig.LogConfig.Config}}' satzball
+sudo docker logs -f caddy
 ```
 
-Steht dort `map[]`, den Container einmal wie unter „Update einspielen“ neu anlegen.
+Die App-Logs enthalten keine Zugriffe (Gunicorn schreibt kein Access-Log), sondern nur Start-Meldungen und
+Fehler, z. B. „Mail für Team 12 konnte nicht verschickt werden“. Caddy schreibt in der Vorlage ebenfalls kein
+Access-Log; im Caddy-Log stehen Meldungen zu Start und Zertifikaten und bei Fehlern (z. B. App nicht erreichbar)
+der betroffene Aufruf samt IP-Adresse. So beschreibt es auch die Datenschutzerklärung – wer im `Caddyfile` ein
+Access-Log (`log`) einschaltet, muss dort Speicherdauer und Zweck nachtragen. `compose.yaml` begrenzt jedes Container-Log auf 30 MB, ältere Einträge löscht Docker selbst.

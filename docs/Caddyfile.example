@@ -1,0 +1,21 @@
+# Vorlage für /opt/satzball/Caddyfile – Domains ersetzen, nicht benötigte Blöcke löschen.
+# Danach: sudo docker compose restart caddy
+
+# Mit Domain: Caddy holt das HTTPS-Zertifikat selbst und leitet http auf https um.
+# Der DNS-Eintrag (Typ A) muss vorher auf den Server zeigen.
+volleyball.example.de {
+	reverse_proxy satzball:8000
+}
+
+bierpong.example.de {
+	reverse_proxy becherkoenig:8000
+}
+
+# Ohne Domain, nur über die IP des Servers (kein HTTPS, in den .env-Dateien DJANGO_HTTPS=0):
+# :80 {
+# 	reverse_proxy satzball:8000
+# }
+#
+# :8080 {
+# 	reverse_proxy becherkoenig:8000
+# }
