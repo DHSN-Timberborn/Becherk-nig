@@ -168,9 +168,29 @@
 .bk-regeln__text p { margin: 0; line-height: 1.5; }
 .bk-regeln__titel { margin: 0 0 4px; font: 700 30px/1.1 var(--kond); text-transform: uppercase; letter-spacing: .03em; }
 .bk-regeln__titel::after { --x: #fff; }
-@media (min-width: 720px) { .bk-regeln { grid-template-columns: 1fr 1fr; padding: 80px 32px; } }
+/* Zwei Spalten erst, wenn die rote Fläche wirklich breit ist (sie geht über die ganze Fensterbreite, s. u.) */
+@media (min-width: 820px) { .bk-regeln { grid-template-columns: 1fr 1fr; gap: 40px; } }
 /* Fuß direkt nach der roten Fläche: kein Abstand, die gerissene Kante sitzt auf dem Rot */
 .inhalt:has(.bk-regeln) + .fuss { margin-top: 0; }
+
+/* ===== Breite wie bei Leon: Kopf, rote Flächen, Fuß und Navigation über die ganze Fensterbreite,
+   der Inhalt bleibt eine gut lesbare Spalte in der Mitte (am Handy ändert sich nichts) ===== */
+:root .app { max-width: none; overflow-x: clip; }
+:root .inhalt { width: 100%; max-width: 560px; margin: 0 auto; }
+:root .app--breit .inhalt { max-width: 1180px; }  /* Orga-Spielplan bleibt breit */
+:root .kopf { padding-left: max(16px, calc(50% - 540px)); padding-right: max(16px, calc(50% - 540px)); }
+:root .nav { padding-left: max(8px, calc(50% - 280px)); padding-right: max(8px, calc(50% - 280px)); }
+/* Rote Flächen aus der Spalte heraus auf volle Breite, Text darin wie bei Leon auf max. 1100 px */
+.bk-hero, .bk-regeln {
+  margin-left: calc(50% - 50vw); margin-right: calc(50% - 50vw);
+  padding-left: max(20px, calc(50vw - 540px)); padding-right: max(20px, calc(50vw - 540px));
+}
+.bk-hero > :not(.bk-splitter) { max-width: 560px; }
+@media (min-width: 820px) {
+  .bk-hero { min-height: 420px; padding-top: 60px; padding-bottom: 96px; }
+  .bk-hero__titel { font-size: 54px; }
+  .bk-regeln { padding-top: 96px; padding-bottom: 96px; }
+}
 
 /* Admin (lädt diese Datei vor admin.css): Titel in aufrechter Oswald statt schräger Barlow */
 :root #site-name { font-style: normal; font-weight: 700; letter-spacing: .03em; }
