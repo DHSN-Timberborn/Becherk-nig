@@ -172,6 +172,8 @@ Betrieb (nginx, Update, Sicherung, Probelauf): `docs/betrieb.md`, Vorlage `docs/
   monatlich gebündelt; Django bleibt auf LTS 5.2).
 - `.github/workflows/tests.yml` läuft bei jedem PR und Push auf `main`: Docker-Image bauen, Tests im Image,
   Container starten und Seiten abrufen. Nur mergen, wenn der Lauf grün ist.
+- Nach grünem Lauf auf `main` veröffentlicht derselbe Workflow das Image als `ghcr.io/<besitzer>/<repo>:latest`
+  (und `:<commit>`); ein Fork baut automatisch sein eigenes. Das Paket muss auf GitHub einmal öffentlich gestellt werden.
 
 ## Befehle
 
