@@ -1,0 +1,24 @@
+{% load static %}{# Becherkönig: „So funktioniert’s“ ganz unten auf der Startseite (Design und Bild: Leon Scholle). #}
+{% if turnier %}
+<section class="bk-regeln">
+  <figure class="bk-regeln__bild">
+    <img src="{% static 'img/becherkoenig/tisch.jpg' %}" alt="Bierpong-Tisch mit Bechern und Ball" loading="lazy">
+    <figcaption>Becher &amp; Ball</figcaption>
+  </figure>
+  <div class="bk-regeln__text">
+    <h2 class="bk-regeln__titel">So funktioniert’s</h2>
+    <p>
+      Teams melden sich mit mindestens {{ turnier.pflicht_spieler }} Spieler{{ turnier.pflicht_spieler|pluralize:"n" }} an{% if turnier.min_spieler > turnier.pflicht_spieler %} – empfohlen sind {{ turnier.min_spieler }}{% endif %}.
+      Danach wird der Spielplan ausgelost: {% if turnier.modus == "jeder_gegen_jeden" %}Jeder spielt gegen jeden.{% else %}erst Gruppenspiele, dann die K.-o.-Runde.{% endif %}
+    </p>
+    {% if turnier.zaehlmodus == "becher" %}
+    <p>
+      Nach jedem Spiel wird eingetragen, wie viele Becher noch stehen – wer mehr übrig hat, gewinnt und bekommt 2 Punkte.
+      Bei Punktgleichheit entscheidet die Becher-Differenz.
+    </p>
+    {% endif %}
+    <p><b>Ungerade Teamanzahl?</b> Kein Problem: In jeder Runde hat ein Team Pause.</p>
+    {% if turnier.anmeldung_moeglich %}<a class="bk-hero__knopf" href="{% url 'anmelden' %}">Zur Anmeldung</a>{% endif %}
+  </div>
+</section>
+{% endif %}
