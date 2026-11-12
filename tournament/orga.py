@@ -4,12 +4,12 @@ from datetime import datetime, timedelta
 
 from django import forms
 from django.contrib import messages
-from django.contrib.admin.views.decorators import staff_member_required
 from django.core.exceptions import ValidationError
 from django.shortcuts import get_object_or_404, redirect, render
 from django.urls import reverse
 
-from . import ko, spielplan
+from . import ko, rollen, spielplan
+from .konten import orga_required
 from .models import Spiel, Team, Turnier
 from .tabelle import gruppentabellen
 
@@ -39,7 +39,7 @@ def _raster(turnier, spiele):
     return [(z, [belegung.get((z, f)) for f in felder]) for z in zeiten], felder, ende
 
 
-@staff_member_required
+@orga_required
 def spielplan_druck(request):
     """Druckansicht zum Aushängen in der Halle (auch vor der Veröffentlichung)."""
     turnier = _turnier(request)
@@ -58,7 +58,7 @@ def spielplan_druck(request):
     })
 
 
-@staff_member_required
+@orga_required
 def spielplan_seite(request):
     turnier = _turnier(request)
     if not turnier:
@@ -73,6 +73,9 @@ def spielplan_seite(request):
         else spielplan.gruppen_vorschlag(anzahl_teams),
     })
 
+    if request.method == "POST" and not rollen.darf(request.user, "spielplan"):
+        messages.error(request, "Dafür fehlt deiner Rolle das Recht „Spielplan & Ergebnisse“.")
+        return redirect(hier)
     if request.method == "POST":
         aktion = request.POST.get("aktion")
         if aktion == "erzeugen" and form.is_valid():
@@ -122,7 +125,7 @@ def spielplan_seite(request):
     })
 
 
-@staff_member_required
+@orga_required
 def ergebnis_seite(request, pk):
     spiel = get_object_or_404(Spiel.objects.select_related("turnier", "gruppe", "team_a", "team_b", "schiri_team"), pk=pk)
     turnier = spiel.turnier
@@ -131,6 +134,9 @@ def ergebnis_seite(request, pk):
     spiel = next(s for s in spiele if s.pk == spiel.pk)
     fehler = []
 
+    if request.method == "POST" and not rollen.darf(request.user, "spielplan"):
+        messages.error(request, "Ergebnisse eintragen darf deine Rolle nicht – dafür fehlt „Spielplan & Ergebnisse“.")
+        return redirect("orga_ergebnis", pk=spiel.pk)
     if request.method == "POST":
         def zahl(name):
             wert = request.POST.get(name, "").strip()

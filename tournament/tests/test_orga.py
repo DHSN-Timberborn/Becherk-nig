@@ -24,7 +24,7 @@ class OrgaSeitenTests(TestCase):
         self.client.logout()
         r = self.client.get(self.url)
         self.assertEqual(r.status_code, 302)
-        self.assertIn("/admin/login/", r.url)
+        self.assertIn("/orga/login/", r.url)  # eigener Orga-Login statt Admin-Login
 
     def test_spielplan_erzeugen_und_anzeigen(self):
         r = self.client.post(self.url, {

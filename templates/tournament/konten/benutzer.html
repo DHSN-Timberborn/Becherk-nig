@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% block titel %}Benutzer · {{ marke }}{% endblock %}
+{% block kopf %}{% include "tournament/konten/_kopf.html" with seite="benutzer" %}{% endblock %}
+{% block nav %}{% endblock %}
+{% block banner %}{% endblock %}
+{% block inhalt %}
+<div class="stapel stapel--eng">
+  <h1 class="titel titel--m">Benutzer</h1>
+  <span class="leise">Neue Leute kommen per Einladung dazu: per E-Mail oder mit einem Link, den du selbst teilst.</span>
+</div>
+<a class="btn" href="{% url 'orga_einladen' %}">+ Jemanden einladen</a>
+
+{% if einladungen %}
+<div class="stapel stapel--eng">
+  <h2 class="zwischen">Offene Einladungen</h2>
+  <div class="liste">
+    {% for e in einladungen %}
+    <div class="liste__zeile">
+      <span><span class="liste__name">{{ e.email|default:"Link zum Teilen" }}</span><br>
+        <span class="leise klein">als {{ e.rolle }} · gültig bis {{ e.gueltig_bis|date:"j.n., H:i" }} Uhr</span>
+        {% if not e.email %}<br><button type="button" class="btn-link klein" data-kopieren="{{ e.link }}">Link kopieren</button>{% endif %}
+      </span>
+      <form method="post" action="{% url 'orga_einladung_widerrufen' e.pk %}">{% csrf_token %}<button type="submit" class="btn-link">Zurückziehen</button></form>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+{% endif %}
+
+<div class="stapel stapel--eng">
+  <h2 class="zwischen">Orga-Konten</h2>
+  <div class="liste">
+    {% for k in konten %}
+    <a class="liste__zeile liste__zeile--link" href="{% url 'orga_benutzer_bearbeiten' k.pk %}">
+      <span><span class="liste__name">{{ k.get_full_name|default:k.get_username }}</span>{% if not k.is_active %} <span class="badge badge--abgesagt">gesperrt</span>{% endif %}<br>
+        <span class="leise klein">{% if k.is_superuser %}Superuser{% else %}{% for g in k.groups.all %}{{ g.name }}{% if not forloop.last %}, {% endif %}{% empty %}ohne Rolle{% endfor %}{% endif %}
+        {% if k.email %} · {{ k.email }}{% endif %}{% if k.orga_profil.telefon %} · {{ k.orga_profil.telefon }}{% endif %}</span></span>
+      <span aria-hidden="true">→</span>
+    </a>
+    {% endfor %}
+  </div>
+</div>
+{% endblock %}
+{% block skripte %}<script>
+// „Link kopieren“: in die Zwischenablage, sonst zum Markieren anzeigen
+document.addEventListener("click", function (e) {
+  var k = e.target.closest("[data-kopieren]");
+  if (!k) return;
+  navigator.clipboard.writeText(k.dataset.kopieren).then(function () { k.textContent = "Kopiert ✓"; },
+    function () { window.prompt("Link kopieren:", k.dataset.kopieren); });
+});
+</script>{% endblock %}

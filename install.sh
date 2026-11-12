@@ -114,7 +114,7 @@ if ja "SMTP-Zugang jetzt eintragen? Ohne landen Mails nur im Log" "j"; then
   smtp_pw=$(geheim "Passwort (wird nicht angezeigt)")
 fi
 
-fett "5/6  Orga-Zugang (für /admin/$( [ "$mit_becher" = ja ] && printf ', gilt für beide Apps'))"
+fett "5/6  Erster Orga-Zugang (Superuser für /orga/$( [ "$mit_becher" = ja ] && printf ', gilt für beide Apps'); weitere Leute lädst du danach dort ein)"
 orga_name=$(pflicht "Benutzername" "orga")
 orga_mail=$(pflicht "E-Mail")
 while true; do
@@ -251,8 +251,8 @@ date > .eingerichtet   # ab jetzt verweigert ein erneuter Aufruf die Einrichtung
 
 adresse() { if [ -n "$1" ]; then printf 'https://%s/' "$1"; else printf 'http://%s%s/' "$ip" "$2"; fi; }
 fett "Fertig! Weiter geht es unter:"
-hinweis "Satzball:     $(adresse "$domain_satzball" "")admin/"
-[ "$mit_becher" = ja ] && hinweis "Becherkönig:  $(adresse "$domain_becher" ":8080")admin/"
+hinweis "Satzball:     $(adresse "$domain_satzball" "")orga/"
+[ "$mit_becher" = ja ] && hinweis "Becherkönig:  $(adresse "$domain_becher" ":8080")orga/"
 hinweis "Anmelden mit „$orga_name“ und deinem Passwort."
 [ -n "$domain_satzball$domain_becher" ] && hinweis "Das HTTPS-Zertifikat holt Caddy beim ersten Aufruf – kann eine Minute dauern."
 [ -z "$domain_satzball" ] && hinweis "Ohne Domain läuft alles ohne HTTPS – für echte Turniere eine Domain eintragen (docs/betrieb.md)."

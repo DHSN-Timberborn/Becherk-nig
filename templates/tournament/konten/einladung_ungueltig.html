@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block titel %}Einladung · {{ marke }}{% endblock %}
+{% block nav %}{% endblock %}
+{% block banner %}{% endblock %}
+{% block inhalt %}
+<div class="stapel stapel--eng">
+  <h1 class="titel titel--m">{% if angemeldet %}Du bist schon angemeldet{% else %}Einladung nicht mehr gültig{% endif %}</h1>
+  {% if angemeldet %}
+  <p class="leise">Einladungen sind für neue Konten. Melde dich erst ab, wenn du für jemand anderen ein Konto anlegen willst.</p>
+  <a class="btn" href="{% url 'orga_uebersicht' %}">Zur Orga-Übersicht</a>
+  {% else %}
+  <p class="leise">Der Link ist abgelaufen, wurde schon benutzt oder zurückgezogen. Bitte die Orga um eine neue Einladung.</p>
+  <a class="btn btn--sekundaer" href="{% url 'orga_login' %}">Zum Orga-Login</a>
+  {% endif %}
+</div>
+{% endblock %}

@@ -85,6 +85,12 @@ DATABASES = {
     }
 }
 
+# Orga-Login (tournament/konten.py) – danach zur Orga-Übersicht
+LOGIN_URL = "orga_login"
+LOGIN_REDIRECT_URL = "orga_uebersicht"
+# Zugangslinks für ein neues Passwort (Orga → Benutzer) gelten wie Einladungen 7 Tage
+PASSWORD_RESET_TIMEOUT = 7 * 24 * 60 * 60
+
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
     {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator"},

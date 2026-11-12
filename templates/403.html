@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block titel %}Kein Zugriff · {{ marke }}{% endblock %}
+{% block nav %}{% endblock %}
+{% block banner %}{% endblock %}
+{% block inhalt %}
+{# Für PermissionDenied (z. B. Rollen-Seite ohne „Benutzer & Rollen“) statt Djangos nackter „403 Forbidden“-Seite #}
+<div class="stapel stapel--eng">
+  <h1 class="titel titel--m">Kein Zugriff</h1>
+  {% if user.is_staff %}
+  <p class="leise">Dafür fehlt deiner Rolle das passende Recht. Wenn du es brauchst, frag jemanden aus der Orga mit „Benutzer &amp; Rollen“.</p>
+  {% else %}
+  <p class="leise">Diese Seite ist nur für das Orga-Team.</p>
+  {% endif %}
+</div>
+{% if user.is_staff %}<a class="btn" href="{% url 'orga_uebersicht' %}">Zur Orga-Übersicht</a>{% else %}<a class="btn" href="{% url 'startseite' %}">Zur Startseite</a>{% endif %}
+{% endblock %}

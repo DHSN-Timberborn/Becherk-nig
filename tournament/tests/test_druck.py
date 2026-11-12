@@ -23,7 +23,7 @@ class DruckansichtTests(TestCase):
     def test_nur_fuer_orga(self):
         r = self.client.get(self.url)
         self.assertEqual(r.status_code, 302)
-        self.assertIn("/admin/login/", r.url)
+        self.assertIn("/orga/login/", r.url)  # eigener Orga-Login statt Admin-Login
 
     def test_inhalt(self):
         self.client.force_login(User.objects.create_superuser("orga", "o@example.de", "x"))
@@ -60,7 +60,7 @@ class DruckansichtTests(TestCase):
 
 class FaviconTests(TestCase):
     def test_admin_und_druckansicht_haben_das_favicon(self):
-        self.assertContains(self.client.get(reverse("admin:login")), "img/logo.svg")
+        self.assertContains(self.client.get(reverse("orga_login")), "img/logo.svg")
         self.client.force_login(User.objects.create_superuser("orga", "o@example.de", "x"))
         self.assertContains(self.client.get(reverse("admin:index")), "img/logo.svg")
         t = Turnier.objects.create(name="Cup", datum=date(2026, 11, 14), beginn=time(9, 30), ort="Halle", max_teams=8,

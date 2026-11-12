@@ -1,0 +1,12 @@
+{% autoescape off %}Hallo,
+
+{{ von.get_full_name|default:"die Orga" }} lädt dich ins Orga-Team von {{ marke }} ein – als „{{ einladung.rolle }}“.
+
+Über diesen Link legst du dein Konto an (Name, Telefon optional, Passwort):
+{{ link }}
+
+Der Link gilt {{ tage }} Tage und nur für ein Konto. Bitte gib ihn nicht weiter.
+
+Sportliche Grüße
+eure Orga
+{% endautoescape %}

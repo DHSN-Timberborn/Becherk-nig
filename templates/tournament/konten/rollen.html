@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block titel %}Rollen · {{ marke }}{% endblock %}
+{% block kopf %}{% include "tournament/konten/_kopf.html" with seite="rollen" %}{% endblock %}
+{% block nav %}{% endblock %}
+{% block banner %}{% endblock %}
+{% block inhalt %}
+<div class="stapel stapel--eng">
+  <h1 class="titel titel--m">Rollen</h1>
+  <span class="leise">Eine Rolle legt fest, was jemand im Orga-Bereich darf. Ansehen dürfen alle.</span>
+</div>
+<a class="btn" href="{% url 'orga_rolle_neu' %}">+ Neue Rolle</a>
+{% if rollen %}
+<div class="liste">
+  {% for gruppe, bausteine, anzahl in rollen %}
+  <a class="liste__zeile liste__zeile--link" href="{% url 'orga_rolle' gruppe.pk %}">
+    <span><span class="liste__name">{{ gruppe.name }}</span><br>
+      <span class="leise klein">{% if bausteine %}{{ bausteine|join:" · " }}{% else %}nur ansehen{% endif %} · {{ anzahl }} Person{{ anzahl|pluralize:"en" }}</span></span>
+    <span aria-hidden="true">→</span>
+  </a>
+  {% endfor %}
+</div>
+{% else %}
+<p class="leise">Noch keine Rollen. Lege zum Beispiel „Turnierleitung“ (alles) und „Helfer am Tisch“ (nur Ergebnisse) an.</p>
+{% endif %}
+{% endblock %}

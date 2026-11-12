@@ -1,0 +1,9 @@
+{% load static %}{# Kopf der Orga-Kontenseiten (Übersicht, Rollen, Benutzer) #}
+<header class="kopf">
+  <a class="marke" href="{% url 'startseite' %}"><img src="{% static 'img/logo.svg' %}" alt="" width="28" height="28">{{ marke }}</a>
+  <nav class="kopf__nav">
+    <a href="{% url 'orga_uebersicht' %}"{% if seite == "uebersicht" %} aria-current="page"{% endif %}>Übersicht</a>
+    {% if perms.auth.change_user %}<a href="{% url 'orga_benutzer' %}"{% if seite == "benutzer" %} aria-current="page"{% endif %}>Benutzer</a>
+    <a href="{% url 'orga_rollen' %}"{% if seite == "rollen" %} aria-current="page"{% endif %}>Rollen</a>{% endif %}
+  </nav>
+</header>
