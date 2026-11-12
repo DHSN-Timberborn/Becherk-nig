@@ -20,5 +20,10 @@
   {{ form.aktiv.errors }}
   <button type="submit" class="btn">Speichern</button>
 </form>
+<div class="karte">
+  <span class="liste__name">Passwort vergessen?</span>
+  <span class="leise klein">Erstellt einen Einmal-Link, mit dem {{ konto.first_name|default:"die Person" }} ein neues Passwort setzt. Den Link schickst du selbst weiter.</span>
+  <form method="post" action="{% url 'orga_zugangslink' konto.pk %}">{% csrf_token %}<button type="submit" class="btn btn--sekundaer">Neuen Zugangslink erstellen</button></form>
+</div>
 <a class="btn-link btn-link--neutral" href="{% url 'orga_benutzer' %}">← Alle Benutzer</a>
 {% endblock %}

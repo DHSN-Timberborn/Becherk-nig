@@ -116,6 +116,8 @@ in `.env`-Dateien schreibt es jeden Wert in Anführungszeichen, weil Compose `$`
   per Mail oder Link): Person legt Name, E-Mail (= Benutzername, klein), optional Telefon (`OrgaProfil`) und Passwort
   fest, bekommt `is_staff` + die Rolle. Schritt-Formulare: `<form data-schritte>` + `static/js/schritte.js`
   (ohne JS alle Schritte sichtbar). Superuser ändern nur Superuser; das eigene Konto kann man nicht sperren.
+  Passwort vergessen: „Neuen Zugangslink erstellen“ in Benutzer bearbeiten (Djangos Passwort-Token, `PasswordResetConfirmView`
+  als `konten.PasswortNeu`, 7 Tage, ungültig nach Passwortänderung oder Login). `templates/403.html` statt nackter 403-Seite.
 - Admin-Optik: `templates/admin/base_site.html` lädt `marke.css` und `static/css/admin.css`; admin.css legt nur
   Djangos CSS-Variablen auf die Marken-Farben (`--ac`, `--ink` …) und setzt Rundungen – Ableger bekommen so ihre
   Farben auch im Admin. Hell/Dunkel folgt dem Gerät (Djangos Umschalter ausgeblendet). Die App-Überschrift im Admin

@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block titel %}Neues Passwort · {{ marke }}{% endblock %}
+{% block nav %}{% endblock %}
+{% block banner %}{% endblock %}
+{% block inhalt %}
+{% if validlink %}
+<div class="stapel stapel--eng">
+  <h1 class="titel titel--m">Neues Passwort</h1>
+  <span class="leise">für {{ form.user.get_full_name|default:form.user.get_username }} – danach bist du direkt angemeldet.</span>
+</div>
+<form method="post" class="formular karte">
+  {% csrf_token %}
+  {% include "tournament/konten/_feld.html" with feld=form.new_password1 %}
+  {% include "tournament/konten/_feld.html" with feld=form.new_password2 %}
+  <button type="submit" class="btn">Passwort speichern</button>
+</form>
+{% else %}
+<div class="stapel stapel--eng">
+  <h1 class="titel titel--m">Link nicht mehr gültig</h1>
+  <p class="leise">Der Zugangslink ist abgelaufen oder wurde schon benutzt. Bitte die Orga um einen neuen.</p>
+  <a class="btn btn--sekundaer" href="{% url 'orga_login' %}">Zum Orga-Login</a>
+</div>
+{% endif %}
+{% endblock %}

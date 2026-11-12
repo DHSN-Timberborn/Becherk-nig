@@ -11,13 +11,16 @@ from django.contrib.auth import get_user_model, login, password_validation
 from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import Group
-from django.contrib.auth.views import LoginView
+from django.contrib.auth.tokens import default_token_generator
+from django.contrib.auth.views import LoginView, PasswordResetConfirmView
 from django.core.exceptions import PermissionDenied, ValidationError
 from django.core.mail import send_mail
 from django.db import transaction
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
-from django.urls import reverse
+from django.urls import reverse, reverse_lazy
+from django.utils.encoding import force_bytes
+from django.utils.http import urlsafe_base64_encode
 from django.views.decorators.http import require_POST
 
 from . import rollen
@@ -171,6 +174,33 @@ def benutzer_bearbeiten(request, pk):
             messages.success(request, f"{konto.get_full_name() or konto.email} gespeichert.")
             return redirect("orga_benutzer")
     return render(request, "tournament/konten/benutzer_form.html", {"form": form, "konto": konto})
+
+
+@require_POST
+@_nur_mit("benutzer")
+def zugangslink(request, pk):
+    """„Passwort vergessen“: Einmal-Link zum Setzen eines neuen Passworts – zum selbst Weiterschicken, ohne SMTP.
+    Djangos Passwort-Token: verfällt nach PASSWORD_RESET_TIMEOUT und sobald das Passwort geändert wurde."""
+    konto = get_object_or_404(User, pk=pk, is_staff=True)
+    if konto.is_superuser and not request.user.is_superuser:
+        raise PermissionDenied
+    link = request.build_absolute_uri(reverse("orga_passwort_neu", kwargs={
+        "uidb64": urlsafe_base64_encode(force_bytes(konto.pk)), "token": default_token_generator.make_token(konto),
+    }))
+    return render(request, "tournament/konten/zugangslink.html", {
+        "konto": konto, "link": link, "tage": settings.PASSWORD_RESET_TIMEOUT // 86400,
+    })
+
+
+class PasswortNeu(PasswordResetConfirmView):
+    template_name = "tournament/konten/passwort_neu.html"
+    post_reset_login = True
+    post_reset_login_backend = "django.contrib.auth.backends.ModelBackend"
+    success_url = reverse_lazy("orga_uebersicht")
+
+    def form_valid(self, form):
+        messages.success(self.request, "Neues Passwort gespeichert – du bist angemeldet.")
+        return super().form_valid(form)
 
 
 class EinladenForm(forms.Form):

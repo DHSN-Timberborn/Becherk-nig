@@ -192,3 +192,40 @@ class EinladungTests(TestCase):
         self.assertContains(r, "eigene Konto kann man nicht sperren")
         boss = User.objects.create_superuser("boss", "b@example.de", PASSWORT)
         self.assertEqual(self.client.get(reverse("orga_benutzer_bearbeiten", args=[boss.pk])).status_code, 403)
+
+
+class KeinZugriffUndZugangslinkTests(TestCase):
+    def setUp(self):
+        self.verwalter = konto("chef@example.de", rolle("Leitung", "benutzer"))
+        self.helfer = konto("helfer@example.de", rolle("Helfer"), first_name="Lena")
+
+    def test_kein_zugriff_im_satzball_look(self):
+        self.client.force_login(self.helfer)
+        r = self.client.get(reverse("orga_rollen"))
+        self.assertContains(r, "Dafür fehlt deiner Rolle das passende Recht", status_code=403)
+        self.assertContains(r, reverse("orga_uebersicht"), status_code=403)
+        self.assertEqual(self.client.post(reverse("orga_zugangslink", args=[self.verwalter.pk])).status_code, 403)
+
+    def test_neues_passwort_ueber_zugangslink(self):
+        self.client.force_login(self.verwalter)
+        r = self.client.post(reverse("orga_zugangslink", args=[self.helfer.pk]))
+        link = r.context["link"]
+        self.assertContains(r, link)
+        self.client.logout()
+
+        r = self.client.get(link, follow=True)  # Django leitet einmal auf eine Adresse ohne Token weiter
+        self.assertContains(r, "Neues Passwort")
+        neu = "Neues-Becher-Passwort-1"
+        r = self.client.post(r.redirect_chain[-1][0], {"new_password1": neu, "new_password2": neu})
+        self.assertRedirects(r, reverse("orga_uebersicht"))
+        self.helfer.refresh_from_db()
+        self.assertTrue(self.helfer.check_password(neu))
+        self.assertContains(self.client.get(reverse("orga_uebersicht")), "Hallo Lena")
+
+        self.client.logout()  # nach dem Ändern ist der Link verbraucht
+        self.assertContains(self.client.get(link, follow=True), "nicht mehr gültig")
+
+    def test_superuser_nur_durch_superuser(self):
+        boss = User.objects.create_superuser("boss", "b@example.de", PASSWORT)
+        self.client.force_login(self.verwalter)
+        self.assertEqual(self.client.post(reverse("orga_zugangslink", args=[boss.pk])).status_code, 403)
