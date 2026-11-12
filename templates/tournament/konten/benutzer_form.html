@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block titel %}{{ konto.get_full_name|default:konto.get_username }} · {{ marke }}{% endblock %}
+{% block kopf %}{% include "tournament/konten/_kopf.html" with seite="benutzer" %}{% endblock %}
+{% block nav %}{% endblock %}
+{% block banner %}{% endblock %}
+{% block inhalt %}
+<div class="stapel stapel--eng">
+  <h1 class="titel titel--m">{{ konto.get_full_name|default:konto.get_username }}</h1>
+  <span class="leise">{{ konto.email }}{% if konto.orga_profil.telefon %} · {{ konto.orga_profil.telefon }}{% endif %}{% if konto.last_login %} · zuletzt da am {{ konto.last_login|date:"j.n.Y" }}{% endif %}</span>
+</div>
+{% if konto.is_superuser %}<div class="hinweis">Superuser dürfen immer alles – die Rolle ändert daran nichts.</div>{% endif %}
+<form method="post" class="formular karte">
+  {% csrf_token %}
+  <div class="stapel stapel--eng">
+    <span class="zwischen">Rolle</span>
+    {% for opt in form.rolle %}<label class="wahl">{{ opt.tag }}<span>{{ opt.choice_label }}</span></label>{% endfor %}
+    {{ form.rolle.errors }}
+  </div>
+  <label class="check">{{ form.aktiv }}<span>{{ form.aktiv.label }}</span></label>
+  {{ form.aktiv.errors }}
+  <button type="submit" class="btn">Speichern</button>
+</form>
+<a class="btn-link btn-link--neutral" href="{% url 'orga_benutzer' %}">← Alle Benutzer</a>
+{% endblock %}

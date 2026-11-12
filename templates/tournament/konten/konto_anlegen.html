@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% load static %}
+{% block titel %}Konto anlegen · {{ marke }}{% endblock %}
+{% block nav %}{% endblock %}
+{% block banner %}{% endblock %}
+{% block inhalt %}
+<div class="stapel stapel--eng">
+  <h1 class="titel titel--m">Willkommen im Orga-Team</h1>
+  <span class="leise">Du wurdest als <b>{{ einladung.rolle }}</b> eingeladen. Leg dir in drei kurzen Schritten dein Konto an.</span>
+</div>
+<form method="post" class="formular" data-schritte novalidate>
+  {% csrf_token %}
+  {% include "tournament/konten/_schritte_kopf.html" %}
+  <fieldset class="schritt" data-titel="Name">
+    <legend class="zwischen">1 · Wer bist du?</legend>
+    {% include "tournament/konten/_feld.html" with feld=form.vorname %}
+    {% include "tournament/konten/_feld.html" with feld=form.nachname %}
+  </fieldset>
+  <fieldset class="schritt" data-titel="Kontakt">
+    <legend class="zwischen">2 · Kontakt</legend>
+    {% include "tournament/konten/_feld.html" with feld=form.email %}
+    {% include "tournament/konten/_feld.html" with feld=form.telefon %}
+  </fieldset>
+  <fieldset class="schritt" data-titel="Passwort">
+    <legend class="zwischen">3 · Passwort</legend>
+    {% include "tournament/konten/_feld.html" with feld=form.passwort1 %}
+    {% include "tournament/konten/_feld.html" with feld=form.passwort2 %}
+    <span class="leise klein">Mindestens 8 Zeichen, nicht zu ähnlich zu Name oder E-Mail und nicht nur Zahlen.</span>
+  </fieldset>
+  {% include "tournament/konten/_schritte_knoepfe.html" with senden="Konto anlegen" %}
+</form>
+{% endblock %}
+{% block skripte %}<script src="{% static 'js/schritte.js' %}"></script>{% endblock %}

@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% load static %}
+{% block titel %}{% if gruppe %}{{ gruppe.name }}{% else %}Neue Rolle{% endif %} · {{ marke }}{% endblock %}
+{% block kopf %}{% include "tournament/konten/_kopf.html" with seite="rollen" %}{% endblock %}
+{% block nav %}{% endblock %}
+{% block banner %}{% endblock %}
+{% block inhalt %}
+<h1 class="titel titel--m">{% if gruppe %}Rolle bearbeiten{% else %}Neue Rolle{% endif %}</h1>
+<form method="post" class="formular" data-schritte novalidate>
+  {% csrf_token %}
+  {% include "tournament/konten/_schritte_kopf.html" %}
+  <fieldset class="schritt" data-titel="Name">
+    <legend class="zwischen">1 · Name</legend>
+    {% include "tournament/konten/_feld.html" with feld=form.name %}
+  </fieldset>
+  <fieldset class="schritt" data-titel="Rechte">
+    <legend class="zwischen">2 · Was darf die Rolle?</legend>
+    <span class="leise klein">Ansehen dürfen alle Orga-Konten. Hier kommt dazu, was die Rolle ändern darf.</span>
+    {% for schluessel, titel, text in bausteine %}
+    <label class="wahl">
+      <input type="checkbox" name="bausteine" value="{{ schluessel }}"{% if schluessel in gewaehlt %} checked{% endif %}>
+      <span><b>{{ titel }}</b><br><span class="leise klein">{{ text }}</span></span>
+    </label>
+    {% endfor %}
+    {{ form.bausteine.errors }}
+  </fieldset>
+  {% include "tournament/konten/_schritte_knoepfe.html" with senden="Rolle speichern" %}
+</form>
+{% if gruppe %}
+<form method="post" action="{% url 'orga_rolle_loeschen' gruppe.pk %}" class="mitte" onsubmit="return confirm('Rolle „{{ gruppe.name|escapejs }}“ löschen?')">
+  {% csrf_token %}<button type="submit" class="btn-link">Rolle löschen</button>
+</form>
+{% endif %}
+<a class="btn-link btn-link--neutral" href="{% url 'orga_rollen' %}">← Alle Rollen</a>
+{% endblock %}
+{% block skripte %}<script src="{% static 'js/schritte.js' %}"></script>{% endblock %}

@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block titel %}Einladung erstellt · {{ marke }}{% endblock %}
+{% block kopf %}{% include "tournament/konten/_kopf.html" with seite="benutzer" %}{% endblock %}
+{% block nav %}{% endblock %}
+{% block banner %}{% endblock %}
+{% block inhalt %}
+<div class="stapel stapel--eng">
+  <div class="erfolg-icon" aria-hidden="true">✓</div>
+  <h1 class="titel titel--m">Einladung erstellt</h1>
+  <span class="leise">als {{ einladung.rolle }} · gültig bis {{ einladung.gueltig_bis|date:"j.n.Y, H:i" }} Uhr, nur für ein Konto</span>
+</div>
+{% if einladung.email %}
+<div class="hinweis">Die Einladung ist per E-Mail an <b>{{ einladung.email }}</b> unterwegs.</div>
+<span class="leise klein">Kommt sie nicht an (Spam?), kannst du den Link auch selbst schicken:</span>
+{% else %}
+<span class="leise">Schick diesen Link an die Person, z. B. per WhatsApp oder Signal:</span>
+{% endif %}
+<div class="karte">
+  <input class="link-feld" type="text" value="{{ link }}" readonly aria-label="Einladungslink" onclick="this.select()">
+  <button type="button" class="btn" data-kopieren="{{ link }}">Link kopieren</button>
+</div>
+<a class="btn btn--sekundaer" href="{% url 'orga_benutzer' %}">Zu den Benutzern</a>
+{% endblock %}
+{% block skripte %}<script>
+document.querySelector("[data-kopieren]").addEventListener("click", function () {
+  var k = this;
+  navigator.clipboard.writeText(k.dataset.kopieren).then(function () { k.textContent = "Kopiert ✓"; },
+    function () { document.querySelector(".link-feld").select(); });
+});
+</script>{% endblock %}

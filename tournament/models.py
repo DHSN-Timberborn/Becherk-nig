@@ -4,9 +4,11 @@ Die Tabelle (Platzierung) wird nicht gespeichert, sondern aus beendeten Spielen 
 """
 
 import secrets
+from datetime import timedelta
 from decimal import Decimal
 from urllib.parse import urlsplit
 
+from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.core.validators import MinValueValidator
 from django.db import models
@@ -537,3 +539,52 @@ class Spiel(models.Model):
             if a == b:
                 return {"punkte_a": "Im Punkte-Modus gibt es kein Unentschieden."}
         return {}
+
+
+# ---------------------------------------------------------------------------------------------------------------
+# Orga-Konten: Einladungen und Profil (Telefon). Rollen sind Django-Gruppen, siehe tournament/rollen.py.
+
+EINLADUNG_GUELTIG_TAGE = 7
+
+
+def _einladung_ablauf():
+    return timezone.now() + timedelta(days=EINLADUNG_GUELTIG_TAGE)
+
+
+class Einladung(models.Model):
+    """Einmal-Link zum Anlegen eines Orga-Kontos mit fester Rolle – per Mail verschickt oder selbst geteilt."""
+    token = models.CharField(max_length=64, unique=True, default=neuer_edit_token, editable=False)
+    rolle = models.ForeignKey("auth.Group", on_delete=models.CASCADE, related_name="einladungen")
+    email = models.EmailField("E-Mail", blank=True, help_text="Leer = Link wird selbst geteilt (z. B. per Messenger).")
+    erstellt_von = models.ForeignKey(settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL,
+                                     related_name="+")
+    erstellt_am = models.DateTimeField(auto_now_add=True)
+    gueltig_bis = models.DateTimeField(default=_einladung_ablauf)
+    angenommen_von = models.OneToOneField(settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL,
+                                          related_name="einladung")
+
+    class Meta:
+        verbose_name = "Einladung"
+        verbose_name_plural = "Einladungen"
+        ordering = ["-erstellt_am"]
+
+    def __str__(self):
+        return f"Einladung als {self.rolle} ({self.email or 'Link'})"
+
+    @property
+    def offen(self):
+        """Noch nicht benutzt und nicht abgelaufen."""
+        return self.angenommen_von_id is None and self.gueltig_bis > timezone.now()
+
+
+class OrgaProfil(models.Model):
+    """Zusätzliche Angaben zu einem Orga-Konto (nur für die Orga sichtbar)."""
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name="orga_profil")
+    telefon = models.CharField("Telefon", max_length=30, blank=True)
+
+    class Meta:
+        verbose_name = "Orga-Profil"
+        verbose_name_plural = "Orga-Profile"
+
+    def __str__(self):
+        return str(self.user)

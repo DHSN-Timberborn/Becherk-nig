@@ -213,6 +213,18 @@ b, strong { font-weight: 700; }
 .becherwahl__knoepfe input:checked + span { background: var(--ac); color: var(--aci); }
 .becherwahl__knoepfe input:focus-visible + span { outline: 3px solid var(--ac); outline-offset: 2px; }
 .btn-link--neutral { color: var(--ac); }
+/* Schritt-für-Schritt-Formulare (static/js/schritte.js): ohne JavaScript alle Schritte untereinander */
+.schritt { margin: 0; padding: 0; border: 0; display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.schritt legend { padding: 0; margin-bottom: 4px; }
+.schritte-kopf { display: none; }
+.schritte--aktiv .schritte-kopf { display: flex; flex-direction: column; gap: 6px; }
+.schritte-balken { height: 6px; border-radius: 3px; background: var(--sf2); overflow: hidden; }
+.schritte-balken span { display: block; height: 100%; width: 0; background: var(--ac); transition: width .2s; }
+.schritte-knoepfe { display: flex; gap: 10px; }
+.schritte-knoepfe .btn { flex: 1; }
+.link-feld { width: 100%; height: 44px; padding: 0 10px; border: 1.5px solid var(--line); border-radius: 10px; background: var(--sf2); color: var(--ink); font-size: 14px; }
+[hidden] { display: none !important; }
+
 /* PayPal auf der Kapitänsseite (templates/tournament/_zahlungsinfo.html) */
 .paypal { gap: 10px; }
 .paypal__qr summary { cursor: pointer; font-weight: 600; color: var(--ac); }
