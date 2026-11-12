@@ -112,7 +112,9 @@ sudo docker exec -it satzball python manage.py createsuperuser
 sudo docker exec -it becherkoenig python manage.py createsuperuser
 ```
 
-Danach `https://volleyball.example.de/admin/` aufrufen und anmelden.
+Danach `https://volleyball.example.de/orga/` aufrufen und anmelden. Weitere Leute lädst du dort unter
+**Benutzer & Rollen** ein: erst eine Rolle anlegen (was darf sie?), dann per E-Mail oder Link einladen – die Person
+legt Name, E-Mail, Telefon (optional) und Passwort selbst fest. Der Link gilt 7 Tage und nur einmal.
 
 **7. Tägliche Sicherung** per Cronjob (`sudo crontab -e`), Zeilen für nicht genutzte Apps weglassen:
 

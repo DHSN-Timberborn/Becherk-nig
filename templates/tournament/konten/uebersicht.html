@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+{% block titel %}Orga · {{ marke }}{% endblock %}
+{% block kopf %}{% include "tournament/konten/_kopf.html" with seite="uebersicht" %}{% endblock %}
+{% block nav %}{% endblock %}
+{% block banner %}{% endblock %}
+{% block inhalt %}
+<div class="stapel stapel--eng">
+  <h1 class="titel titel--m">Hallo {{ user.first_name|default:user.get_username }}</h1>
+  <span class="leise">Rolle: {{ rolle }}{% if turnier %} · aktuelles Turnier: {{ turnier.name }}{% endif %}</span>
+</div>
+
+<div class="liste">
+  <a class="liste__zeile liste__zeile--link" href="{% url 'orga_spielplan' %}">
+    <span><span class="liste__name">Spielplan &amp; Ergebnisse</span><br><span class="leise klein">{% if darf.spielplan %}Spielplan erzeugen, Spiele verschieben, Ergebnisse eintragen{% else %}Spielplan und Ergebnisse ansehen{% endif %}</span></span><span aria-hidden="true">→</span>
+  </a>
+  <a class="liste__zeile liste__zeile--link" href="{% url 'admin:tournament_team_changelist' %}{% if turnier %}?turnier__id__exact={{ turnier.pk }}{% endif %}">
+    <span><span class="liste__name">Teams &amp; Zahlungen</span><br><span class="leise klein">{% if darf.teams %}Teams bearbeiten, „bezahlt“ setzen, Warteliste{% else %}Teams und Zahlungsstand ansehen{% endif %}</span></span><span aria-hidden="true">→</span>
+  </a>
+  <a class="liste__zeile liste__zeile--link" href="{% url 'admin:tournament_turnier_changelist' %}">
+    <span><span class="liste__name">Turniere</span><br><span class="leise klein">{% if darf.turniere %}Turniere anlegen und einstellen{% else %}Turniere ansehen{% endif %}</span></span><span aria-hidden="true">→</span>
+  </a>
+  {% if darf.benutzer %}
+  <a class="liste__zeile liste__zeile--link" href="{% url 'orga_benutzer' %}">
+    <span><span class="liste__name">Benutzer &amp; Rollen</span><br><span class="leise klein">Leute einladen, Rollen und Rechte festlegen</span></span><span aria-hidden="true">→</span>
+  </a>
+  {% endif %}
+</div>
+
+<div class="stapel stapel--eng">
+  <a class="btn-link btn-link--neutral" href="{% url 'admin:index' %}">Admin (Expertenansicht)</a>
+  <form method="post" action="{% url 'orga_logout' %}" class="mitte">{% csrf_token %}<button type="submit" class="btn-link">Abmelden</button></form>
+</div>
+{% endblock %}

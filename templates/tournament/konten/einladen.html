@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% load static %}
+{% block titel %}Jemanden einladen · {{ marke }}{% endblock %}
+{% block kopf %}{% include "tournament/konten/_kopf.html" with seite="benutzer" %}{% endblock %}
+{% block nav %}{% endblock %}
+{% block banner %}{% endblock %}
+{% block inhalt %}
+<h1 class="titel titel--m">Jemanden einladen</h1>
+<form method="post" class="formular" data-schritte novalidate>
+  {% csrf_token %}
+  {% include "tournament/konten/_schritte_kopf.html" %}
+  <fieldset class="schritt" data-titel="Rolle">
+    <legend class="zwischen">1 · Welche Rolle?</legend>
+    {% for opt in form.rolle %}<label class="wahl">{{ opt.tag }}<span>{{ opt.choice_label }}</span></label>{% endfor %}
+    {{ form.rolle.errors }}
+    <a class="klein" href="{% url 'orga_rolle_neu' %}">Passende Rolle fehlt? Neue Rolle anlegen</a>
+  </fieldset>
+  <fieldset class="schritt" data-titel="Einladung">
+    <legend class="zwischen">2 · Wie einladen?</legend>
+    {% for opt in form.weg %}<label class="wahl">{{ opt.tag }}<span>{{ opt.choice_label }}</span></label>{% endfor %}
+    <div data-zeigen-wenn="weg=mail">{% include "tournament/konten/_feld.html" with feld=form.email %}</div>
+    <span class="leise klein">Der Link gilt {{ tage }} Tage und nur für ein Konto. Name, E-Mail, Telefon und Passwort trägt die Person selbst ein.</span>
+  </fieldset>
+  {% include "tournament/konten/_schritte_knoepfe.html" with senden="Einladung erstellen" %}
+</form>
+<a class="btn-link btn-link--neutral" href="{% url 'orga_benutzer' %}">← Abbrechen</a>
+{% endblock %}
+{% block skripte %}<script src="{% static 'js/schritte.js' %}"></script>{% endblock %}

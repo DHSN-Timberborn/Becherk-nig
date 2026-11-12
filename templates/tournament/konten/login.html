@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block titel %}Orga-Login · {{ marke }}{% endblock %}
+{% block nav %}{% endblock %}
+{% block banner %}{% endblock %}
+{% block inhalt %}
+<div class="stapel stapel--eng">
+  <h1 class="titel titel--m">Orga-Login</h1>
+  <p class="leise">Für das Orga-Team. Noch kein Konto? Lass dich von der Orga einladen.</p>
+</div>
+<form method="post" class="formular karte">
+  {% csrf_token %}
+  {% if form.non_field_errors %}<div class="hinweis hinweis--fehler">E-Mail/Benutzername oder Passwort stimmen nicht – oder das Konto ist gesperrt.</div>{% endif %}
+  {% include "tournament/konten/_feld.html" with feld=form.username %}
+  {% include "tournament/konten/_feld.html" with feld=form.password %}
+  <input type="hidden" name="next" value="{{ next }}">
+  <button type="submit" class="btn">Anmelden</button>
+</form>
+<p class="leise klein mitte">Passwort vergessen? Jemand aus der Orga mit „Benutzer &amp; Rollen“ kann dir einen neuen Zugangslink schicken.</p>
+{% endblock %}
